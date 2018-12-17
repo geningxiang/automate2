@@ -4,7 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="com.genx.auotmate.entity.ServerEntity" table="CA_SERVER">
+    <class name="com.genx.auotmate.entity.ServerEntity" table="CA2_SERVER">
         <id name="id" column="ID" unsaved-value="0">
             <generator class="identity"/>
         </id>
