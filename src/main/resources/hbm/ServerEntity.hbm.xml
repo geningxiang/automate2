@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.automate.entity.ServerEntity" table="CA2_SERVER">
+        <id name="id" column="ID" unsaved-value="0">
+            <generator class="identity"/>
+        </id>
+        <property column="TYPE" name="type"/>
+        <property column="NAME" name="name"/>
+        <property column="INSIDE_IP" name="insideIp"/>
+        <property column="OUTSIDE_IP" name="outsideIp"/>
+
+        <property column="SSH_HOST" name="sshHost"/>
+        <property column="SSH_PORT" name="sshPort"/>
+        <property column="SSH_USER" name="sshUser"/>
+        <property column="SSH_PWD" name="sshPwd"/>
+
+        <property column="REMARK" name="remark"/>
+        <property column="ENVIRONMENT" name="environment"/>
+        <property column="STATUS" name="status"/>
+    </class>
+</hibernate-mapping>
