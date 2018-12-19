@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title1</title>
+</head>
+<body>
+<div id="log"></div>
+<script>
+    var worker = new SharedWorker('sharedWorker1.js');
+    var log = document.getElementById('log');
+    worker.port.addEventListener('message', function(e) {
+        log.textContent = e.data;
+    }, false);
+    worker.port.addEventListener('error', function(e) {
+        console.error(e);
+    }, false);
+
+    worker.port.start(); // note: need this when using addEventListener
+    setInterval(function(){
+        worker.port.postMessage("【1】" + new Date().getTime());
+    }, 1000);
+
+</script>
+</body>
+</html>
