@@ -1,6 +1,7 @@
 package com.automate.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.automate.ssh.ISSHClient;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,7 +11,7 @@ import com.alibaba.fastjson.JSONObject;
  * @author: genx
  * @date: 2018/12/17 23:45
  */
-public class ServerEntity {
+public class ServerEntity implements ISSHClient {
 
     /**
      * 服务器类型
@@ -145,6 +146,7 @@ public class ServerEntity {
         this.outsideIp = outsideIp;
     }
 
+    @Override
     public String getSshHost() {
         return sshHost;
     }
@@ -153,6 +155,7 @@ public class ServerEntity {
         this.sshHost = sshHost;
     }
 
+    @Override
     public Integer getSshPort() {
         return sshPort;
     }
@@ -161,6 +164,7 @@ public class ServerEntity {
         this.sshPort = sshPort;
     }
 
+    @Override
     public String getSshUser() {
         return sshUser;
     }
@@ -169,6 +173,7 @@ public class ServerEntity {
         this.sshUser = sshUser;
     }
 
+    @Override
     public String getSshPwd() {
         return sshPwd;
     }

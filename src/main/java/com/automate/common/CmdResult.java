@@ -61,5 +61,7 @@ public class CmdResult {
         return cmd;
     }
 
-
+    public boolean isSuccess(){
+        return exitStatus == 0;
+    }
 }

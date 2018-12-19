@@ -56,12 +56,12 @@ public class SSHProxyImpl implements ISSHProxy {
         this.passWord = passWord;
     }
 
-//    public SSHProxyImpl(ServerEntity serverEntity) {
-//        this.hostName = serverEntity.getIp();
-//        this.port = serverEntity.getPort();
-//        this.userName = serverEntity.getUserName();
-//        this.passWord = serverEntity.getPassword();
-//    }
+    public SSHProxyImpl(ISSHClient sshClient) {
+        this.hostName = sshClient.getSshHost();
+        this.port = sshClient.getSshPort() != null ? sshClient.getSshPort() : 22;
+        this.userName = sshClient.getSshUser();
+        this.passWord = sshClient.getSshPwd();
+    }
 
     public void setCharset(Charset charset) {
         if (charset != null) {

@@ -26,7 +26,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>springDispatcherServlet</servlet-name>
-    <url-pattern>/api/*</url-pattern>
+    <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
   <!-- 乱码处理 -->
@@ -40,7 +40,7 @@
   </filter>
   <filter-mapping>
     <filter-name>characterEncodingFilter</filter-name>
-    <url-pattern>/api/*</url-pattern>
+    <url-pattern>*.do</url-pattern>
   </filter-mapping>
 
   <welcome-file-list>
