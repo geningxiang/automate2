@@ -109,7 +109,7 @@
         </li>
         <li>
         <a href="#">
-        <span class="photo"><img alt="avatar" src="./img/avatar-mini.jpg"></span>
+        <span class="photo"><img alt="avatar" src="/resources/img/avatar-mini.jpg"></span>
         <span class="subject">
         <span class="from">Jonathan Smith</span>
         <span class="time">Just now</span>
@@ -121,7 +121,7 @@
         </li>
         <li>
         <a href="#">
-        <span class="photo"><img alt="avatar" src="./img/avatar-mini2.jpg"></span>
+        <span class="photo"><img alt="avatar" src="/resources/img/avatar-mini2.jpg"></span>
         <span class="subject">
         <span class="from">Jhon Doe</span>
         <span class="time">10 mins</span>
@@ -133,7 +133,7 @@
         </li>
         <li>
         <a href="#">
-        <span class="photo"><img alt="avatar" src="./img/avatar-mini3.jpg"></span>
+        <span class="photo"><img alt="avatar" src="/resources/img/avatar-mini3.jpg"></span>
         <span class="subject">
         <span class="from">Jason Stathum</span>
         <span class="time">3 hrs</span>
@@ -145,7 +145,7 @@
         </li>
         <li>
         <a href="#">
-        <span class="photo"><img alt="avatar" src="./img/avatar-mini4.jpg"></span>
+        <span class="photo"><img alt="avatar" src="/resources/img/avatar-mini4.jpg"></span>
         <span class="subject">
         <span class="from">Jondi Rose</span>
         <span class="time">Just now</span>
@@ -226,7 +226,7 @@
         <!-- user login dropdown start-->
         <li class="dropdown">
         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-        <img alt="" src="img/avatar1_small.jpg">
+        <img alt="" src="/resources/img/avatar1_small.jpg">
         <span class="username">Jhon Doue</span>
         <b class="caret"></b>
         </a>

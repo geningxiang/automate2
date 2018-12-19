@@ -64,11 +64,10 @@ var Script = function () {
     });
 
     $('.sidebar-toggle-box').click(function () {
-
         if ($('#sidebar > ul').is(":visible") === true) {
             $('#main-content').css({
                 //'margin-left': '0px'
-                'padding-left':'0'
+                'padding-left': '0'
             });
             $('#sidebar').css({
                 'margin-left': '-210px'
@@ -143,7 +142,7 @@ var Script = function () {
 
     if ($(".custom-bar-chart")) {
         $(".bar").each(function () {
-            var i = $(this).find(".value").html();
+            var i = $(this).find(".value").html().trim();
             $(this).find(".value").html("");
             $(this).find(".value").animate({
                 height: i

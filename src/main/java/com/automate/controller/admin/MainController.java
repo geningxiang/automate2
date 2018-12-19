@@ -21,4 +21,9 @@ public class MainController {
     }
 
 
+    @RequestMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
+
 }

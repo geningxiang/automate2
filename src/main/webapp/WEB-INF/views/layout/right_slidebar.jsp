@@ -5,7 +5,7 @@
         <li class="online">
         <div class="media">
         <a href="#" class="pull-left media-thumb">
-        <img alt="" src="img/chat-avatar2.jpg" class="media-object">
+        <img alt="" src="/resources/img/chat-avatar2.jpg" class="media-object">
         </a>
         <div class="media-body">
         <strong>John Doe</strong>
@@ -16,7 +16,7 @@
         <li class="online">
         <div class="media">
         <a href="#" class="pull-left media-thumb">
-        <img alt="" src="img/chat-avatar.jpg" class="media-object">
+        <img alt="" src="/resources/img/chat-avatar.jpg" class="media-object">
         </a>
         <div class="media-body">
         <div class="media-status">
@@ -31,7 +31,7 @@
         <li class="online">
         <div class="media">
         <a href="#" class="pull-left media-thumb">
-        <img alt="" src="img/pro-ac-1.png" class="media-object">
+        <img alt="" src="/resources/img/pro-ac-1.png" class="media-object">
         </a>
         <div class="media-body">
         <div class="media-status">
@@ -45,7 +45,7 @@
         <li class="online">
         <div class="media">
         <a href="#" class="pull-left media-thumb">
-        <img alt="" src="img/avatar1.jpg" class="media-object">
+        <img alt="" src="/resources/img/avatar1.jpg" class="media-object">
         </a>
         <div class="media-body">
         <strong>Anjelina Joli</strong>
@@ -56,7 +56,7 @@
         <li class="online">
         <div class="media">
         <a href="#" class="pull-left media-thumb">
-        <img alt="" src="img/mail-avatar.jpg" class="media-object">
+        <img alt="" src="/resources/img/mail-avatar.jpg" class="media-object">
         </a>
         <div class="media-body">
         <div class="media-status">

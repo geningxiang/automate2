@@ -357,7 +357,7 @@ ul.sidebar-menu li a.active i {
 
 .wrapper {
     display: inline-block;
-    margin-top: 60px;
+    /*margin-top: 60px;*/
     padding: 15px;
     width: 100%;
 }
