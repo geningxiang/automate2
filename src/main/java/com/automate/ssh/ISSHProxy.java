@@ -5,6 +5,9 @@ import com.automate.common.CmdResult;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
+import java.io.InputStream;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: java连接远程服务器的操作(接口)
@@ -26,6 +29,10 @@ public interface ISSHProxy {
      * @Date:
      */
     boolean uploadLocalFileToRemote(String localFile, String remoteDir) throws SftpException, JSchException, Exception;
+
+    boolean uploadToRemote(InputStream inputStream, String dst) throws JSchException, SftpException;
+
+    List<String> readRemoteFileLines(String remoteFile) throws Exception;
 
     void close();
 }

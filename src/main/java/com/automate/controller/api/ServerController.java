@@ -2,12 +2,12 @@ package com.automate.controller.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.automate.common.ResponseEntity;
-import com.automate.common.ResponseStatus;
 import com.automate.entity.ServerEntity;
 import com.automate.service.ServerService;
 import com.automate.ssh.helper.PsAuxHelper;
 import com.automate.ssh.vo.LinuxProcessVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,11 +47,11 @@ public class ServerController {
     @RequestMapping("/psAux")
     public ResponseEntity<List<LinuxProcessVO>> psAux(Integer id) throws Exception {
         if (id == null || id <= 0) {
-            return ResponseEntity.of(ResponseStatus.BAD_REQUEST, "参数错误", null);
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误", null);
         }
         ServerEntity model = serverService.getModel(id);
         if (model == null) {
-            return ResponseEntity.of(ResponseStatus.NOT_FOUND, "未找到相应的服务器", null);
+            return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的服务器", null);
         }
         return ResponseEntity.ok(PsAuxHelper.psAux(model));
     }

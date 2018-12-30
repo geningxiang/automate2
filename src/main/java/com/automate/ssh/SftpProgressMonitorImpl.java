@@ -4,6 +4,8 @@ import com.jcraft.jsch.SftpProgressMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+
 /**
  * @Author:luzhengxian
  * Description 通过ssh远程连接进行文件上传时的工具接口实现方法
@@ -18,15 +20,22 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor{
     private boolean endFlag=false;
 
     @Override
-    public void init(int op, String srcFile, String dstDir, long size) {
-        logger.debug("文件开始上传：["+srcFile+"]-->["+dstDir+"]"+",文件大小："+size+",参数："+op);
+    public void init(int mode, String srcFile, String dstDir, long size) {
+
+        // inputstream上传时  size = -1
+        logger.debug("文件开始上传：[{}]-->[{}]"+",文件大小：{},参数：{}", srcFile, dstDir, size, mode);
         this.size=size;
     }
 
     @Override
     public boolean count(long count) {
         currentSize+=count;
-        logger.debug("上传数量："+currentSize);
+        if(size > 0){
+            logger.debug("上传进度：{}/{} {}%", currentSize, size, new BigDecimal(currentSize * 100).divide(new BigDecimal(size), 2, BigDecimal.ROUND_HALF_UP));
+        } else {
+            logger.debug("上传进度：已上传{}", currentSize);
+        }
+
         return true;
     }
 

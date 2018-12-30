@@ -10,6 +10,8 @@
 <script src="/resources/js/jquery.customSelect.min.js" ></script>
 <script src="/resources/js/respond.min.js" ></script>
 
+<!-- 模板解析 art-template -->
+<script src="/resources/js/template-web.js"></script>
 <!--right slidebar-->
 <script src="/resources/js/slidebars.min.js"></script>
 

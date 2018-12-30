@@ -5,9 +5,11 @@ import com.automate.common.BufferedReaderTimeOutMonitor;
 import com.automate.common.Charsets;
 import com.automate.common.CmdResult;
 import com.jcraft.jsch.*;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -160,7 +162,6 @@ public class SSHProxyImpl implements ISSHProxy {
 
     /**
      * 上传本地文件到 远程文件夹
-     *
      * @param localFile 本地文件
      * @param remoteDir
      * @return
@@ -187,7 +188,40 @@ public class SSHProxyImpl implements ISSHProxy {
                 channel.disconnect();
             }
         }
-//        return false;
+    }
+
+    @Override
+    public boolean uploadToRemote(InputStream inputStream, String dst) throws JSchException, SftpException {
+        ChannelSftp channel = null;
+        try {
+            channel = (ChannelSftp) getSession().openChannel("sftp");
+            channel.connect();
+            //实例化这个接口实现类，在文件传输的时候对传输进度进行监控
+            SftpProgressMonitorImpl sftpImpl = new SftpProgressMonitorImpl();
+            channel.put(inputStream, dst, sftpImpl);
+            return sftpImpl.isSuccess();
+        } finally {
+            if (channel != null) {
+                channel.disconnect();
+            }
+        }
+    }
+
+    @Override
+    public List<String> readRemoteFileLines(String remoteFile) throws Exception {
+        ChannelSftp channel = null;
+        try {
+            channel = (ChannelSftp) getSession().openChannel("sftp");
+            channel.connect();
+
+            //实例化这个接口实现类，在文件传输的时候对传输进度进行监控
+            SftpProgressMonitorImpl sftpImpl = new SftpProgressMonitorImpl();
+            return IOUtils.readLines(channel.get(remoteFile, sftpImpl), "UTF-8");
+        } finally {
+            if (channel != null) {
+                channel.disconnect();
+            }
+        }
     }
 
     /**

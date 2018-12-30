@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8"%>
 <html>
 <head>
     <jsp:include page="common/head.jsp"/>
@@ -32,7 +33,7 @@
     <!--sidebar end-->
 
     <!--main content start-->
-    <iframe id="main-content" src="/admin/dashboard.do">
+    <iframe id="main-content" name="mainContent" src="/admin/dashboard.do">
     </iframe>
     <!--main content end-->
     <!-- Right Slidebar start -->
