@@ -4,7 +4,7 @@
 
 <Workspace>
 	<Local Expanded="Yes">
-		<Model Expanded="Yes" ID="{CB604EFF-5B00-49B4-9BA7-10D2FEC6945B}" Name="Automate2" Selected="Yes" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="Automate2.pdm"/>
+		<Model Expanded="Yes" ID="{CB604EFF-5B00-49B4-9BA7-10D2FEC6945B}" Loaded="No" Name="Automate2" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="Automate2.pdm"/>
 		<Model Expanded="Yes" ID="{804EC83A-DF30-4E44-AD29-755878C9F003}" Loaded="No" Name="资讯demo" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="/github-workspace/InformationDemo/documents/资讯demo.pdm"/>
 	</Local>
 	<BrowserModule Name="Repository"/>

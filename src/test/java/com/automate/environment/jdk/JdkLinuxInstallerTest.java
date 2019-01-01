@@ -30,9 +30,9 @@ public class JdkLinuxInstallerTest {
 
         isshProxy.execCommand("tar zxvf /usr/local/jdk-8u191-linux-x64.tar.gz -C /usr/local");
 
-
+        //修改 securerandom.source
+        // java 随机数 /dev/random  会造成tomcat 启动慢
         List<String> list= isshProxy.readRemoteFileLines("/usr/local/jdk1.8.0_191/jre/lib/security/java.security");
-
         StringBuilder sb = new StringBuilder();
         for (String s : list) {
             if("securerandom.source=file:/dev/random".equals(s)){
@@ -42,8 +42,9 @@ public class JdkLinuxInstallerTest {
                 sb.append(s).append("\r\n");
             }
         }
-
         isshProxy.uploadToRemote(new ByteArrayInputStream(sb.toString().getBytes()), "/usr/local/jdk1.8.0_191/jre/lib/security/java.security");
+
+
 
 
         isshProxy.close();

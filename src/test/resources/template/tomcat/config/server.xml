@@ -1,0 +1,95 @@
+<#setting number_format="#">
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 一般不会通过端口来关闭tomcat -->
+<Server port="${shutDownPort!-1}" shutdown="SHUTDOWN">
+
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+  <!-- Security listener. Documentation at /docs/config/listeners.html
+  <Listener className="org.apache.catalina.security.SecurityListener" />
+  -->
+  <!--APR library loader. Documentation at /docs/apr.html -->
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <!-- 内存泄漏的监控 Prevent memory leaks due to use of particular java/javax APIs-->
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <!-- 
+    全局命名资源 定义了 JNDI（Java 命名和目录接口）资源，其允许 Java 软件客户端通过名称搜寻和查找数据。
+  -->
+  <GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+  </GlobalNamingResources>
+
+  <!-- 
+    Server是顶级组件，代表一个 Tomcat 实例。可以包含一个或多个 Services ，其中每个 Service 都有自己的 Engines 和 Connectors。
+   -->
+  <Service name="Catalina">
+    <!-- 
+      Connector(表示客户端和service之间的连接)
+      port：代表Tomcat监听端口，也就是网站的访问端口，默认为8080，可以根据需要改成其他。
+      protocol：协议类型，可选类型有四种，分别为BIO（阻塞型IO），NIO，NIO2和APR。
+          //BIO  
+          protocol="HTTP/1.1"  
+          //NIO  
+          protocol="org.apache.coyote.http11.Http11NioProtocol"  
+          //NIO2  
+          protocol="org.apache.coyote.http11.Http11Nio2Protocol"  
+          //APR  
+          protocol="org.apache.coyote.http11.Http11AprProtocol" 
+      maxThreads：由该连接器创建的处理请求线程的最大数目，也就是可以处理的同时请求的最大数目。如果未配置默认值为200。如果一个执行器与此连接器关联，则忽略此属性，因为该属性将被忽略，所以该连接器将使用执行器而不是一个内部线程池来执行任务
+      minSpareThreads：线程的最小运行数目，这些始终保持运行。如果未指定，默认值为10。
+      acceptCount：当所有可能的请求处理线程都在使用时传入连接请求的最大队列长度。如果未指定，默认值为100。一般是设置的跟 maxThreads一样或一半，此值设置的过大会导致排队的请求超时而未被处理。所以这个值应该是主要根据应用的访问峰值与平均值来权衡配置。
+      maxConnections：在任何给定的时间内，服务器将接受和处理的最大连接数。当这个数字已经达到时，服务器将接受但不处理，等待进一步连接。NIO与NIO2的默认值为10000，APR默认值为8192。
+      connectionTimeout：当请求已经被接受，但未被处理，也就是等待中的超时时间。单位为毫秒，默认值为60000。通常情况下设置为30000。
+      maxHttpHeaderSize：请求和响应的HTTP头的最大大小，以字节为单位指定。如果没有指定，这个属性被设置为8192（8 KB）。
+      tcpNoDelay：如果为true，服务器socket会设置TCP_NO_DELAY选项，在大多数情况下可以提高性能。缺省情况下设为true。
+      compression：是否启用gzip压缩，默认为关闭状态。这个参数的可接受值为“off”（不使用压缩），“on”（压缩文本数据），“force”（在所有的情况下强制压缩）。
+      compressionMinSize：如果compression="on"，则启用此项。被压缩前数据的最小值，也就是超过这个值后才被压缩。如果没有指定，这个属性默认为“2048”（2K），单位为byte。
+      disableUploadTimeout：这个标志允许servlet Container在一个servlet执行的时候，使用一个不同的，更长的连接超时。最终的结果是给servlet更长的时间以便完成其执行，或者在数据上载的时候更长的超时时间。如果没有指定，设为false。
+      enableLookups：关闭DNS反向查询。
+      URIEncoding：URL编码字符集。
+    -->
+    <Connector port="${port}" 
+        protocol="${protocol!'HTTP/1.1'}"
+        maxThreads="${maxThreads!1000}"
+        minSpareThreads="${minSpareThreads!10}"
+        acceptCount="${acceptCount!1000}"
+        maxConnections="${maxConnections!1000}"
+        connectionTimeout="${connectionTimeout!30000}"   
+        maxHttpHeaderSize="${maxHttpHeaderSize!8192}"  
+        tcpNoDelay="${tcpNoDelay!'true'}"
+        compression="${compression!'off'}"
+        compressionMinSize="${compressionMinSize!4096}"  
+        disableUploadTimeout="${disableUploadTimeout!'true'}"
+        enableLookups="${enableLookups!'false'}"
+        URIEncoding="UTF-8"
+               />
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm" resourceName="UserDatabase"/>
+      </Realm>
+
+      <Host name="localhost"  appBase="webapps" unpackWARs="true" autoDeploy="true">
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="localhost_access_log" suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+      </Host>
+      <!--
+        appBase 目录
+        unpackWARs  如果为true，则tomcat会自动将WAR文件解压，否则不解压，直接从WAR文件中运行应用程序
+        autoDeploy  如果此项设为true,表示Tomcat服务处于运行状态时,能够监测appBase下的文件,如果有新有web应用加入进来,会自运发布这个WEB应用
+        deployOnStartup:如果此项设为true,表示Tomcat服务器启动时会自动发布appBase目录下所有的Web应用.如果Web应用 中的server.xml没有相应的<Context>元素,将采用Tomcat默认的Context
+      -->
+      <Host name="localhost"  appBase="${appBase!'webapps'}" unpackWARs="false" autoDeploy="false" xmlValidation="false" xmlNamespaceAware="false">
+        <!-- %{X-Real-IP}i 在nginx代理时 获取真实IP -->
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" prefix="localhost_access_log." suffix=".txt" pattern="%{X-Real-IP}i %h %l %u %t &quot;%r&quot; %s %b" />
+      </Host>
+    </Engine>
+  </Service>
+</Server>
