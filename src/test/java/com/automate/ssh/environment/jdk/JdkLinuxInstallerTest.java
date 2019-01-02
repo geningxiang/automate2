@@ -1,16 +1,10 @@
-package com.automate.environment.jdk;
+package com.automate.ssh.environment.jdk;
 
 import com.automate.ssh.ISSHProxy;
 import com.automate.ssh.SSHProxyImpl;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.
