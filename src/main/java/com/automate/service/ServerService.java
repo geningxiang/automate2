@@ -5,6 +5,7 @@ import com.automate.entity.ServerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -20,16 +21,21 @@ public class ServerService {
     @Autowired
     private ServerDAO serverDAO;
 
+    @Autowired
+    private EntityManager entityManager;
+
     public List<ServerEntity> getList(){
-        String hql = "from ServerEntity order by id";
-        return serverDAO.getList(hql);
+//        String hql = "from ServerEntity order by id";
+//        return serverDAO.getList(hql);
+        return null;
     }
 
     /**
      * 查询对象
      **/
     public ServerEntity getModel(int id) {
-        return serverDAO.getModel(id);
+//        return serverDAO.getModel(id);
+        return null;
     }
 
     /**
@@ -43,7 +49,7 @@ public class ServerService {
      * 更新对象
      **/
     public void update(ServerEntity model) {
-        serverDAO.update(model);
+//        serverDAO.update(model);
     }
 
     /**

@@ -3,6 +3,8 @@ package com.automate.entity;
 import com.alibaba.fastjson.JSONObject;
 import com.automate.ssh.ISSHClient;
 
+import javax.persistence.*;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -11,6 +13,8 @@ import com.automate.ssh.ISSHClient;
  * @author: genx
  * @date: 2018/12/17 23:45
  */
+@Entity
+@Table(name = "CA2_SERVER")
 public class ServerEntity implements ISSHClient {
 
     /**
@@ -56,53 +60,75 @@ public class ServerEntity implements ISSHClient {
         NORMAL
     }
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name = "ID", nullable = false)
     private Integer id;
 
     /**
      * @see Type
      */
+    @Column(name = "TYPE")
     private Integer type;
+
     /**
      * 名称
      */
+    @Column(name = "NAME")
     private String name;
+
     /**
      * 内网IP
      */
+    @Column(name = "INSIDE_IP")
     private String insideIp;
+
     /**
      * 外网IP
      */
+    @Column(name = "OUTSIDE_IP")
     private String outsideIp;
 
     /**
      * ssh IP
      */
+    @Column(name = "SSH_HOST")
     private String sshHost;
     /**
      * ssh 端口
      */
+
+    @Column(name = "SSH_PORT")
     private Integer sshPort;
+
     /**
      * ssh 用户
      */
+    @Column(name = "SSH_USER")
     private String sshUser;
+
     /**
      * ssh 密码
      */
+    @Column(name = "SSH_PWD")
     private String sshPwd;
 
     /**
      * 备注
      */
+    @Column(name = "REMARK")
     private String remark;
+
     /**
      * 环境
      */
+    @Column(name = "ENVIRONMENT")
     private Integer environment;
+
     /**
      * 状态
      */
+    @Column(name = "STATUS")
     private Integer status;
 
 

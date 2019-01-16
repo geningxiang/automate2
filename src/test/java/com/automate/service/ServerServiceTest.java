@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @date: 2018/12/17 23:51
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:/spring/*.xml", "classpath:/spring-mvc.xml"})
+@ContextConfiguration({"classpath:/spring/*.xml"})
 public class ServerServiceTest {
 
     @Autowired

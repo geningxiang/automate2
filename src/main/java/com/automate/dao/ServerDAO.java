@@ -1,7 +1,8 @@
 package com.automate.dao;
 
-import com.automate.common.hibernate.BaseDAO;
 import com.automate.entity.ServerEntity;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +13,5 @@ import org.springframework.stereotype.Repository;
  * @date: 2018/12/17 23:49
  */
 @Repository
-public class ServerDAO extends BaseDAO<ServerEntity, Integer> {
-
+public interface ServerDAO extends PagingAndSortingRepository<ServerEntity, Integer>, JpaSpecificationExecutor<ServerEntity> {
 }

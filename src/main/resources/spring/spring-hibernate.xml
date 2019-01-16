@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-            http://www.springframework.org/schema/beans
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-            http://www.springframework.org/schema/tx
-            http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
-            http://www.springframework.org/schema/aop
-            http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
-    <!--从配置文件加载数据库信息-->
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations" value="classpath:jdbc.properties"/>
-        <property name="fileEncoding" value="UTF-8"/>
-    </bean>
+
+
+
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+
+    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
 
 
     <!-- Hibernate配置信息 -->
@@ -38,62 +37,39 @@
          -->
     </bean>
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    <!--指定实现JPA的适配器 -->
+    <bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="org.hibernate.dialect.SQLServer2012Dialect"/>
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="mappingLocations">
-            <list>
-                <value>classpath*:/hbm/*.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties">
+        <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter"/>
+        <property name="packagesToScan" value="com.automate.entity" /><!--待扫描的实体类包，不再需要persistence.xml了 -->
+        <property name="jpaProperties">
             <props>
-                <!-- 一个Hibernate Dialect类名允许Hibernate针对特定的关系数据库生成优化的SQL. 取值 full.classname.of.Dialect -->
-                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
-                <!-- 是否打印sql语句 -->
+                <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
                 <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
-                <!-- 输出格式化后的sql,更方便查看    -->
-                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
-
-                <!-- 如果开启, Hibernate将收集有助于性能调节的统计数据. 取值 true | false -->
-                <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
-
-                <prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
-                <prop key="hibernate.jdbc.use_streams_for_binary">${hibernate.jdbc.use_streams_for_binary}</prop>
-                <prop key="hibernate.jdbc.batch_versioned_data">${hibernate.jdbc.batch_versioned_data}</prop>
-                <prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
-                <prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
-                <prop key="hibernate.max_fetch_depth">${hibernate.max_fetch_depth}</prop>
+                <prop key="hibernate.hbm2ddl.auto">none</prop>
             </props>
         </property>
     </bean>
 
 
-    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
-        <property name="sessionFactory" ref="sessionFactory"></property>
-        <property name="checkWriteOperations" value="false"></property>
+    <!-- Jpa 事务配置 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <!--配置事务管理器-->
-    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
+    <!-- Spring Data Jpa 配置 Spring -->
+    <!-- 初始化容器时将会扫描 base-package 指定的包目录及其子目录，为继承 Repository 或其子接口的接口创建代理对象，并将代理对象注册为
+        Spring Bean -->
+    <!-- base-package 扫描的包 -->
+    <!-- repository-impl-postfix 仓库自定义实现类的后缀。自动扫描该名称带有该后缀的类，并添加到接口的实现 -->
+    <!-- factory-class 仓库接口的实现工厂 -->
+    <jpa:repositories base-package="com.automate.dao"
+                      entity-manager-factory-ref="entityManagerFactory"
+                      transaction-manager-ref="transactionManager">
+    </jpa:repositories>
 
-    <tx:advice id="defaultTransactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="save*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="add*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="create*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="batch*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="remove*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="read*" isolation="READ_UNCOMMITTED" propagation="REQUIRED" read-only="true"/>
-            <tx:method name="*" propagation="REQUIRED" read-only="true"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <aop:config>
-        <aop:pointcut id="allServiceMethods" expression="execution(* com.automate.service.*.*(..))"/>
-        <aop:advisor advice-ref="defaultTransactionAdvice" pointcut-ref="allServiceMethods"/>
-    </aop:config>
 </beans>
