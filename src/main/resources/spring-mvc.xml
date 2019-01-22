@@ -30,6 +30,9 @@
 
     </mvc:annotation-driven>
 
+
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+        
     <!-- 自定义拦截器
     <mvc:interceptors>
         <mvc:interceptor>
