@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,8 +30,8 @@ public class ServerController {
 
     @RequestMapping("/list")
     public ResponseEntity<JSONArray> list() {
-        List<ServerEntity> list = serverService.getList();
-        JSONArray array = new JSONArray(list.size());
+        Iterable<ServerEntity> list = serverService.getList();
+        JSONArray array = new JSONArray();
         for (ServerEntity serverEntity : list) {
             array.add(serverEntity.toJson());
         }
@@ -49,8 +50,8 @@ public class ServerController {
         if (id == null || id <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误", null);
         }
-        ServerEntity model = serverService.getModel(id);
-        if (model == null) {
+        Optional<ServerEntity> model = serverService.getModel(id);
+        if (!model.isPresent()) {
             return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的服务器", null);
         }
         return ResponseEntity.ok(PsAuxHelper.psAux(model));

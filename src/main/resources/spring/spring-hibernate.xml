@@ -19,7 +19,6 @@
         <property name="url" value="${jdbc.jdbcUrl}"/>
         <property name="username" value="${jdbc.user}"/>
         <property name="password" value="${jdbc.password}"/>
-
         <!-- 配置初始化大小、最小、最大 -->
         <property name="initialSize" value="10"/>
         <property name="minIdle" value="10"/>
@@ -50,7 +49,9 @@
             <props>
                 <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
                 <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
                 <prop key="hibernate.hbm2ddl.auto">none</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
             </props>
         </property>
     </bean>

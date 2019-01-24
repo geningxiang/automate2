@@ -2,7 +2,7 @@ package com.automate.ssh.helper;
 
 import com.automate.common.CmdResult;
 import com.automate.contants.SSHContants;
-import com.automate.ssh.ISSHClient;
+import com.automate.entity.ServerEntity;
 import com.automate.ssh.ISSHProxy;
 import com.automate.ssh.SSHProxyImpl;
 import com.automate.ssh.vo.LinuxProcessVO;
@@ -12,6 +12,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,8 +23,8 @@ import java.util.List;
  */
 public class PsAuxHelper {
 
-    public static List<LinuxProcessVO> psAux(ISSHClient sshClient) throws Exception {
-        ISSHProxy isshProxy = new SSHProxyImpl(sshClient);
+    public static List<LinuxProcessVO> psAux(Optional<ServerEntity> sshClient) throws Exception {
+        ISSHProxy isshProxy = new SSHProxyImpl(sshClient.get());
         //ww 代表不截断
         CmdResult sshResult = isshProxy.execCommand("ps aux ww | grep -v grep | grep -E \"" + SSHContants.PS_AUX_GREP + "\"");
         List<LinuxProcessVO> list = new ArrayList(64);

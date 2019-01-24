@@ -1,7 +1,7 @@
 package com.automate.service;
 
-import com.automate.dao.ServerDAO;
-import com.automate.entity.ServerEntity;
+import com.automate.dao.ProjectDAO;
+import com.automate.entity.ProjectEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -14,47 +14,46 @@ import java.util.Optional;
  * Description:
  *
  * @author: genx
- * @date: 2018/12/17 23:49
+ * @date: 2019/1/24 23:26
  */
 @Service
-public class ServerService {
+public class ProjectService {
 
     @Autowired
-    private ServerDAO serverDAO;
+    private ProjectDAO projectDAO;
 
     @Autowired
     private EntityManager entityManager;
 
-    public Iterable<ServerEntity> getList() {
-        return serverDAO.findAll(Sort.by("id"));
+    public Iterable<ProjectEntity> getList() {
+        return projectDAO.findAll(Sort.by("id"));
     }
 
     /**
      * 查询对象
      **/
-    public Optional<ServerEntity> getModel(int id) {
-        return serverDAO.findById(id);
+    public Optional<ProjectEntity> getModel(int id) {
+        return projectDAO.findById(id);
     }
 
     /**
      * 添加对象
      **/
-    public void save(ServerEntity model) {
-        serverDAO.save(model);
+    public void save(ProjectEntity model) {
+        projectDAO.save(model);
     }
 
     /**
      * 更新对象
      **/
-    public void update(ServerEntity model) {
-        serverDAO.save(model);
+    public void update(ProjectEntity model) {
+        projectDAO.save(model);
     }
 
     /**
      * 删除对象
      **/
     public void deleteById(int id) {
-        serverDAO.deleteById(id);
+        projectDAO.deleteById(id);
     }
-
 }

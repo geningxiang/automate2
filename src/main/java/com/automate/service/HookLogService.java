@@ -1,7 +1,7 @@
 package com.automate.service;
 
-import com.automate.dao.ServerDAO;
-import com.automate.entity.ServerEntity;
+import com.automate.dao.HookLogDAO;
+import com.automate.entity.HookLogEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -14,47 +14,46 @@ import java.util.Optional;
  * Description:
  *
  * @author: genx
- * @date: 2018/12/17 23:49
+ * @date: 2019/1/24 23:26
  */
 @Service
-public class ServerService {
+public class HookLogService {
 
     @Autowired
-    private ServerDAO serverDAO;
+    private HookLogDAO hookLogDAO;
 
     @Autowired
     private EntityManager entityManager;
 
-    public Iterable<ServerEntity> getList() {
-        return serverDAO.findAll(Sort.by("id"));
+    public Iterable<HookLogEntity> getList() {
+        return hookLogDAO.findAll(Sort.by("id"));
     }
 
     /**
      * 查询对象
      **/
-    public Optional<ServerEntity> getModel(int id) {
-        return serverDAO.findById(id);
+    public Optional<HookLogEntity> getModel(int id) {
+        return hookLogDAO.findById(id);
     }
 
     /**
      * 添加对象
      **/
-    public void save(ServerEntity model) {
-        serverDAO.save(model);
+    public void save(HookLogEntity model) {
+        hookLogDAO.save(model);
     }
 
     /**
      * 更新对象
      **/
-    public void update(ServerEntity model) {
-        serverDAO.save(model);
+    public void update(HookLogEntity model) {
+        hookLogDAO.save(model);
     }
 
     /**
      * 删除对象
      **/
     public void deleteById(int id) {
-        serverDAO.deleteById(id);
+        hookLogDAO.deleteById(id);
     }
-
 }
