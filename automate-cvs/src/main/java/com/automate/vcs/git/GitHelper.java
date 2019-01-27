@@ -33,7 +33,7 @@ public class GitHelper extends AbstractCVSHelper {
     }
 
     /**
-     * 初始化
+     * 初始化 clone项目
      */
     public void init() throws GitAPIException {
         CloneCommand cloneCommand = Git.cloneRepository();
@@ -45,6 +45,11 @@ public class GitHelper extends AbstractCVSHelper {
         Git result = cloneCommand.setProgressMonitor(new JgitProgressMonitor()).call();
     }
 
+    /**
+     * 查询单个分支的所有提交历史(本地)
+     * @return
+     * @throws Exception
+     */
     @Override
     public List<CommitLog> commitLogs() throws Exception {
         FileRepository db = openFileRepository();

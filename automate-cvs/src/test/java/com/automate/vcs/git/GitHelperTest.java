@@ -3,13 +3,20 @@ package com.automate.vcs.git;
 import com.alibaba.fastjson.JSON;
 import com.automate.vcs.ICVSRepository;
 import com.automate.vcs.vo.CommitLog;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,5 +60,47 @@ public class GitHelperTest {
         GitHelper gitHelper = new GitHelper(repository);
         gitHelper.init();
 
+    }
+
+    @Test
+    public void test() throws IOException, GitAPIException {
+        FileRepository db = new FileRepository(new File("E:/work/temp/.git"));
+
+        Git git = Git.wrap(db);
+
+        UsernamePasswordCredentialsProvider usernamePasswordCredentialsProvider = new UsernamePasswordCredentialsProvider("genx", "ge10111011");
+
+
+        Map<String, String> localBranchMap = new HashMap<>();
+        List<Ref> list = git.branchList().call();
+        for (Ref ref : list) {
+            System.out.println(ref.getName());
+            localBranchMap.put(ref.getName().substring(11), ref.getObjectId().toObjectId().getName());
+        }
+
+        System.out.println(localBranchMap.entrySet());
+
+
+
+        Collection<Ref> refs = git.lsRemote().setTags(false).setHeads(false).setCredentialsProvider(usernamePasswordCredentialsProvider).call();
+        for (Ref ref : refs) {
+//            System.out.println(ref.getName() + " | " + ref.isPeeled() + " | " + ref.isSymbolic());
+            if(ref.getName().startsWith("refs/heads/")) {
+                String branchName = ref.getName().substring(11);
+                String id = localBranchMap.get(branchName);
+                if(id == null){
+                    System.out.println("新建：" + branchName);
+                    git.checkout().setName(branchName).setCreateBranch(true).call();
+                } else {
+                    System.out.println(id);
+                    System.out.println(ref.isPeeled());
+                    System.out.println("更新：" + branchName);
+                    git.checkout().setName(branchName).call();
+                }
+
+
+            }
+        }
+        db.close();
     }
 }
