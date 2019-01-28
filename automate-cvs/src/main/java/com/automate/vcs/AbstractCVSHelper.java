@@ -24,5 +24,5 @@ public abstract class AbstractCVSHelper implements ICVSHelper {
         this.passWord = repository.getPassWord();
     }
 
-    public abstract List<CommitLog> commitLogs() throws Exception;
+
 }

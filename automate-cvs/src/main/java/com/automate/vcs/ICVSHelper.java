@@ -13,5 +13,29 @@ import java.util.List;
  */
 public interface ICVSHelper {
 
+    /**
+     * 初始化项目  clone
+     * @throws Exception
+     */
+    void init() throws Exception;
+
+    /**
+     * 更新整个项目
+     * @throws Exception
+     */
+    void update() throws Exception;
+
+    /**
+     * 更新项目的一个分支
+     * @param branchName
+     * @throws Exception
+     */
+    void update(String branchName) throws Exception;
+
+    /**
+     * 查看提交记录(本地的)
+     * @return
+     * @throws Exception
+     */
     List<CommitLog> commitLogs() throws Exception;
 }

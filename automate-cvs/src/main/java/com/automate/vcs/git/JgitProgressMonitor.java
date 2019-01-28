@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date: 2019/1/26 23:46
  */
 public class JgitProgressMonitor implements ProgressMonitor {
-    private static Logger logger = LoggerFactory.getLogger(JgitProgressMonitor.class);
+    private static final Logger logger = LoggerFactory.getLogger(JgitProgressMonitor.class);
 
     private AtomicInteger count = new AtomicInteger(0);
 

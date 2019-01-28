@@ -5,6 +5,7 @@ import com.automate.vcs.ICVSRepository;
 import com.automate.vcs.vo.CommitLog;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Ref;
@@ -50,7 +51,7 @@ public class GitHelperTest {
     }
 
     @Test
-    public void init() throws GitAPIException {
+    public void init() throws Exception {
         ICVSRepository repository = new CVSTestRepository(
                 "E:\\work\\temp",
                 "http://60.190.13.162:6104/quotation/QuotationServer.git",
@@ -67,10 +68,7 @@ public class GitHelperTest {
         FileRepository db = new FileRepository(new File("E:/work/temp/.git"));
 
         Git git = Git.wrap(db);
-
         UsernamePasswordCredentialsProvider usernamePasswordCredentialsProvider = new UsernamePasswordCredentialsProvider("genx", "ge10111011");
-
-
         Map<String, String> localBranchMap = new HashMap<>();
         List<Ref> list = git.branchList().call();
         for (Ref ref : list) {
@@ -80,6 +78,9 @@ public class GitHelperTest {
 
         System.out.println(localBranchMap.entrySet());
 
+//        git.checkout().setName("").call();
+//
+//        git.reset().call();
 
 
         Collection<Ref> refs = git.lsRemote().setTags(false).setHeads(false).setCredentialsProvider(usernamePasswordCredentialsProvider).call();
@@ -96,11 +97,14 @@ public class GitHelperTest {
                     System.out.println(ref.isPeeled());
                     System.out.println("更新：" + branchName);
                     git.checkout().setName(branchName).call();
+
                 }
-
-
+                git.reset().setMode(ResetCommand.ResetType.HARD).call();
+                git.pull().setCredentialsProvider(usernamePasswordCredentialsProvider).call();
             }
         }
         db.close();
     }
+
+
 }
