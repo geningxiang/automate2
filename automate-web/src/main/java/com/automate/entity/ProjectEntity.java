@@ -1,5 +1,8 @@
 package com.automate.entity;
 
+import com.automate.common.SystemConfig;
+import com.automate.vcs.ICVSRepository;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -12,7 +15,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "CA2_PROJECT")
-public class ProjectEntity {
+public class ProjectEntity implements ICVSRepository {
     public enum Type{
         /**
          * java项目
@@ -272,6 +275,30 @@ public class ProjectEntity {
 
     public void setStatus(Status status) {
         this.status = (byte)status.ordinal();
+    }
+
+    @Transient
+    @Override
+    public String getLocalDir() {
+        return SystemConfig.getProjectSourceCodeDir(this);
+    }
+
+    @Transient
+    @Override
+    public String getRemoteUrl() {
+        return this.versionUrl;
+    }
+
+    @Transient
+    @Override
+    public String getUserName() {
+        return this.versionUser;
+    }
+
+    @Transient
+    @Override
+    public String getPassWord() {
+        return this.versionPwd;
     }
 
 }

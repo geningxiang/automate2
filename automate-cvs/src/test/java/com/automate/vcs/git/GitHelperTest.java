@@ -44,67 +44,38 @@ public class GitHelperTest {
     public void commitLogs() throws Exception {
         ICVSRepository repository = new CVSTestRepository("D:\\idea-workspace\\CaimaoQuotation\\QuotationServer", null, null, null);
         GitHelper gitHelper = new GitHelper(repository);
-        List<CommitLog> list = gitHelper.commitLogs();
+        List<CommitLog> list = gitHelper.commitLogs("master");
         for (CommitLog commitLog : list) {
             System.out.println(JSON.toJSONString(commitLog));
         }
     }
 
-    @Test
+      @Test
     public void init() throws Exception {
         ICVSRepository repository = new CVSTestRepository(
-                "E:\\work\\temp",
-                "http://60.190.13.162:6104/quotation/QuotationServer.git",
+                "E:\\work\\SpringBootDemo",
+                "http://60.190.13.162:6104/genx/SpringBootDemo.git",
                 "genx",
                 "ge10111011");
 
         GitHelper gitHelper = new GitHelper(repository);
         gitHelper.init();
-
     }
 
     @Test
-    public void test() throws IOException, GitAPIException {
-        FileRepository db = new FileRepository(new File("E:/work/temp/.git"));
-
-        Git git = Git.wrap(db);
-        UsernamePasswordCredentialsProvider usernamePasswordCredentialsProvider = new UsernamePasswordCredentialsProvider("genx", "ge10111011");
-        Map<String, String> localBranchMap = new HashMap<>();
-        List<Ref> list = git.branchList().call();
-        for (Ref ref : list) {
-            System.out.println(ref.getName());
-            localBranchMap.put(ref.getName().substring(11), ref.getObjectId().toObjectId().getName());
-        }
-
-        System.out.println(localBranchMap.entrySet());
-
-//        git.checkout().setName("").call();
-//
-//        git.reset().call();
+    public void update() throws Exception {
+        ICVSRepository repository = new CVSTestRepository(
+                "E:\\work\\SpringBootDemo",
+                "http://60.190.13.162:6104/genx/SpringBootDemo.git",
+                "genx",
+                "ge10111011");
 
 
-        Collection<Ref> refs = git.lsRemote().setTags(false).setHeads(false).setCredentialsProvider(usernamePasswordCredentialsProvider).call();
-        for (Ref ref : refs) {
-//            System.out.println(ref.getName() + " | " + ref.isPeeled() + " | " + ref.isSymbolic());
-            if(ref.getName().startsWith("refs/heads/")) {
-                String branchName = ref.getName().substring(11);
-                String id = localBranchMap.get(branchName);
-                if(id == null){
-                    System.out.println("新建：" + branchName);
-                    git.checkout().setName(branchName).setCreateBranch(true).call();
-                } else {
-                    System.out.println(id);
-                    System.out.println(ref.isPeeled());
-                    System.out.println("更新：" + branchName);
-                    git.checkout().setName(branchName).call();
-
-                }
-                git.reset().setMode(ResetCommand.ResetType.HARD).call();
-                git.pull().setCredentialsProvider(usernamePasswordCredentialsProvider).call();
-            }
-        }
-        db.close();
+        GitHelper gitHelper = new GitHelper(repository);
+        List<String> updatedBranchList = gitHelper.update();
+        System.out.println(StringUtils.join(updatedBranchList, ","));
     }
+
 
 
 }

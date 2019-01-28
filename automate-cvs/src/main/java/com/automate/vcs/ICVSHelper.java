@@ -17,25 +17,28 @@ public interface ICVSHelper {
      * 初始化项目  clone
      * @throws Exception
      */
-    void init() throws Exception;
+    List<String> init() throws Exception;
 
     /**
      * 更新整个项目
      * @throws Exception
+     * @return 有变化的分支列表
      */
-    void update() throws Exception;
+    List<String> update() throws Exception;
 
     /**
      * 更新项目的一个分支
      * @param branchName
      * @throws Exception
+     * @return 有变化的分支列表
      */
-    void update(String branchName) throws Exception;
+    List<String> update(String branchName) throws Exception;
 
     /**
      * 查看提交记录(本地的)
-     * @return
+     * @param  branchName 分支名
+     * @return  倒序的  最新的在前面
      * @throws Exception
      */
-    List<CommitLog> commitLogs() throws Exception;
+    List<CommitLog> commitLogs(String branchName) throws Exception;
 }

@@ -9,5 +9,5 @@ package com.automate.common;
  */
 public class Config {
 
-    public final static String INSTALLATION_PACKAGE_DIR = "D:/work/temp";
+
 }

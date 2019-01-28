@@ -30,9 +30,9 @@
     <loggers>
 
         <!--过滤掉一些无用的DEBUG信息-->
-        <logger name="org.springframework" level="info"></logger>
+        <logger name="org.springframework" level="info"/>
         <logger name="org.hibernate" level="warn"/>
-
+        <logger name="org.eclipse.jgit" level="info"/>
 
         <!--建立一个默认的root的logger-->
         <Root level="debug">
