@@ -17,8 +17,11 @@
         }
 
         body {
-            font-family: Source Code Pro, SimHei, serif ;
             background: url('/resources/img/bg.jpg') center / cover no-repeat;
+        }
+
+        h2, input, button{
+            font-family:  "Source Code Pro", "Microsoft Yahei", serif ;
         }
 
         input, button{
@@ -27,7 +30,7 @@
         .login_box {
             box-shadow: -15px 15px 15px rgba(6, 17, 47, 0.6);
             opacity: 1;
-            width: 240px;
+            width: 300px;
             height: 240px;
             position: absolute;
             left: 0;
@@ -75,7 +78,6 @@
             padding: 10px 50px;
             border: 2px solid #4FA1D9;
             color: #4FA1D9;
-            text-transform: uppercase;
             font-size: 16px;
             font-weight: bold;
             -webkit-transition-property: background,color;
@@ -84,6 +86,7 @@
             transition-duration: .2s;
             cursor: pointer;
             margin-top: 5px;
+            font-family:  "Source Code Pro", "Microsoft Yahei", serif ;
         }
 
         .login_box button:hover {
@@ -98,12 +101,12 @@
 
 <!-- 登陆版 -->
 <div class="login_box">
-    <h2>SIGN IN NOW</h2>
+    <h2>Welcome to Automate2</h2>
     <div class="login-wrap">
         <input type="text" class="form-control" placeholder="Username" autofocus="">
         <input type="password" class="form-control" placeholder="Password">
 
-        <button class="btn btn-lg btn-login btn-block" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-login btn-block" type="submit">SIGN IN</button>
     </div>
 </div>
 
