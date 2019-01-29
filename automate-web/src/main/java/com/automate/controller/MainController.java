@@ -1,5 +1,6 @@
 package com.automate.controller;
 
+import com.automate.common.annotation.AllowNoLogin;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,11 +15,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class MainController {
 
+    @AllowNoLogin
+    @RequestMapping(value={"/", "/login"})
+    public String login() {
+        return "login";
+    }
 
-    @RequestMapping("/")
-    public String index() {
+    @AllowNoLogin
+    @RequestMapping("doLogin")
+    public String doLogin() {
         return "index";
     }
 
+    @AllowNoLogin
+    @RequestMapping("loginOut")
+    public String loginOut() {
+        return "login";
+    }
 
+    @RequestMapping("/index")
+    public String index() {
+        return "index";
+    }
 }
