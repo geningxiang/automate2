@@ -1,4 +1,4 @@
-package com.automate.controller.api;
+package com.automate.controller.other;
 
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.HookLogEntity;

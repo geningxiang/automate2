@@ -2,16 +2,13 @@ package com.automate.vcs.git.hook;
 
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.HookLogEntity;
-import com.automate.entity.ProjectEntity;
 import com.automate.vcs.git.AbstractGitHook;
 import com.automate.vcs.git.GitContants;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -83,6 +80,6 @@ public class GogsHook extends AbstractGitHook {
             hookLogEntity.setHandleStatus(HookLogEntity.HandleStatus.IGNORE);
             hookLogEntity.setHandleResult("不需要关注的事件");
         }
-        hookLogDAO.save(hookLogEntity);
+        hookLogRepository.save(hookLogEntity);
     }
 }

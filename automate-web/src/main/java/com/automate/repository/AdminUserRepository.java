@@ -1,4 +1,4 @@
-package com.automate.dao;
+package com.automate.repository;
 
 import com.automate.entity.AdminUserEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @date: 2019/1/30 0:57
  */
 @Repository
-public interface AdminUserDAO extends PagingAndSortingRepository<AdminUserEntity, Integer>, JpaSpecificationExecutor<AdminUserEntity> {
+public interface AdminUserRepository extends PagingAndSortingRepository<AdminUserEntity, Integer>, JpaSpecificationExecutor<AdminUserEntity> {
 
     /**
      * 根据用户名 查询用户

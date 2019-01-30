@@ -4,6 +4,8 @@
 <meta name="author" content="geningxiang@qq.com">
 <title>Automate2</title>
 
+<link rel="shortcut icon" href="/resources/favicon.ico">
+
 <!-- Bootstrap core CSS -->
 <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
 <link href="/resources/css/bootstrap-reset.css" rel="stylesheet">
@@ -16,8 +18,10 @@
 <!--right slidebar-->
 <link href="/resources/css/slidebars.css" rel="stylesheet">
 
-<!-- Custom styles for this template -->
+<!--toastr-->
+<link href="/resources/assets/toastr-master/toastr.css" rel="stylesheet" type="text/css" />
 
+<!-- Custom styles for this template -->
 <link href="/resources/css/style.css" rel="stylesheet">
 <link href="/resources/css/style-responsive.css" rel="stylesheet"/>
 

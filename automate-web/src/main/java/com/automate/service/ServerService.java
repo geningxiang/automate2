@@ -1,6 +1,6 @@
 package com.automate.service;
 
-import com.automate.dao.ServerDAO;
+import com.automate.repository.ServerRepository;
 import com.automate.entity.ServerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -20,41 +20,41 @@ import java.util.Optional;
 public class ServerService {
 
     @Autowired
-    private ServerDAO serverDAO;
+    private ServerRepository serverRepository;
 
     @Autowired
     private EntityManager entityManager;
 
     public Iterable<ServerEntity> getList() {
-        return serverDAO.findAll(Sort.by("id"));
+        return serverRepository.findAll(Sort.by("id"));
     }
 
     /**
      * 查询对象
      **/
     public Optional<ServerEntity> getModel(int id) {
-        return serverDAO.findById(id);
+        return serverRepository.findById(id);
     }
 
     /**
      * 添加对象
      **/
     public void save(ServerEntity model) {
-        serverDAO.save(model);
+        serverRepository.save(model);
     }
 
     /**
      * 更新对象
      **/
     public void update(ServerEntity model) {
-        serverDAO.save(model);
+        serverRepository.save(model);
     }
 
     /**
      * 删除对象
      **/
     public void deleteById(int id) {
-        serverDAO.deleteById(id);
+        serverRepository.deleteById(id);
     }
 
 }

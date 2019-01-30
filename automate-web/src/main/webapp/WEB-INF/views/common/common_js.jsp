@@ -10,6 +10,9 @@
 <script src="/resources/js/jquery.customSelect.min.js" ></script>
 <script src="/resources/js/respond.min.js" ></script>
 
+<!-- toastr 通知窗体 -->
+<script src="/resources/assets/toastr-master/toastr.js"></script>
+
 <!-- 模板解析 art-template -->
 <script src="/resources/js/template-web.js"></script>
 <!--right slidebar-->

@@ -1,4 +1,4 @@
-package com.automate.dao;
+package com.automate.repository;
 
 import com.automate.entity.ServerEntity;
 import org.junit.Test;
@@ -20,16 +20,16 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:/spring/*.xml"})
-public class ServerDAOTest {
+public class ServerRepositoryTest {
     @Autowired
-    private ServerDAO serverDAO;
+    private ServerRepository serverRepository;
 
     @Autowired
     private EntityManager entityManager;
 
     @Test
     public void findAll() {
-        Iterable<ServerEntity> list = serverDAO.findAll();
+        Iterable<ServerEntity> list = serverRepository.findAll();
         for (ServerEntity serverEntity : list) {
             System.out.println(serverEntity.toJson());
         }

@@ -1,4 +1,4 @@
-package com.automate.dao;
+package com.automate.repository;
 
 import com.automate.entity.ProjectEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,7 +15,7 @@ import java.util.List;
  * @date: 2019/1/24 23:24
  */
 @Repository
-public interface ProjectDAO extends PagingAndSortingRepository<ProjectEntity, Integer>, JpaSpecificationExecutor<ProjectEntity> {
+public interface ProjectRepository extends PagingAndSortingRepository<ProjectEntity, Integer>, JpaSpecificationExecutor<ProjectEntity> {
 
     /**
      * 根据 版本控制地址查找项目

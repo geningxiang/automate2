@@ -5,7 +5,7 @@ $(function() {
         autoClose: true,
         saveState: true,
         disableLink: true,
-        speed: 'slow',
+        speed: 'fast',
         showCount: false,
         autoExpand: true,
 //        cookie: 'dcjq-accordion-1',
@@ -34,9 +34,9 @@ var Script = function () {
         var o = ($(this).offset());
         diff = 250 - o.top;
         if(diff>0)
-            $("#sidebar").scrollTo("-="+Math.abs(diff),500);
+            $("#sidebar").scrollTo("-="+Math.abs(diff), 300);
         else
-            $("#sidebar").scrollTo("+="+Math.abs(diff),500);
+            $("#sidebar").scrollTo("+="+Math.abs(diff), 300);
     });
 
 //    sidebar toggle

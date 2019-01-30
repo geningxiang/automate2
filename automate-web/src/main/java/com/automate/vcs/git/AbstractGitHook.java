@@ -1,8 +1,8 @@
 package com.automate.vcs.git;
 
 import com.alibaba.fastjson.JSONObject;
-import com.automate.dao.HookLogDAO;
-import com.automate.dao.ProjectDAO;
+import com.automate.repository.HookLogRepository;
+import com.automate.repository.ProjectRepository;
 import com.automate.entity.ProjectEntity;
 import com.automate.service.ProjectBranchService;
 import com.automate.vcs.ICVSHelper;
@@ -24,10 +24,10 @@ import java.util.List;
 public abstract class AbstractGitHook {
 
     @Autowired
-    protected ProjectDAO projectDAO;
+    protected ProjectRepository projectRepository;
 
     @Autowired
-    protected HookLogDAO hookLogDAO;
+    protected HookLogRepository hookLogRepository;
 
     @Autowired
     private ProjectBranchService projectBranchService;
@@ -56,7 +56,7 @@ public abstract class AbstractGitHook {
      */
     protected int branchChange(String gitUrl, String branchName) throws Exception {
         Assert.hasText(gitUrl, "gitUrl is empty");
-        List<ProjectEntity> projectEntitys = projectDAO.getAllByVersionUrlOrderByIdDesc(gitUrl);
+        List<ProjectEntity> projectEntitys = projectRepository.getAllByVersionUrlOrderByIdDesc(gitUrl);
 
         if (projectEntitys.size() == 0) {
             throw new IllegalArgumentException("未找到相应的项目");

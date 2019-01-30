@@ -7,10 +7,10 @@ package com.automate.contants;
  * @author: genx
  * @date: 2019/1/29 23:26
  */
-public class AdminContants {
+public class AdminUserContants {
 
-    public static final int ADMIN_USER_LEVEL_ROOT = 99;
+    public static final byte ADMIN_USER_LEVEL_ROOT = 99;
 
-    public static final int ADMIN_USER_LEVEL_NORMAL = 10;
+    public static final byte ADMIN_USER_LEVEL_NORMAL = 10;
 
 }

@@ -1,6 +1,6 @@
-package com.automate.dao;
+package com.automate.repository;
 
-import com.automate.entity.HookLogEntity;
+import com.automate.entity.ServerEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
  * Description:
  *
  * @author: genx
- * @date: 2019/1/24 23:25
+ * @date: 2018/12/17 23:49
  */
 @Repository
-public interface HookLogDAO extends PagingAndSortingRepository<HookLogEntity, Integer>, JpaSpecificationExecutor<HookLogEntity> {
+public interface ServerRepository extends PagingAndSortingRepository<ServerEntity, Integer>, JpaSpecificationExecutor<ServerEntity> {
 
 }

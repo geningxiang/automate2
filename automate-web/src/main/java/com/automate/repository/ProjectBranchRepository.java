@@ -1,4 +1,4 @@
-package com.automate.dao;
+package com.automate.repository;
 
 import com.automate.entity.ProjectBranchEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @date: 2019/1/28 23:24
  */
 @Repository
-public interface ProjectBranchDAO extends PagingAndSortingRepository<ProjectBranchEntity, Integer>, JpaSpecificationExecutor<ProjectBranchEntity> {
+public interface ProjectBranchRepository extends PagingAndSortingRepository<ProjectBranchEntity, Integer>, JpaSpecificationExecutor<ProjectBranchEntity> {
 
     /**
      * 根据 项目ID，分支名称查找

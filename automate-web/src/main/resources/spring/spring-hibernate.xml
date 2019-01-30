@@ -64,7 +64,7 @@
     <!-- base-package 扫描的包 -->
     <!-- repository-impl-postfix 仓库自定义实现类的后缀。自动扫描该名称带有该后缀的类，并添加到接口的实现 -->
     <!-- factory-class 仓库接口的实现工厂 -->
-    <jpa:repositories base-package="com.automate.dao"
+    <jpa:repositories base-package="com.automate.repository"
                       entity-manager-factory-ref="entityManagerFactory"
                       transaction-manager-ref="transactionManager">
     </jpa:repositories>

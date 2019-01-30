@@ -1,4 +1,4 @@
-package com.automate.controller;
+package com.automate.controller.other;
 
 import com.automate.common.SystemConfig;
 import com.automate.common.annotation.AllowNoLogin;

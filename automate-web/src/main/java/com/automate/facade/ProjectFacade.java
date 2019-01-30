@@ -1,8 +1,5 @@
 package com.automate.facade;
 
-import com.alibaba.fastjson.JSON;
-import com.automate.dao.ProjectBranchDAO;
-import com.automate.entity.ProjectBranchEntity;
 import com.automate.entity.ProjectEntity;
 import com.automate.service.ProjectBranchService;
 import com.automate.vcs.ICVSHelper;
@@ -11,7 +8,6 @@ import com.automate.vcs.vo.CommitLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**

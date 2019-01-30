@@ -2,6 +2,7 @@ package com.automate.interceptor;
 
 import com.automate.common.SessionUser;
 import com.automate.common.annotation.AllowNoLogin;
+import com.automate.contants.CommonContants;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
@@ -50,7 +51,7 @@ public class AdminInterceptor implements HandlerInterceptor {
                 return true;
             }
 
-            SessionUser sessionUser = (SessionUser) request.getSession().getAttribute("SessionUser");
+            SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonContants.SESSION_USER_KEY);
             if (sessionUser == null) {
 
                 if (handlerMethod.hasMethodAnnotation(ResponseBody.class) || handlerMethod.getBeanType().isAnnotationPresent(RestController.class)) {
