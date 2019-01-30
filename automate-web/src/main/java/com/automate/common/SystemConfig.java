@@ -37,8 +37,27 @@ public class SystemConfig {
      */
     private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.properties";
 
+    /**
+     * 默认的 基础文件夹名称
+     */
+    private static final String DEFAULT_DATA_DIR = "automate-data";
+
+    /**
+     * 默认的 源代码文件夹名称
+     */
+    private static final String DEFAULT_SOURCE_CODE_DIR = "source-code";
+
+
 
     private static final Properties properties = new Properties();
+
+
+    /**
+     * 用于git 同步的 源代码文件夹路径
+     * 单个库的文件夹是 ${SOURCE_CODE_DIR}/${库ID}/
+     */
+    private static String SOURCE_CODE_DIR = null;
+
 
     static {
         ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -59,6 +78,8 @@ public class SystemConfig {
         } catch (IOException e) {
             logger.error("加载配置文件失败!", e);
         }
+
+        init();
     }
 
     public static void show() {
@@ -83,10 +104,41 @@ public class SystemConfig {
         System.out.println(data);
     }
 
+    private static void init(){
+        String defaultDataDir = null;
+        try{
+            ResourceLoader resourceLoader = new DefaultResourceLoader();
+            String classResourcePath = SystemConfig.class.getName().replaceAll("\\.", "/") + ".class";
+            Resource resource = resourceLoader.getResource(classResourcePath);
+            if(resource.isFile()) {
+                //TODO 暂时没有考虑 在 war 的情况
+                String classFilePath = resource.getFile().getAbsolutePath();
 
-    //TODO
-    public final static String INSTALLATION_PACKAGE_DIR = "D:/work/temp";
+                // 拿到 classes 的路径  比如 E:\tools\apache-tomcat-8.5.32\webapps\ROOT\WEB-INF\classes
+                String classLocation = classFilePath.substring(0, classFilePath.length() - classResourcePath.length());
+                System.out.println(classLocation);
 
+                 /*
+                从 E:\tools\apache-tomcat-8.5.32\webapps\ROOT\WEB-INF\classes
+                转到 E:\tools\apache-tomcat-8.5.32\automate-data
+                 */
+                File webroot = new File(classLocation).getParentFile().getParentFile().getParentFile().getParentFile();
+
+                defaultDataDir = webroot.getAbsolutePath() + System.lineSeparator() + DEFAULT_DATA_DIR;
+            }
+        } catch (Exception e){
+            logger.error("init error", e);
+        }
+
+        String sourceCodeDir = trimToEmpty(properties.get("source.code.dir"));
+        if(StringUtils.isNotEmpty(sourceCodeDir)) {
+            SOURCE_CODE_DIR = sourceCodeDir;
+        } else if(defaultDataDir != null){
+            //使用默认路径
+            SOURCE_CODE_DIR = defaultDataDir + System.lineSeparator() + DEFAULT_SOURCE_CODE_DIR;
+        }
+
+    }
 
     private static String trimToEmpty(Object obj) {
         return obj == null ? "" : String.valueOf(obj).trim();
