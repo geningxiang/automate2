@@ -1911,7 +1911,7 @@ rangy.createModule("DomUtil", function(api, module) {
     var range = document.selection.createRange();
     alert(range.parentElement().id); // Should alert "ul" but alerts "b"
 
-    This method returns the common ancestor node of the following:
+    This method returns the config ancestor node of the following:
     - the parentElement() of the textRange
     - the parentElement() of the textRange after calling collapse(true)
     - the parentElement() of the textRange after calling collapse(false)
@@ -5644,7 +5644,7 @@ wysihtml5.dom.replaceWithChildNodes = function(node) {
 })(wysihtml5.dom);
 
 /**
- * Fix most common html formatting misbehaviors of browsers implementation when inserting
+ * Fix most config html formatting misbehaviors of browsers implementation when inserting
  * content via copy & paste contentEditable
  *
  * @author Christopher Blum

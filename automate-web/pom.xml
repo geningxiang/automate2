@@ -181,6 +181,12 @@
       <version>2.3.28</version>
     </dependency>
 
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.11</version>
+    </dependency>
   </dependencies>
 
   <build>

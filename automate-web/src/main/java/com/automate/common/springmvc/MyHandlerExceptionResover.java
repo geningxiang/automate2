@@ -28,7 +28,7 @@ public class MyHandlerExceptionResover implements HandlerExceptionResolver {
     @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         //把异常信息记入日志
-        logger.error("拦截器捕获异常", ex);
+        logger.error("捕获异常", ex);
         try {
             if (ex instanceof MaxUploadSizeExceededException) {
 

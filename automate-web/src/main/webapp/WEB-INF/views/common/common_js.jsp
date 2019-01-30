@@ -15,5 +15,5 @@
 <!--right slidebar-->
 <script src="/resources/js/slidebars.min.js"></script>
 
-<!--common script for all pages-->
+<!--config script for all pages-->
 <script src="/resources/js/common-scripts.js"></script>
