@@ -1,6 +1,6 @@
 package com.automate.service;
 
-import com.automate.dao.HookLogDAO;
+import com.automate.repository.HookLogRepository;
 import com.automate.entity.HookLogEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -20,40 +20,40 @@ import java.util.Optional;
 public class HookLogService {
 
     @Autowired
-    private HookLogDAO hookLogDAO;
+    private HookLogRepository hookLogRepository;
 
     @Autowired
     private EntityManager entityManager;
 
     public Iterable<HookLogEntity> getList() {
-        return hookLogDAO.findAll(Sort.by("id"));
+        return hookLogRepository.findAll(Sort.by("id"));
     }
 
     /**
      * 查询对象
      **/
     public Optional<HookLogEntity> getModel(int id) {
-        return hookLogDAO.findById(id);
+        return hookLogRepository.findById(id);
     }
 
     /**
      * 添加对象
      **/
     public void save(HookLogEntity model) {
-        hookLogDAO.save(model);
+        hookLogRepository.save(model);
     }
 
     /**
      * 更新对象
      **/
     public void update(HookLogEntity model) {
-        hookLogDAO.save(model);
+        hookLogRepository.save(model);
     }
 
     /**
      * 删除对象
      **/
     public void deleteById(int id) {
-        hookLogDAO.deleteById(id);
+        hookLogRepository.deleteById(id);
     }
 }

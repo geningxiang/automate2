@@ -1,8 +1,9 @@
 package com.automate.entity;
 
+import com.automate.contants.AdminUserContants;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,6 +15,20 @@ import java.util.Objects;
 @Entity
 @Table(name = "CA2_ADMIN_USER")
 public class AdminUserEntity {
+
+    /**
+     * 管理员状态
+     */
+    public enum Status{
+        /**
+         * 注销的
+         */
+        CANCEL,
+        /**
+         * 激活的
+         */
+        ACTIVATE
+    }
 
     private Integer id;
     /**
@@ -103,8 +118,8 @@ public class AdminUserEntity {
 
     /**
      * 设置等级 现在只有2级
-     * @see com.automate.contants.AdminContants#ADMIN_USER_LEVEL_ROOT
-     * @see com.automate.contants.AdminContants#ADMIN_USER_LEVEL_NORMAL
+     * @see AdminUserContants#ADMIN_USER_LEVEL_ROOT
+     * @see AdminUserContants#ADMIN_USER_LEVEL_NORMAL
      * @param level
      */
     public void setLevel(Byte level) {
@@ -120,6 +135,11 @@ public class AdminUserEntity {
     public void setStatus(Byte status) {
         this.status = status;
     }
+
+    public void setStatus(Status status) {
+        this.status = (byte)status.ordinal();
+    }
+
 
     @Basic
     @Column(name = "UPDATE_TIME", nullable = true)

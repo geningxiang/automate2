@@ -1,7 +1,9 @@
 package com.automate.entity;
 
+import com.alibaba.fastjson.JSONObject;
 import com.automate.common.SystemConfig;
 import com.automate.vcs.ICVSRepository;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -299,6 +301,21 @@ public class ProjectEntity implements ICVSRepository {
     @Override
     public String getPassWord() {
         return this.versionPwd;
+    }
+
+    public JSONObject toJson(){
+        JSONObject data = new JSONObject();
+        data.put("id", this.id);
+        data.put("type", this.type);
+        data.put("name", this.name);
+        data.put("icon", this.icon);
+        data.put("remark", this.remark);
+        data.put("versionType", this.versionType);
+        data.put("versionUrl", this.versionUrl);
+        data.put("compileType", this.compileType);
+        data.put("createTime", FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss").format(createTime));
+        data.put("status", this.status);
+        return data;
     }
 
 }
