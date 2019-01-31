@@ -9,15 +9,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 
-import java.io.*;
-import java.net.URL;
-import java.util.Enumeration;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
 /**
  * Created with IntelliJ IDEA.
  * Description:
+ * 项目配置参数      读取  config.properties 文件
  *
  * @author: genx
  * @date: 2019/1/29 0:09
@@ -40,23 +40,17 @@ public class SystemConfig {
     /**
      * 默认的 基础文件夹名称
      */
-    private static final String DEFAULT_DATA_DIR = "automate-data";
+    private static final String DEFAULT_DATA_DIR_NAME = "automate-data";
 
     /**
      * 默认的 源代码文件夹名称
      */
-    private static final String DEFAULT_SOURCE_CODE_DIR = "source-code";
+    private static final String SOURCE_CODE_DIR = "sourcecode";
 
 
+    private static String DEFAULT_DATA_DIR = null;
 
     private static final Properties properties = new Properties();
-
-
-    /**
-     * 用于git 同步的 源代码文件夹路径
-     * 单个库的文件夹是 ${SOURCE_CODE_DIR}/${库ID}/
-     */
-    private static String SOURCE_CODE_DIR = null;
 
 
     static {
@@ -79,7 +73,8 @@ public class SystemConfig {
             logger.error("加载配置文件失败!", e);
         }
 
-        init();
+        //初始化默认文件夹
+        initDataDir();
     }
 
     public static void show() {
@@ -104,40 +99,45 @@ public class SystemConfig {
         System.out.println(data);
     }
 
-    private static void init(){
-        String defaultDataDir = null;
-        try{
-            ResourceLoader resourceLoader = new DefaultResourceLoader();
-            String classResourcePath = SystemConfig.class.getName().replaceAll("\\.", "/") + ".class";
-            Resource resource = resourceLoader.getResource(classResourcePath);
-            if(resource.isFile()) {
-                //TODO 暂时没有考虑 在 war 的情况
-                String classFilePath = resource.getFile().getAbsolutePath();
+    private static void initDataDir() {
 
-                // 拿到 classes 的路径  比如 E:\tools\apache-tomcat-8.5.32\webapps\ROOT\WEB-INF\classes
-                String classLocation = classFilePath.substring(0, classFilePath.length() - classResourcePath.length());
-                System.out.println(classLocation);
-
-                 /*
-                从 E:\tools\apache-tomcat-8.5.32\webapps\ROOT\WEB-INF\classes
-                转到 E:\tools\apache-tomcat-8.5.32\automate-data
-                 */
-                File webroot = new File(classLocation).getParentFile().getParentFile().getParentFile().getParentFile();
-
-                defaultDataDir = webroot.getAbsolutePath() + System.lineSeparator() + DEFAULT_DATA_DIR;
+        String automateDataDir = trimToEmpty(properties.get("automate.data.dir"));
+        if (StringUtils.isNotEmpty(automateDataDir)) {
+            automateDataDir = automateDataDir.replace("\\", "/");
+            if (!automateDataDir.endsWith("/")) {
+                automateDataDir += "/";
             }
-        } catch (Exception e){
-            logger.error("init error", e);
-        }
+            File dir = new File(automateDataDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+                DEFAULT_DATA_DIR = dir.getAbsolutePath();
+            } else if (dir.isDirectory()) {
+                DEFAULT_DATA_DIR = dir.getAbsolutePath();
+            } else {
+                logger.error("this is not a Directory:{}", automateDataDir);
+            }
+        } else {
+            try {
+                ResourceLoader resourceLoader = new DefaultResourceLoader();
+                String classResourcePath = SystemConfig.class.getName().replaceAll("\\.", "/") + ".class";
+                Resource resource = resourceLoader.getResource(classResourcePath);
+                if (resource.isFile()) {
+                    //TODO 暂时没有考虑 在 war 的情况
+                    String classFilePath = resource.getFile().getAbsolutePath();
+                    // 拿到 classes 的路径  比如 E:\tools\apache-tomcat-8.5.32\webapps\ROOT\WEB-INF\classes
+                    String classLocation = classFilePath.substring(0, classFilePath.length() - classResourcePath.length());
+                     /*
+                    从 E:\tools\apache-tomcat-8.5.32\webapps\ROOT\WEB-INF\classes
+                    转到 E:\tools\apache-tomcat-8.5.32\automate-data
+                     */
+                    File webroot = new File(classLocation).getParentFile().getParentFile().getParentFile().getParentFile();
 
-        String sourceCodeDir = trimToEmpty(properties.get("source.code.dir"));
-        if(StringUtils.isNotEmpty(sourceCodeDir)) {
-            SOURCE_CODE_DIR = sourceCodeDir;
-        } else if(defaultDataDir != null){
-            //使用默认路径
-            SOURCE_CODE_DIR = defaultDataDir + System.lineSeparator() + DEFAULT_SOURCE_CODE_DIR;
+                    DEFAULT_DATA_DIR = webroot.getAbsolutePath() + "/" + DEFAULT_DATA_DIR_NAME;
+                }
+            } catch (Exception e) {
+                logger.error("init dataDir error", e);
+            }
         }
-
     }
 
     private static String trimToEmpty(Object obj) {
