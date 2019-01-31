@@ -2,28 +2,49 @@ package com.automate.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
  * Description:
  *
  * @author: genx
- * @date: 2019/1/28 23:22
+ * @date: 2019/1/31 19:45
  */
 @Entity
-@Table(name = "CA2_PROJECT_BRANCH")
-public class ProjectBranchEntity {
+@Table(name = "ca2_source_code_branch")
+public class SourceCodeBranchEntity {
+
+    /**
+     * 每次代码变动后的操作
+     */
+    public enum AutoType{
+        /**
+         * 无操作
+         */
+        NONE,
+        /**
+         * 自动编译
+         */
+        AUTO_COMPILE,
+        /**
+         * maven、gradle 自动 install 到仓库
+         */
+        AUTO_INSTALL
+    }
+
     private Integer id;
-    private Integer projectId;
+    private Integer sourceCodeId;
     private String branchName;
     private String lastCommitId;
     private Timestamp lastCommitTime;
     private String lastCommitUser;
     private String commitLog;
     private Timestamp updateTime;
+    private Byte autoType;
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public Integer getId() {
         return id;
@@ -34,13 +55,13 @@ public class ProjectBranchEntity {
     }
 
     @Basic
-    @Column(name = "PROJECT_ID", nullable = true)
-    public Integer getProjectId() {
-        return projectId;
+    @Column(name = "SOURCE_CODE_ID", nullable = true)
+    public Integer getSourceCodeId() {
+        return sourceCodeId;
     }
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setSourceCodeId(Integer sourceCodeId) {
+        this.sourceCodeId = sourceCodeId;
     }
 
     @Basic
@@ -101,6 +122,20 @@ public class ProjectBranchEntity {
 
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Basic
+    @Column(name = "AUTO_TYPE", nullable = true)
+    public Byte getAutoType() {
+        return autoType;
+    }
+
+    public void setAutoType(Byte autoType) {
+        this.autoType = autoType;
+    }
+
+    public void setAutoType(AutoType autoType) {
+        this.autoType = (byte)autoType.ordinal();
     }
 
 }

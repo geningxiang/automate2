@@ -1,11 +1,14 @@
 package com.automate.common;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,14 +24,19 @@ import static org.junit.Assert.*;
  * @author: genx
  * @date: 2019/1/30 16:50
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:/spring/*.xml"})
 public class SystemConfigTest {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     *
-     */
     @Test
-    public void test(){
+    public void test() throws IOException {
+
+
+    }
+
+    @Test
+    public void pathTest(){
         String classResourcePath = SystemConfig.class.getName().replaceAll("\\.", "/") + ".class";
 
         URL resource = SystemConfig.class.getClassLoader().getSystemClassLoader().getResource(classResourcePath);
@@ -67,26 +75,5 @@ public class SystemConfigTest {
         logger.error("Can not locate agent jar file.");
     }
 
-    @Test
-    public void test1() throws IOException {
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        String classResourcePath = SystemConfig.class.getName().replaceAll("\\.", "/") + ".class";
-        Resource resource = resourceLoader.getResource(classResourcePath);
 
-        if(resource.isFile()) {
-
-            String classFilePath = resource.getFile().getAbsolutePath();
-            System.out.println(classFilePath);
-            String classLocation = classFilePath.substring(0, classFilePath.length() - classResourcePath.length());
-            System.out.println(classLocation);
-
-
-        }
-
-
-        String clsPath = "E:\\tools\\apache-tomcat-8.5.32\\webapps\\ROOT\\WEB-INF\\classes";
-        File webroot = new File(clsPath).getParentFile().getParentFile().getParentFile().getParentFile();
-        System.out.println(webroot.getAbsolutePath());
-
-    }
 }

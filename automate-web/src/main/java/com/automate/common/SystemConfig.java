@@ -1,6 +1,6 @@
 package com.automate.common;
 
-import com.automate.entity.ProjectEntity;
+import com.automate.entity.SourceCodeEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,30 +25,7 @@ import java.util.Properties;
 public class SystemConfig {
     private static final Logger logger = LoggerFactory.getLogger(SystemConfig.class);
 
-    /**
-     * 系统属性中 配置文件路径
-     */
-    private static final String PROPERTY_CONFIG_LOCATION = "config.location";
-
-    /**
-     * 默认的配置文件路径
-     * 不推荐直接使用默认配置文件    不利于环境分离
-     * PROPERTY_CONFIG_LOCATION 优先级更高
-     */
-    private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.properties";
-
-    /**
-     * 默认的 基础文件夹名称
-     */
-    private static final String DEFAULT_DATA_DIR_NAME = "automate-data";
-
-    /**
-     * 默认的 源代码文件夹名称
-     */
-    private static final String SOURCE_CODE_DIR = "sourcecode";
-
-
-    private static String DEFAULT_DATA_DIR = null;
+    private static String AUTOMATE_DATA_DIR = null;
 
     private static final Properties properties = new Properties();
 
@@ -57,12 +34,12 @@ public class SystemConfig {
         ResourceLoader resourceLoader = new DefaultResourceLoader();
         Resource resource;
         try {
-            String configLocation = System.getProperty(PROPERTY_CONFIG_LOCATION);
+            String configLocation = System.getProperty(SystemContants.PROPERTY_CONFIG_LOCATION);
             if (StringUtils.isNotEmpty(configLocation)) {
                 resource = resourceLoader.getResource(configLocation);
             } else {
-                logger.warn("当前未自定义配置文件,使用默认配置:{}", DEFAULT_CONFIG_LOCATION);
-                resource = resourceLoader.getResource(DEFAULT_CONFIG_LOCATION);
+                logger.warn("当前未自定义配置文件,使用默认配置:{}", SystemContants.DEFAULT_CONFIG_LOCATION);
+                resource = resourceLoader.getResource(SystemContants.DEFAULT_CONFIG_LOCATION);
             }
             if (resource != null && resource.exists()) {
                 properties.load(resource.getInputStream());
@@ -77,6 +54,34 @@ public class SystemConfig {
         initDataDir();
     }
 
+    /**
+     * 获取一个项目的 源码文件夹
+     * @param sourceCodeEntity
+     * @return
+     */
+    public static String getSourceCodeDir(SourceCodeEntity sourceCodeEntity) {
+        Assert.notNull(sourceCodeEntity, "sourceCodeEntity is null");
+        Assert.notNull(sourceCodeEntity.getId(), "sourceCodeEntity.id is null");
+        Assert.hasText(AUTOMATE_DATA_DIR, "AUTOMATE_DATA_DIR is null");
+        return new StringBuilder(AUTOMATE_DATA_DIR).append(File.separator)
+                .append(SystemContants.SOURCE_CODE_DIR_NAME).append(File.separator)
+                .append(sourceCodeEntity.getId()).append(File.separator).toString();
+    }
+
+
+    /**
+     * 获取 maven 本地仓库地址
+     * @return
+     */
+    public static String getMavenRepositoryDir() {
+        String dir = trimToEmpty(properties.getProperty(SystemContants.KEY_MAVEN_REPOSITORY));
+        Assert.hasText(dir, "maven.repository is not set");
+        return dir;
+    }
+
+    /**
+     * 将配置信息 输出到控制台
+     */
     public static void show() {
         //怎么显示的好看些  计算一下key最大长度 对齐等号     ^_^
         int maxKeyLength = 0;
@@ -99,20 +104,22 @@ public class SystemConfig {
         System.out.println(data);
     }
 
+    /**
+     * 初始化 项目文件夹
+     */
     private static void initDataDir() {
-
-        String automateDataDir = trimToEmpty(properties.get("automate.data.dir"));
+        String automateDataDir = trimToEmpty(properties.get(SystemContants.KEY_DATA_DIR));
         if (StringUtils.isNotEmpty(automateDataDir)) {
-            automateDataDir = automateDataDir.replace("\\", "/");
-            if (!automateDataDir.endsWith("/")) {
-                automateDataDir += "/";
+            automateDataDir = automateDataDir.replace("\\", File.separator);
+            if (!automateDataDir.endsWith(File.separator)) {
+                automateDataDir += File.separator;
             }
             File dir = new File(automateDataDir);
             if (!dir.exists()) {
                 dir.mkdirs();
-                DEFAULT_DATA_DIR = dir.getAbsolutePath();
+                AUTOMATE_DATA_DIR = dir.getAbsolutePath();
             } else if (dir.isDirectory()) {
-                DEFAULT_DATA_DIR = dir.getAbsolutePath();
+                AUTOMATE_DATA_DIR = dir.getAbsolutePath();
             } else {
                 logger.error("this is not a Directory:{}", automateDataDir);
             }
@@ -130,9 +137,11 @@ public class SystemConfig {
                     从 E:\tools\apache-tomcat-8.5.32\webapps\ROOT\WEB-INF\classes
                     转到 E:\tools\apache-tomcat-8.5.32\automate-data
                      */
-                    File webroot = new File(classLocation).getParentFile().getParentFile().getParentFile().getParentFile();
+                    File webRoot = new File(classLocation).getParentFile().getParentFile().getParentFile().getParentFile();
 
-                    DEFAULT_DATA_DIR = webroot.getAbsolutePath() + "/" + DEFAULT_DATA_DIR_NAME;
+                    AUTOMATE_DATA_DIR = webRoot.getAbsolutePath() + "/" + SystemContants.DEFAULT_DATA_DIR_NAME;
+                    //设置  用于显示
+                    properties.put(SystemContants.KEY_DATA_DIR, AUTOMATE_DATA_DIR);
                 }
             } catch (Exception e) {
                 logger.error("init dataDir error", e);
@@ -144,29 +153,33 @@ public class SystemConfig {
         return obj == null ? "" : String.valueOf(obj).trim();
     }
 
+    private class SystemContants{
+        /**
+         * 系统属性中 配置文件路径
+         */
+        private static final String PROPERTY_CONFIG_LOCATION = "config.location";
 
-    /**
-     * 获取一个项目的 源码文件夹
-     *
-     * @param projectEntity
-     * @return
-     */
-    public static String getProjectSourceCodeDir(ProjectEntity projectEntity) {
-        Assert.notNull(projectEntity, "projectEntity is null");
-        Assert.notNull(projectEntity.getId(), "projectEntity.id is null");
-        return "E:/work/" + projectEntity.getId() + "/";
+        /**
+         * 默认的配置文件路径
+         * 不推荐直接使用默认配置文件    不利于环境分离
+         * PROPERTY_CONFIG_LOCATION 优先级更高
+         */
+        private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.properties";
+
+        /**
+         * 默认的 基础文件夹名称
+         */
+        private static final String DEFAULT_DATA_DIR_NAME = "automate-data";
+
+
+
+        /**
+         * 默认的 源代码文件夹名称
+         */
+        private static final String SOURCE_CODE_DIR_NAME = "sourcecode";
+
+        private static final String KEY_DATA_DIR = "automate.data.dir";
+        private static final String KEY_MAVEN_REPOSITORY = "maven.repository";
+
     }
-
-
-    public static String getMavenRepositoryDir() {
-        //TODO
-        return "D:/Program Files/apache-maven-3.5.3/repository1";
-    }
-
-    public static void main(String[] args) throws IOException {
-
-
-        SystemConfig.show();
-    }
-
 }

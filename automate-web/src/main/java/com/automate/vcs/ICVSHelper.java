@@ -41,4 +41,6 @@ public interface ICVSHelper {
      * @throws Exception
      */
     List<CommitLog> commitLogs(String branchName) throws Exception;
+
+    boolean isLocalRepositoryExist();
 }
