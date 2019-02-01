@@ -12,7 +12,7 @@ import java.util.Objects;
  * @date: 2019/1/31 19:45
  */
 @Entity
-@Table(name = "ca2_source_code_branch")
+@Table(name = "CA2_SOURCE_CODE_BRANCH")
 public class SourceCodeBranchEntity {
 
     /**

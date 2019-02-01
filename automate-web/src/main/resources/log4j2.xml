@@ -2,7 +2,7 @@
 <configuration status="error">
     <Properties>
         <Property name="fileName">log4j2.log</Property>
-        <Property name="backupFilePatch">./logs/</Property>
+        <Property name="backupFilePatch">../logs/</Property>
     </Properties>
     <!--先定义所有的appender-->
     <appenders>

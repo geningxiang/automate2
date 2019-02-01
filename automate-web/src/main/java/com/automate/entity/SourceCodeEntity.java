@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  * @date: 2019/1/31 19:45
  */
 @Entity
-@Table(name = "ca2_source_code")
+@Table(name = "CA2_SOURCE_CODE")
 public class SourceCodeEntity implements ICVSRepository {
     public enum Type {
         /**

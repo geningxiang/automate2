@@ -56,12 +56,15 @@ public class SourceCodeService {
         ICVSHelper cvsHelper = new GitHelper(sourceCodeEntity);
         //检查一下
         List<String> updateBranchList;
+        int total = 0;
         if(!cvsHelper.isLocalRepositoryExist()){
-            cvsHelper.init();
+            updateBranchList = cvsHelper.init();
+            total += sync(sourceCodeEntity, cvsHelper, updateBranchList);
         }
         //clone 只作用于master分支  所以再调一遍 update
         updateBranchList = cvsHelper.update();
-        return sync(sourceCodeEntity, cvsHelper, updateBranchList);
+        total += sync(sourceCodeEntity, cvsHelper, updateBranchList);
+        return total;
     }
 
     public int sync(SourceCodeEntity projectEntity, ICVSHelper cvsHelper, List<String> branchList) throws Exception {

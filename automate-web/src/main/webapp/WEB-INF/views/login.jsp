@@ -35,14 +35,16 @@
             box-sizing: content-box;
             box-shadow: -15px 15px 15px rgba(6, 17, 47, 0.6);
             opacity: 1;
-            width: 310px;
-            height: 240px;
+            box-sizing: border-box;
+            max-width: 90%;
             position: absolute;
-            left: 0;
-            right: 0;
-            margin: auto;
-            top: 0;
-            bottom: 0;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%,-50%);
+            -ms-transform: translate(-50%,-50%);		/* IE 9 */
+            -webkit-transform: translate(-50%,-50%);	/* Safari and Chrome */
+            -o-transform: translate(-50%,-50%);		    /* Opera */
+            -moz-transform: translate(-50%,-50%);	    /* Firefox */
             padding: 30px 40px 40px 40px;
             background: #35394a;
             background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #35394a), color-stop(100%, rgb(0, 0, 0)));
