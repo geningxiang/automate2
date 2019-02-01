@@ -20,7 +20,7 @@ public class JgitProgressMonitor implements ProgressMonitor {
 
     @Override
     public void start(int i) {
-        logger.info(String.valueOf(i));
+//        logger.info(String.valueOf(i));
     }
 
     /**
@@ -37,18 +37,18 @@ public class JgitProgressMonitor implements ProgressMonitor {
      */
     @Override
     public void beginTask(String step, int i) {
-        logger.info("{},{}", step, i);
+//        logger.info("{},{}", step, i);
         count.set(0);
     }
 
     @Override
     public void update(int i) {
-        logger.info(String.valueOf(count.addAndGet(i)));
+//        logger.info(String.valueOf(count.addAndGet(i)));
     }
 
     @Override
     public void endTask() {
-        logger.info("endTask");
+//        logger.info("endTask");
     }
 
     @Override

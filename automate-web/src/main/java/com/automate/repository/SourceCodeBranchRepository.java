@@ -1,6 +1,6 @@
 package com.automate.repository;
 
-import com.automate.entity.ProjectBranchEntity;
+import com.automate.entity.SourceCodeBranchEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -13,13 +13,14 @@ import org.springframework.stereotype.Repository;
  * @date: 2019/1/28 23:24
  */
 @Repository
-public interface ProjectBranchRepository extends PagingAndSortingRepository<ProjectBranchEntity, Integer>, JpaSpecificationExecutor<ProjectBranchEntity> {
+public interface SourceCodeBranchRepository extends PagingAndSortingRepository<SourceCodeBranchEntity, Integer>, JpaSpecificationExecutor<SourceCodeBranchEntity> {
 
     /**
-     * 根据 项目ID，分支名称查找
-     * @param project
+     * 根据 源码库ID，分支名称查找
+     *
+     * @param sourceId
      * @param branchName
      * @return
      */
-    ProjectBranchEntity findFirstByProjectIdAndBranchNameOrderByIdDesc(int project, String branchName);
+    SourceCodeBranchEntity findFirstBySourceCodeIdAndBranchName(int sourceId, String branchName);
 }

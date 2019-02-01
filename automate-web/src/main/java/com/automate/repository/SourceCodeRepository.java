@@ -1,6 +1,6 @@
 package com.automate.repository;
 
-import com.automate.entity.ProjectEntity;
+import com.automate.entity.SourceCodeEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -15,12 +15,13 @@ import java.util.List;
  * @date: 2019/1/24 23:24
  */
 @Repository
-public interface ProjectRepository extends PagingAndSortingRepository<ProjectEntity, Integer>, JpaSpecificationExecutor<ProjectEntity> {
+public interface SourceCodeRepository extends PagingAndSortingRepository<SourceCodeEntity, Integer>, JpaSpecificationExecutor<SourceCodeEntity> {
 
     /**
-     * 根据 版本控制地址查找项目
-     * @param versionUrl
+     * 根据 版本控制地址查找 源码库
+     *
+     * @param vcsUrl
      * @return
      */
-    List<ProjectEntity> getAllByVersionUrlOrderByIdDesc(String versionUrl);
+    SourceCodeEntity getFirstByVcsUrl(String vcsUrl);
 }

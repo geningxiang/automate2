@@ -13,37 +13,29 @@ import java.sql.Timestamp;
  * Description:
  *
  * @author: genx
- * @date: 2019/1/24 23:21
+ * @date: 2019/1/31 19:45
  */
 @Entity
-@Table(name = "CA2_PROJECT")
-public class ProjectEntity implements ICVSRepository {
-    public enum Type{
+@Table(name = "ca2_source_code")
+public class SourceCodeEntity implements ICVSRepository {
+    public enum Type {
         /**
          * java项目
          */
         JAVA,
-        /**
-         * web项目， 前端项目
-         */
-        WEB,
-        /**
-         * 安卓项目
-         */
-        ANDROID
     }
 
     /**
      * 版本控制类型
      */
-    public enum VersionType{
+    public enum VcsType {
         GIT
     }
 
     /**
      * 编译方式
      */
-    public enum CompileType{
+    public enum CompileType {
         MAVEN,
         GRADLE
     }
@@ -51,7 +43,7 @@ public class ProjectEntity implements ICVSRepository {
     /**
      * 状态
      */
-    public enum Status{
+    public enum Status {
         /**
          * 未激活
          */
@@ -62,68 +54,76 @@ public class ProjectEntity implements ICVSRepository {
         ACTIVATE
     }
 
+
     private Integer id;
     /**
-     * 项目类型
+     * 类型
+     *
      * @see Type
      */
     private Byte type;
+
     /**
-     * 项目名称
+     * 名称
      */
     private String name;
-    /**
-     * 图标
-     */
-    private String icon;
+
     /**
      * 备注
      */
     private String remark;
+
     /**
      * 版本控制类型
-     * @see VersionType
+     *
+     * @see VcsType
      */
-    private Byte versionType;
+    private Byte vcsType;
+
     /**
      * 版本控制地址
      */
-    private String versionUrl;
+    private String vcsUrl;
+
     /**
      * 版本控制用户名
      */
-    private String versionUser;
+    private String userName;
+
     /**
      * 版本控制密码
      * TODO 应该做加密处理
      */
-    private String versionPwd;
+    private String passWord;
+
     /**
      * 编译类型
+     *
      * @see CompileType
      */
     private Byte compileType;
+
     /**
      * 创建时间
      */
     private Timestamp createTime;
+
     /**
-     * 相关依赖
+     * 归属人
+     *
+     * @see AdminUserEntity#id
      */
-    private String relyConfig;
-    /**
-     * 环境配置
-     */
-    private String envConfig;
+    private Integer adminId;
+
     /**
      * 状态
+     *
      * @see Status
      */
     private Byte status;
 
-
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public Integer getId() {
         return id;
@@ -132,6 +132,7 @@ public class ProjectEntity implements ICVSRepository {
     public void setId(Integer id) {
         this.id = id;
     }
+
 
     @Basic
     @Column(name = "TYPE", nullable = true)
@@ -158,16 +159,6 @@ public class ProjectEntity implements ICVSRepository {
     }
 
     @Basic
-    @Column(name = "ICON", nullable = true, length = 256)
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    @Basic
     @Column(name = "REMARK", nullable = true, length = 256)
     public String getRemark() {
         return remark;
@@ -178,47 +169,49 @@ public class ProjectEntity implements ICVSRepository {
     }
 
     @Basic
-    @Column(name = "VERSION_TYPE", nullable = true)
-    public Byte getVersionType() {
-        return versionType;
+    @Column(name = "VCS_TYPE", nullable = true)
+    public Byte getVcsType() {
+        return vcsType;
     }
 
-    public void setVersionType(Byte versionType) {
-        this.versionType = versionType;
+    public void setVcsType(Byte vcsType) {
+        this.vcsType = vcsType;
     }
 
-    public void setVersionType(VersionType versionType) {
-        this.versionType = (byte)versionType.ordinal();
-    }
-
-    @Basic
-    @Column(name = "VERSION_URL", nullable = true, length = 256)
-    public String getVersionUrl() {
-        return versionUrl;
-    }
-
-    public void setVersionUrl(String versionUrl) {
-        this.versionUrl = versionUrl;
+    public void setVcsType(VcsType vcsType) {
+        this.vcsType = (byte)vcsType.ordinal();
     }
 
     @Basic
-    @Column(name = "VERSION_USER", nullable = true, length = 64)
-    public String getVersionUser() {
-        return versionUser;
+    @Column(name = "VCS_URL", nullable = true, length = 256)
+    public String getVcsUrl() {
+        return vcsUrl;
     }
 
-    public void setVersionUser(String versionUser) {
-        this.versionUser = versionUser;
+    public void setVcsUrl(String vcsUrl) {
+        this.vcsUrl = vcsUrl;
     }
 
+    @Override
     @Basic
-    @Column(name = "VERSION_PWD", nullable = true, length = 64)
-    public String getVersionPwd() {
-        return versionPwd;
+    @Column(name = "USER_NAME", nullable = true, length = 32)
+    public String getUserName() {
+        return userName;
     }
 
-    public void setVersionPwd(String versionPwd) {
-        this.versionPwd = versionPwd;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @Override
+    @Basic
+    @Column(name = "PASS_WORD", nullable = true, length = 32)
+    public String getPassWord() {
+        return passWord;
+    }
+
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
     }
 
     @Basic
@@ -246,23 +239,13 @@ public class ProjectEntity implements ICVSRepository {
     }
 
     @Basic
-    @Column(name = "RELY_CONFIG", nullable = true, length = 1024)
-    public String getRelyConfig() {
-        return relyConfig;
+    @Column(name = "ADMIN_ID", nullable = true)
+    public Integer getAdminId() {
+        return adminId;
     }
 
-    public void setRelyConfig(String relyConfig) {
-        this.relyConfig = relyConfig;
-    }
-
-    @Basic
-    @Column(name = "ENV_CONFIG", nullable = true, length = 1024)
-    public String getEnvConfig() {
-        return envConfig;
-    }
-
-    public void setEnvConfig(String envConfig) {
-        this.envConfig = envConfig;
+    public void setAdminId(Integer adminId) {
+        this.adminId = adminId;
     }
 
     @Basic
@@ -282,40 +265,27 @@ public class ProjectEntity implements ICVSRepository {
     @Transient
     @Override
     public String getLocalDir() {
-        return SystemConfig.getProjectSourceCodeDir(this);
+        return SystemConfig.getSourceCodeDir(this);
     }
 
     @Transient
     @Override
     public String getRemoteUrl() {
-        return this.versionUrl;
+        return this.vcsUrl;
     }
 
-    @Transient
-    @Override
-    public String getUserName() {
-        return this.versionUser;
-    }
-
-    @Transient
-    @Override
-    public String getPassWord() {
-        return this.versionPwd;
-    }
 
     public JSONObject toJson(){
         JSONObject data = new JSONObject();
         data.put("id", this.id);
         data.put("type", this.type);
         data.put("name", this.name);
-        data.put("icon", this.icon);
         data.put("remark", this.remark);
-        data.put("versionType", this.versionType);
-        data.put("versionUrl", this.versionUrl);
+        data.put("vcsType", this.vcsType);
+        data.put("vcsUrl", this.vcsUrl);
         data.put("compileType", this.compileType);
         data.put("createTime", FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss").format(createTime));
         data.put("status", this.status);
         return data;
     }
-
 }

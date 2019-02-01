@@ -50,14 +50,16 @@ public class GitHelper extends AbstractCVSHelper {
         //TODO 为啥没用呢
         cloneCommand.setCloneAllBranches(true);
 
-
         cloneCommand.setProgressMonitor(new JgitProgressMonitor());
+        logger.debug("clone {}", this.remoteUrl);
         Git git = cloneCommand.call();
+        git.close();
         List<String> branchList = new ArrayList<>(8);
         List<Ref> list = git.branchList().call();
         for (Ref ref : list) {
             branchList.add(ref.getName().substring(GitContants.BRANCH_NAME_PREFIX_LEN));
         }
+        //TODO 第一次同步只返回了 master 分支
         return branchList;
     }
 
@@ -80,8 +82,9 @@ public class GitHelper extends AbstractCVSHelper {
     @Override
     public List<String> update(String branchName) throws Exception {
         FileRepository db = openFileRepository();
+        Git git = null;
         try {
-            Git git = Git.wrap(db);
+            git = Git.wrap(db);
             Map<String, String> localBranchMap = new HashMap(8);
             //查看本地分支
             List<Ref> list = git.branchList().call();
@@ -97,6 +100,7 @@ public class GitHelper extends AbstractCVSHelper {
                 if (ref.getName().startsWith(GitContants.BRANCH_NAME_PREFIX)) {
                     String remoteBranchName = ref.getName().substring(GitContants.BRANCH_NAME_PREFIX_LEN);
                     if(StringUtils.isEmpty(branchName) || branchName.equals(remoteBranchName)) {
+                        logger.debug("check out {} | {}", remoteBranchName, this.remoteUrl);
                         CheckoutCommand checkoutCommand = git.checkout().setName(remoteBranchName);
                         String id = localBranchMap.get(remoteBranchName);
                         if (id == null) {
@@ -106,10 +110,15 @@ public class GitHelper extends AbstractCVSHelper {
                         }
                         checkoutCommand.call();
 
+                        git.fetch().call();
                         //reset hard  以防万一  其实用不着
-                        git.reset().setMode(ResetCommand.ResetType.HARD).call();
+                        git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + remoteBranchName).call();
                         //从远程库 pull 代码
-                        PullResult pullResult = git.pull().setCredentialsProvider(this.credentialsProvider).call();
+                        PullResult pullResult = git.pull().setRemoteBranchName(remoteBranchName).setCredentialsProvider(this.credentialsProvider).call();
+                        if(!pullResult.isSuccessful()){
+                            logger.warn("push 失败");
+                            continue;
+                        }
                         if(id == null || !id.equals(pullResult.getMergeResult().getNewHead().getName())){
                             updateBranchList.add(remoteBranchName);
                         }
@@ -121,8 +130,12 @@ public class GitHelper extends AbstractCVSHelper {
             if(update == 0) {
                 throw new IllegalArgumentException("the branchName is not correct?");
             }
+
             return updateBranchList;
         } finally {
+            if(git != null){
+                git.close();
+            }
             db.close();
         }
     }
@@ -136,8 +149,9 @@ public class GitHelper extends AbstractCVSHelper {
     @Override
     public List<CommitLog> commitLogs(String branchName) throws Exception {
         FileRepository db = openFileRepository();
+        Git git = null;
         try {
-            Git git = Git.wrap(db);
+            git = Git.wrap(db);
             git.checkout().setName(branchName).call();
             Iterator<RevCommit> commits = git.log().all().call().iterator();
             List<CommitLog> list = new ArrayList<>(256);
@@ -147,8 +161,26 @@ public class GitHelper extends AbstractCVSHelper {
             }
             return list;
         } finally {
+            if(git != null){
+                git.close();
+            }
             db.close();
         }
+    }
+
+    @Override
+    public boolean isLocalRepositoryExist(){
+        File file = new File(this.localDir);
+        if (!file.exists()) {
+           return false;
+        }
+        if (!this.localDir.endsWith(GitContants.DOT_GIT)) {
+            file = new File(this.localDir + File.separator + GitContants.DOT_GIT);
+        }
+        if (!file.exists()) {
+            return false;
+        }
+        return true;
     }
 
     private FileRepository openFileRepository() throws IOException {

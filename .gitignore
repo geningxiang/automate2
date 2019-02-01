@@ -9,4 +9,5 @@ out
 gen
 target
 logs
-config1.properties
+automate-data
+config-local.properties

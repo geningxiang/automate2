@@ -7,6 +7,8 @@
     <property name="connection.url">jdbc:mysql://localhost:3306/automate</property>
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
       <mapping class="com.automate.entity.AdminUserEntity"/>
+      <mapping class="com.automate.entity.SourceCodeEntity"/>
+      <mapping class="com.automate.entity.SourceCodeBranchEntity"/>
 
   </session-factory>
 </hibernate-configuration>
