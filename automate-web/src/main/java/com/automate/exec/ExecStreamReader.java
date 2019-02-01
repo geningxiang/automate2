@@ -1,4 +1,4 @@
-package com.automate.cmd;
+package com.automate.exec;
 
 import com.automate.common.Charsets;
 import com.automate.common.utils.SystemUtil;
@@ -17,16 +17,16 @@ import java.io.InputStreamReader;
  * @author: genx
  * @date: 2019/2/1 15:32
  */
-public class CmdStreamReader implements Runnable {
+public class ExecStreamReader implements Runnable {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private InputStream inputStream;
-    private final ExecuetCommand execuetCommand;
+    private final ExecCommand execCommand;
     private final boolean isError;
 
-    public CmdStreamReader(final InputStream inputStream, final ExecuetCommand execuetCommand, boolean isError) {
+    public ExecStreamReader(final InputStream inputStream, final ExecCommand execCommand, boolean isError) {
         this.inputStream = inputStream;
-        this.execuetCommand = execuetCommand;
+        this.execCommand = execCommand;
         this.isError = isError;
     }
 
@@ -38,9 +38,9 @@ public class CmdStreamReader implements Runnable {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 if (this.isError) {
-                    execuetCommand.errorRead(line);
+                    execCommand.errorRead(line);
                 } else {
-                    execuetCommand.inputRead(line);
+                    execCommand.inputRead(line);
                 }
             }
             inputStream = null;

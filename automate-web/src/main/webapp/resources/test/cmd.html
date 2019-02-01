@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.bootcss.com/picnic/6.5.0/picnic.min.css" rel="stylesheet">
+    <style>
+        article{
+            width: 800px;
+            margin: 40px auto 0 auto;
+        }
+    </style>
+</head>
+<body>
+<article>
+<textarea id="command" rows="10"></textarea>
+
+<button onclick="doExec()">提交</button>
+</article>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    function doExec(){
+        $.post("/cmd/exec", {
+            command: $("#command").val()
+        }, function(data){
+            console.log(data);
+        })
+    }
+</script>
+</body>
+</html>

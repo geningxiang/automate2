@@ -1,4 +1,4 @@
-package com.automate.cmd;
+package com.automate.exec;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,7 +7,7 @@ package com.automate.cmd;
  * @author: genx
  * @date: 2019/2/1 16:17
  */
-public interface ICmdStreamMonitor {
+public interface IExecStreamMonitor {
 
     /**
      * 开始

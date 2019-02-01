@@ -1,12 +1,12 @@
-package com.automate.cmd;
+package com.automate.exec;
 
 import com.automate.common.Charsets;
 import com.automate.common.utils.SystemUtil;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author: genx
  * @date: 2019/2/1 15:31
  */
-public class CmdHelper {
-    private static final Logger logger = LoggerFactory.getLogger(CmdHelper.class);
+public class ExecHelper {
+    private static final Logger logger = LoggerFactory.getLogger(ExecHelper.class);
 
     /**
      * 管理 用于 CMD 操作 的线程
@@ -31,37 +31,51 @@ public class CmdHelper {
      * 执行命令
      * !该方法会阻塞  直到运行结束或超时
      *
-     * @param execuetCommand
+     * @param execCommand
      */
-    public static void exec(ExecuetCommand execuetCommand) {
+    public static void exec(ExecCommand execCommand) {
         final Process process;
-        CmdStreamReader inputReader = null;
+        ExecStreamReader inputReader = null;
         Future<Integer> executeFuture = null;
         try {
-            logger.info(execuetCommand.getCommand());
-            process = Runtime.getRuntime().exec(execuetCommand.getCommand());
-            execuetCommand.start();
+            String[] cmds = new String[3];
+
+            if(SystemUtil.isWindows()) {
+                cmds[0] = "cmd.exe";
+                cmds[1] = "/c";
+            } else {
+                cmds[0] = "/bin/sh";
+                cmds[1] = "-c";
+            }
+
+            cmds[2] = StringUtils.join(execCommand.getCommands(), " && ");
+
+            logger.info(StringUtils.join(cmds, " "));
+
+            process = Runtime.getRuntime().exec(cmds);
+            execCommand.start();
+
             process.getOutputStream().close();
 
-            inputReader = new CmdStreamReader(process.getInputStream(), execuetCommand, false);
+            inputReader = new ExecStreamReader(process.getInputStream(), execCommand, false);
             pool.execute(inputReader);
-            // TODO 如果以 CmdStreamReader 的方式读取 errorStream  当发生超时时 close errorStream 时会阻塞
-            //errorReader = new CmdStreamReader(process.getErrorStream(), execuetCommand, true);
+            // TODO 如果以 ExecStreamReader 的方式读取 errorStream  当发生超时时 close errorStream 时会阻塞
+            //errorReader = new ExecStreamReader(process.getErrorStream(), execCommand, true);
             //pool.execute(errorReader);
 
             executeFuture = pool.submit(() -> process.waitFor());
-            int exitValue = executeFuture.get(execuetCommand.getTimeout(), execuetCommand.getUnit());
+            int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
             if (exitValue != 0) {
                 List<String> lines = IOUtils.readLines(process.getErrorStream(), SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
                 for (String line : lines) {
-                    execuetCommand.errorRead(line);
+                    execCommand.errorRead(line);
                 }
             }
-            execuetCommand.end(exitValue);
+            execCommand.end(exitValue);
         } catch (Exception e) {
-            execuetCommand.errorRead("【error by CmdHelper】" + e.getClass().getName());
+            execCommand.errorRead("【error by ExecHelper】" + e.getClass().getName());
             // 1 表示 通用未知错误　
-            execuetCommand.end(1);
+            execCommand.end(1);
             logger.error("exec error", e);
         } finally {
             if (executeFuture != null) {

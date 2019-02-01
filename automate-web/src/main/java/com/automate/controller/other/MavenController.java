@@ -6,6 +6,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
@@ -50,19 +51,28 @@ public class MavenController {
         String path = request.getServletPath().substring(6);
         File file = new File(SystemConfig.getMavenRepositoryDir() + path);
         if (file.exists()) {
+            if(file.isDirectory()){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return null;
+            }
             //返回类型为 二进制
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM.getType());
-            // 设置文件名
-            response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(file.getName(), "UTF-8"));
+
+            if(path.toLowerCase().endsWith(".jar") || path.toLowerCase().endsWith(".war")) {
+                // 设置文件名
+                response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(file.getName(), "UTF-8"));
+            } else {
+                response.setContentType(MediaType.TEXT_PLAIN.getType());
+            }
             response.getOutputStream().write(FileUtils.readFileToByteArray(file));
             return null;
-        } else if (path.toUpperCase().endsWith(DOT_SHA1)) {
+        } else if (path.toLowerCase().endsWith(DOT_SHA1)) {
             path = path.substring(0, path.length() - DOT_SHA1.length());
             file = new File(SystemConfig.getMavenRepositoryDir() + path);
             if (file.exists()) {
                 return sendText(response, DigestUtils.sha1Hex(new FileInputStream(file)));
             }
-        } else if (path.toUpperCase().endsWith(DOT_MD5)) {
+        } else if (path.toLowerCase().endsWith(DOT_MD5)) {
             path = path.substring(0, path.length() - DOT_MD5.length());
             file = new File(SystemConfig.getMavenRepositoryDir() + path);
             if (file.exists()) {

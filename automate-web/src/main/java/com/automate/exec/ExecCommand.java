@@ -1,6 +1,10 @@
-package com.automate.cmd;
+package com.automate.exec;
+
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -10,11 +14,11 @@ import java.util.concurrent.TimeUnit;
  * @author: genx
  * @date: 2019/2/1 15:32
  */
-public class ExecuetCommand {
+public class ExecCommand {
     /**
      * 命令
      */
-    private String command;
+    private List<String> commands;
     /**
      * 环境变量
      * 格式为["name1=value1", "name2=value2"]
@@ -36,31 +40,35 @@ public class ExecuetCommand {
     /**
      * 监控器
      */
-    private ICmdStreamMonitor cmdStreamMonitor;
+    private IExecStreamMonitor cmdStreamMonitor;
 
     /**
-     * 默认的超时时间时 1分钟
+     * 默认的超时时间时 3分钟
      */
-    private long timeout = 1;
+    private long timeout = 3;
     private TimeUnit unit = TimeUnit.MINUTES;
 
-    public ExecuetCommand(String command) {
-        this(command, null, null, null);
+    public ExecCommand(String command) throws IllegalAccessException {
+        this(ImmutableList.of(command), null, null, null);
     }
 
-    public ExecuetCommand(String command, ICmdStreamMonitor cmdStreamMonitor) {
-        this(command, null, null, cmdStreamMonitor);
+    public ExecCommand(String command, IExecStreamMonitor cmdStreamMonitor) throws IllegalAccessException {
+        this(ImmutableList.of(command), null, null, cmdStreamMonitor);
     }
 
-    public ExecuetCommand(String command, String[] envp, File dir, ICmdStreamMonitor cmdStreamMonitor) {
-        this.command = command;
+    public ExecCommand(List<String> commands, IExecStreamMonitor cmdStreamMonitor) throws IllegalAccessException {
+        this(commands, null, null, cmdStreamMonitor);
+    }
+
+    public ExecCommand(List<String> commands, String[] envp, File dir, IExecStreamMonitor cmdStreamMonitor) throws IllegalAccessException {
+        this.commands = ExecFilter.filter(commands);
         this.envp = envp;
         this.dir = dir;
         this.cmdStreamMonitor = cmdStreamMonitor;
     }
 
-    public void setTimeOut(TimeUnit unit, long timeout){
-        if(unit == null || timeout <= 0){
+    public void setTimeOut(TimeUnit unit, long timeout) {
+        if (unit == null || timeout <= 0) {
             throw new IllegalArgumentException(" this timeout is not allow : " + timeout + " / " + unit);
         }
         this.unit = unit;
@@ -83,7 +91,7 @@ public class ExecuetCommand {
 
     public void start() {
         if (this.cmdStreamMonitor != null) {
-            this.cmdStreamMonitor.onStart(this.command);
+            this.cmdStreamMonitor.onStart(StringUtils.join(this.commands, " && "));
         }
     }
 
@@ -94,8 +102,8 @@ public class ExecuetCommand {
         }
     }
 
-    public String getCommand() {
-        return command;
+    public List<String> getCommands() {
+        return commands;
     }
 
     public String[] getEnvp() {
@@ -126,7 +134,7 @@ public class ExecuetCommand {
         return unit;
     }
 
-    public ICmdStreamMonitor getCmdStreamMonitor() {
+    public IExecStreamMonitor getCmdStreamMonitor() {
         return cmdStreamMonitor;
     }
 }
