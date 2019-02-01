@@ -7,5 +7,6 @@
 *.iml
 out
 gen
-target/
-logs/
+target
+logs
+config1.properties
