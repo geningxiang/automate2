@@ -3,7 +3,11 @@ package com.automate.service;
 import com.automate.repository.HookLogRepository;
 import com.automate.entity.HookLogEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -25,8 +29,12 @@ public class HookLogService {
     @Autowired
     private EntityManager entityManager;
 
-    public Iterable<HookLogEntity> getList() {
-        return hookLogRepository.findAll(Sort.by("id"));
+    public Page<HookLogEntity> findAll(Pageable pageable) {
+        return hookLogRepository.findAll(pageable);
+    }
+
+    public Iterable<HookLogEntity> findAll() {
+        return hookLogRepository.findAll(Sort.by("id").descending());
     }
 
     /**

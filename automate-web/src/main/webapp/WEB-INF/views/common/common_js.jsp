@@ -1,3 +1,4 @@
+<%@ page language="java" pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
 <!-- js placed at the end of the document so the pages load faster -->
 <script src="/resources/js/jquery.js"></script>
 <script src="/resources/js/bootstrap.min.js"></script>
@@ -20,3 +21,5 @@
 
 <!--config script for all pages-->
 <script src="/resources/js/common-scripts.js"></script>
+
+<script src="/resources/js/common-page.js" charset="utf-8"></script>

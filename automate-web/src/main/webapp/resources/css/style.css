@@ -2760,6 +2760,7 @@ ul.amounts li {
     padding:15px;
 }
 .dataTables_info{
+    float: left;
     padding:0 15px;
 }
 
