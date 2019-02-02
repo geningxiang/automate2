@@ -2,6 +2,7 @@ package com.automate.common;
 
 import com.automate.entity.SourceCodeEntity;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -77,6 +78,10 @@ public class SystemConfig {
         String dir = trimToEmpty(properties.getProperty(SystemContants.KEY_MAVEN_REPOSITORY));
         Assert.hasText(dir, "maven.repository is not set");
         return dir;
+    }
+
+    public static String getProperty(String key) {
+        return trimToEmpty(properties.getProperty(key));
     }
 
     /**
