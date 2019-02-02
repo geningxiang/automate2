@@ -70,7 +70,9 @@ public class ExecFilter {
             StringBuilder sb = new StringBuilder();
             sb.append(fn);
             if(StringUtils.isNotEmpty(param)) {
-                sb.append(" \"").append(param).append("\"");
+                //TODO 安全性
+//                sb.append(" \"").append(param).append("\"");
+                sb.append(" ").append(param);
             }
             list.add(sb.toString());
         }

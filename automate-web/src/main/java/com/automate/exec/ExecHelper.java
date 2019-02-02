@@ -52,7 +52,7 @@ public class ExecHelper {
 
             logger.info(StringUtils.join(cmds, " "));
 
-            process = Runtime.getRuntime().exec(cmds);
+            process = Runtime.getRuntime().exec(cmds, execCommand.getEnvp(), execCommand.getDir());
             execCommand.start();
 
             process.getOutputStream().close();

@@ -1,6 +1,7 @@
 package com.automate.task.background;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -24,14 +25,24 @@ public abstract class AbstractBackgroundAssembly implements Runnable {
      */
     private final String[] locks;
 
-    public AbstractBackgroundAssembly(String[] locks){
+    public AbstractBackgroundAssembly(Set<String> locks){
         this.uniqueId = INDEX.incrementAndGet();
 
-        if(locks != null && locks.length > 1) {
-            //!! 非常重要  必须要做一次排序    否则会出现 不同任务 互锁的情况
-            Arrays.sort(locks);
+        if(locks != null && locks.size() > 0) {
+            String[] temp = new String[locks.size()];
+            int i = 0;
+            for (String lock : locks) {
+                temp[i++] = lock;
+            }
+            if(i > 1) {
+                //!! 非常重要  必须要做一次排序    否则会出现 不同任务 互锁的情况
+                Arrays.sort(temp);
+            }
+            this.locks = temp;
+        } else {
+            this.locks = null;
         }
-        this.locks = locks;
+
     }
 
 
