@@ -45,9 +45,16 @@ public class BasicAssembly extends AbstractBackgroundAssembly {
     @Override
     public void run() {
         if(tasks != null){
-            for (ITask task : tasks) {
-                task.invoke();
+            try{
+                for (ITask task : tasks) {
+                    task.invoke();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            } finally {
+                //TODO 终止处理
             }
+
         }
     }
 }

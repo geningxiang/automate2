@@ -24,10 +24,10 @@ public abstract class AbstractBackgroundAssembly implements Runnable {
      * 后台任务的 锁列表   简单的根据 String 来锁
      */
     private final String[] locks;
+    private int lockIndex;
 
     public AbstractBackgroundAssembly(Set<String> locks){
         this.uniqueId = INDEX.incrementAndGet();
-
         if(locks != null && locks.size() > 0) {
             String[] temp = new String[locks.size()];
             int i = 0;
@@ -118,5 +118,13 @@ public abstract class AbstractBackgroundAssembly implements Runnable {
      */
     public boolean isCancel(){
         return this.cancel;
+    }
+
+    public int getLockIndex() {
+        return lockIndex;
+    }
+
+    public void setLockIndex(int lockIndex) {
+        this.lockIndex = lockIndex;
     }
 }

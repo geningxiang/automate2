@@ -1,7 +1,6 @@
 package com.automate.task.background;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -13,8 +12,12 @@ import java.util.concurrent.Semaphore;
  */
 public class BackgroundLock {
 
-    private static final Map<String, Semaphore> LOCK_MAP = new HashMap(256);
+    //private static final Map<String, Semaphore> LOCK_MAP = new HashMap(256);
 
+    /**
+     * TODO KEY 越来越多咋办呢
+     */
+    private static final ConcurrentHashMap<String, Semaphore> LOCK_MAP = new ConcurrentHashMap<>(256);
 
     /**
      * 操作 map 时的锁
@@ -24,17 +27,26 @@ public class BackgroundLock {
 
     public static void acquire(AbstractBackgroundAssembly task) throws InterruptedException {
         if (task.getLocks() != null) {
-            for (String key : task.getLocks()) {
-                synchronized (lock) {
-                    Semaphore s = LOCK_MAP.get(key);
-                    if (s == null) {
-                        s = new Semaphore(1);
-                        LOCK_MAP.put(key, s);
-                    }
-                    //获得许可
-                    task.updateStatus(BackgroundStatus.acquire, key);
-                    s.acquire();
+            task.updateStatus(BackgroundStatus.acquire);
+            for (int i = 0; i < task.getLocks().length; i++) {
+
+                String key = task.getLocks()[i];
+//                synchronized (lock) {
+                Semaphore s = new Semaphore(1);
+                Semaphore value = LOCK_MAP.putIfAbsent(key, s);
+                if (value == null) {
+                    value = s;
                 }
+//                    s = LOCK_MAP.get(key);
+//                    if (s == null) {
+//                        s = new Semaphore(1);
+//                        LOCK_MAP.put(key, s);
+//                    }
+////                }
+
+                //获得许可
+                value.acquire();
+                task.setLockIndex(i + 1);
 
             }
         }
@@ -48,7 +60,8 @@ public class BackgroundLock {
                     if (s != null) {
                         //释放资源
                         s.release();
-                        LOCK_MAP.remove(task.getLocks()[i]);
+//                        LOCK_MAP.remove(task.getLocks()[i]);
+
                     }
                 }
 

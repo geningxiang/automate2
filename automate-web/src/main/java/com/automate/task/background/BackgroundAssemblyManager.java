@@ -2,6 +2,7 @@ package com.automate.task.background;
 
 import com.automate.common.SystemConfig;
 import com.automate.common.thread.GlobalThreadPoolManager;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,8 +104,8 @@ public class BackgroundAssemblyManager implements Runnable {
      *
      * @return
      */
-    public Iterator<AbstractBackgroundAssembly> waitingList() {
-        return this.waitingQueue.iterator();
+    public List<AbstractBackgroundAssembly> waitingList() {
+        return Lists.newArrayList(this.waitingQueue.iterator());
     }
 
     /**
@@ -191,6 +192,7 @@ public class BackgroundAssemblyManager implements Runnable {
                         e.printStackTrace();
                     }
                 }
+                ((AbstractBackgroundAssembly) r).updateStatus(BackgroundStatus.running);
             }
         }
 
