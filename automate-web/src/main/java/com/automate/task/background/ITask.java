@@ -13,5 +13,5 @@ public interface ITask {
         return null;
     }
 
-    void invoke() throws IllegalAccessException;
+    void invoke() throws Exception;
 }

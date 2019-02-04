@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.AssemblyLineEntity;
+import com.automate.exec.ExecStreamPrintMonitor;
 import com.automate.task.background.ITask;
 import com.automate.task.background.impl.MavenTask;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +63,7 @@ public class AssemblyLineServiceTest {
         assemblyLineService.save(model);
     }
 
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) throws Exception {
 
 
         JSONArray config = new JSONArray();
@@ -75,11 +76,12 @@ public class AssemblyLineServiceTest {
 
 
         MavenTask mavenTask2 = new MavenTask();
-        mavenTask2.setCustom("deplay");
+        mavenTask2.setCustom("compile");
         JSONObject json2 = (JSONObject) JSONObject.toJSON(mavenTask2);
         json2.put("className", mavenTask2.getClass().getName());
         config.add(json2);
 
+        ExecStreamPrintMonitor execStreamPrintMonitor = new ExecStreamPrintMonitor();
 
         for (int i = 0; i < config.size(); i++) {
             JSONObject item = config.getJSONObject(i);
@@ -93,7 +95,10 @@ public class AssemblyLineServiceTest {
 
                     ITask task = (ITask) JSONObject.parseObject(item.toJSONString(), cls);
 
+                    ((MavenTask) task).setExecStreamMonitor(execStreamPrintMonitor);
                     System.out.println(JSON.toJSONString(task));
+
+                    task.invoke();
                 }
             }
         }

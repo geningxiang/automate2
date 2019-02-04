@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class MavenTaskTest {
 
-    public static void main(String[] args) throws IllegalAccessException {
+    public static void main(String[] args) throws Exception {
 
         IExecStreamMonitor execStreamMonitor = new IExecStreamMonitor() {
             @Override
@@ -48,7 +48,7 @@ public class MavenTaskTest {
         task.setDir("D:/idea-workspace/Automate2");
         task.setExecStreamMonitor(execStreamMonitor);
 
-        ExecCommand execCommand = task.getExecCommand();
+        ExecCommand execCommand = task.buildExecCommand();
 
         ExecHelper.exec(execCommand);
 

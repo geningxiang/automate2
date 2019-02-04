@@ -1,10 +1,11 @@
 package com.automate.exec;
 
+import com.automate.common.utils.EnvironmentPathUtil;
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,19 +19,18 @@ public class ExecCommand {
     /**
      * 命令
      */
-    private List<String> commands;
+    private String command;
     /**
      * 环境变量
      * 格式为["name1=value1", "name2=value2"]
      */
-    private String[] envp;
+    private Map<String, String> envpMap;
     /**
      * 指定工作目录
      */
     private File dir;
 
-    private StringBuffer out = new StringBuffer(1024);
-    private StringBuffer error = new StringBuffer(1024);
+    private StringBuffer out = new StringBuffer(2048);
 
     /**
      * 返回状态码
@@ -43,9 +43,9 @@ public class ExecCommand {
     private IExecStreamMonitor cmdStreamMonitor;
 
     /**
-     * 默认的超时时间时 3分钟
+     * 默认的超时时间时 10分钟
      */
-    private long timeout = 3;
+    private long timeout = 10;
     private TimeUnit unit = TimeUnit.MINUTES;
 
     public ExecCommand(String command) throws IllegalAccessException {
@@ -60,9 +60,9 @@ public class ExecCommand {
         this(commands, null, null, cmdStreamMonitor);
     }
 
-    public ExecCommand(List<String> commands, String[] envp, File dir, IExecStreamMonitor cmdStreamMonitor) throws IllegalAccessException {
-        this.commands = ExecFilter.filter(commands);
-        this.envp = envp;
+    public ExecCommand(List<String> commands, Map<String, String> envpMap, File dir, IExecStreamMonitor cmdStreamMonitor) throws IllegalAccessException {
+        this.command = ExecFormatter.format(commands);
+        this.envpMap = envpMap;
         this.dir = dir;
         this.cmdStreamMonitor = cmdStreamMonitor;
     }
@@ -83,7 +83,7 @@ public class ExecCommand {
     }
 
     public void errorRead(String line) {
-        this.error.append(line).append(System.lineSeparator());
+        this.out.append(line).append(System.lineSeparator());
         if (this.cmdStreamMonitor != null) {
             this.cmdStreamMonitor.onMsg(line);
         }
@@ -91,7 +91,7 @@ public class ExecCommand {
 
     public void start() {
         if (this.cmdStreamMonitor != null) {
-            this.cmdStreamMonitor.onStart(StringUtils.join(this.commands, " && "));
+            this.cmdStreamMonitor.onStart(this.command);
         }
     }
 
@@ -102,12 +102,22 @@ public class ExecCommand {
         }
     }
 
-    public List<String> getCommands() {
-        return commands;
+    public String getCommand() {
+        return command;
     }
 
     public String[] getEnvp() {
-        return envp;
+        //从 ThreadLocal 中的 读取环境变量
+        Map<String, String> map = EnvironmentPathUtil.get();
+        if (this.envpMap != null && this.envpMap.size() > 0) {
+            map.putAll(this.envpMap);
+        }
+        String[] evnp = new String[map.size()];
+        int i = 0;
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            evnp[i++] = entry.getKey() + "=" + entry.getValue();
+        }
+        return evnp;
     }
 
     public File getDir() {
@@ -118,9 +128,6 @@ public class ExecCommand {
         return out;
     }
 
-    public StringBuffer getError() {
-        return error;
-    }
 
     public int getExitValue() {
         return exitValue;

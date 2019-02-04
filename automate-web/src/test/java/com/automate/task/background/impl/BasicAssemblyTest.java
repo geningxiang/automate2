@@ -1,10 +1,8 @@
 package com.automate.task.background.impl;
 
 import com.automate.exec.ExecCommand;
-import com.automate.exec.ExecHelper;
 import com.automate.exec.IExecStreamMonitor;
 import com.automate.task.background.BackgroundAssemblyManager;
-import com.automate.task.background.ITask;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
-
-import static org.junit.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,13 +45,13 @@ public class BasicAssemblyTest {
             }
         });
 
-        ExecTask execTask = new ExecTask(execCommand);
-
-        BasicAssembly basicAssembly = BasicAssembly.create("SpringBootDemo-编译", new ITask[]{execTask});
-
-        backgroundAssemblyManager.execute(basicAssembly);
-
-        Thread.sleep(10000);
+//        ExecTask execTask = new ExecTask(execCommand);
+//
+//        BasicAssembly basicAssembly = BasicAssembly.create("SpringBootDemo-编译", new ITask[]{execTask});
+//
+//        backgroundAssemblyManager.execute(basicAssembly);
+//
+//        Thread.sleep(10000);
     }
 
 }

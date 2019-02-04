@@ -2,6 +2,7 @@ package com.automate.task.background;
 
 import com.automate.common.SystemConfig;
 import com.automate.common.thread.GlobalThreadPoolManager;
+import com.automate.common.utils.EnvironmentPathUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -9,14 +10,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created with IntelliJ IDEA.
  * Description:
- *  后台流水线 管理器
+ * 后台流水线 管理器
+ *
  * @author: genx
  * @date: 2019/2/2 8:51
  */
@@ -184,7 +188,7 @@ public class BackgroundAssemblyManager implements Runnable {
                             waitingQueue.size());
                 }
 
-                if(((AbstractBackgroundAssembly) r).getLocks() != null){
+                if (((AbstractBackgroundAssembly) r).getLocks() != null) {
                     try {
                         //申请锁
                         BackgroundLock.acquire((AbstractBackgroundAssembly) r);
@@ -194,6 +198,8 @@ public class BackgroundAssemblyManager implements Runnable {
                 }
                 ((AbstractBackgroundAssembly) r).updateStatus(BackgroundStatus.running);
             }
+
+            EnvironmentPathUtil.remove();
         }
 
         @Override
@@ -203,7 +209,7 @@ public class BackgroundAssemblyManager implements Runnable {
                     ((AbstractBackgroundAssembly) r).setEndTime(System.currentTimeMillis());
                     this.currentMap.remove(((AbstractBackgroundAssembly) r).getUniqueId());
 
-                    if(((AbstractBackgroundAssembly) r).getLocks() != null){
+                    if (((AbstractBackgroundAssembly) r).getLocks() != null) {
                         //释放锁
                         BackgroundLock.release((AbstractBackgroundAssembly) r);
                     }
@@ -217,6 +223,8 @@ public class BackgroundAssemblyManager implements Runnable {
                                 waitingQueue.size());
                     }
                 }
+
+                EnvironmentPathUtil.remove();
             } finally {
                 super.afterExecute(r, t);
             }

@@ -15,7 +15,7 @@ import java.util.Arrays;
  * @author: genx
  * @date: 2019/2/3 9:59
  */
-public class MavenTask extends ExecTask {
+public class MavenTask extends AbstractExecTask {
 
     /*
     使用-B参数：该参数表示让Maven使用批处理模式构建项目，能够避免一些需要人工参与交互而造成的挂起状态
@@ -41,8 +41,9 @@ public class MavenTask extends ExecTask {
     }
 
 
+
     @Override
-    public ExecCommand getExecCommand() throws IllegalAccessException {
+    public ExecCommand buildExecCommand() throws Exception {
         StringBuilder cmd = new StringBuilder("mvn");
         String shortcut = StringUtils.trimToEmpty(this.shortcut);
 

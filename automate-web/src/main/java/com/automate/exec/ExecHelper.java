@@ -48,7 +48,7 @@ public class ExecHelper {
                 cmds[1] = "-c";
             }
 
-            cmds[2] = StringUtils.join(execCommand.getCommands(), " && ");
+            cmds[2] = execCommand.getCommand();
 
             logger.info(StringUtils.join(cmds, " "));
 
