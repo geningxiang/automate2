@@ -1,4 +1,16 @@
 var PAGE_SIZE_ARRAY = [20, 50, 100];
+
+var toPage = function(formId, pageNo){
+    $("#pageNo").val(pageNo);
+    $("#" + formId).submit();
+};
+
+var changePageSize = function(formId, pageSize){
+    $("#pageNo").val(1);
+    $("#pageSize").val(pageSize);
+    $("#" + formId).submit();
+
+};
 $(function () {
 
     var qryFrmId = $("#qryFrmId").eq(0);
@@ -30,7 +42,7 @@ $(function () {
     var beforeEl = '<div class="row-fluid">';
     beforeEl += '<div class="span6">';
     beforeEl += '<div id="dynamic-table_length" class="dataTables_length">';
-    beforeEl += '<label><select class="form-control">';
+    beforeEl += '<label><select class="form-control" onchange="changePageSize(\'qryFrmId\', this.value)">';
     for (var i = 0; i < PAGE_SIZE_ARRAY.length; i++) {
         beforeEl += '<option value="' + PAGE_SIZE_ARRAY[i] + '" ' + (pageSize == PAGE_SIZE_ARRAY[i] ? 'selected' : '') + '>' + PAGE_SIZE_ARRAY[i] + '</option>';
     }
@@ -44,26 +56,37 @@ $(function () {
     var afterEl = '<div class="row-fluid">'+
         '   <div class="span6">' +
         '    <div class="dataTables_info" id="dynamic-table_info">' +
-        '     Showing '+((pageNo - 1) * pageSize + 1)+' to '+((pageNo - 1) * pageSize + pageSize)+' of '+totalElements+' entries' +
+        '     Showing '+((pageNo - 1) * pageSize + 1)+' to '+ Math.min((pageNo - 1) * pageSize + pageSize, totalElements)+' of '+totalElements+' entries' +
         '    </div>' +
         '   </div>' +
         '   <div class="span6">' +
         '    <div class="dataTables_paginate paging_bootstrap pagination">' +
         '     <ul>';
 
-    afterEl += '<li><a href="javascript:toPage(\'qryFrmId\',1)"><i class="fa fa-backward"></i>&nbsp;</a></li>';
-    afterEl += '<li><a href="javascript:toPage(\'qryFrmId\',1)"><i class="fa fa-caret-left"></i>&nbsp;</a></li>';
+    if(pageNo > 1) {
+        afterEl += '<li class="first"> <a href="javascript:toPage(\'qryFrmId\',1)"><i class="fa fa-backward"></i>&nbsp;</a></li>';
+        afterEl += '<li class="prev"> <a href="javascript:toPage(\'qryFrmId\','+(pageNo-1)+')"><i class="fa fa-caret-left"></i>&nbsp;</a></a></li>';
+    }
 
 
+    for(var i = pageNo - 5; i < pageNo; i++){
+        if(i > 0) {
+            afterEl += '<li> <a href="javascript:toPage(\'qryFrmId\','+i+')">'+i+'</a></li>';
+        }
+    }
+    afterEl += '<li class="active"><a href="javascript:void(0);">'+pageNo+'</a></li>';
 
-    afterEl += '<li class="prev disabled"><a href="#"><i class="fa fa-backward"></i>← Previous</a></li>' +
-        '      <li class="active"><a href="#">1</a></li>' +
-        '      <li><a href="#">2</a></li>' +
-        '      <li><a href="#">3</a></li>' +
-        '      <li><a href="#">4</a></li>' +
-        '      <li><a href="#">5</a></li>' +
-        '      <li class="next"><a href="#">Next → </a></li>' +
-        '     </ul>' +
+    for(var i = pageNo + 1; i < pageNo + 5 && i <= totalPage; i++){
+        if(i > 0) {
+            afterEl += '<li> <a href="javascript:toPage(\'qryFrmId\','+i+')">'+i+'</a></li>';
+        }
+    }
+
+    if(pageNo < totalPage) {
+        afterEl += '<li class="next"> <a href="javascript:toPage(\'qryFrmId\','+(pageNo+1)+')"><i class="fa fa-caret-right"></i>&nbsp;</a></li>';
+        afterEl += '<li class="last"> <a href="javascript:toPage(\'qryFrmId\','+totalPage+')"><i  class="fa fa-forward"></i>&nbsp;</a></li>';
+    }
+    afterEl += '</ul>' +
         '    </div>' +
         '   </div>' +
         '  </div>';

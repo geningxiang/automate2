@@ -10,5 +10,8 @@
 
     <context:component-scan base-package="com.automate"/>
 
+    <bean class="com.automate.common.utils.SpringContextUtil"/>
+
+    <!-- 项目启动时将当前的配置参数输出到控制台 -->
     <bean class="com.automate.common.SystemConfig" init-method="show"></bean>
 </beans>

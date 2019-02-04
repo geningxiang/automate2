@@ -9,6 +9,10 @@
       <mapping class="com.automate.entity.AdminUserEntity"/>
       <mapping class="com.automate.entity.SourceCodeEntity"/>
       <mapping class="com.automate.entity.SourceCodeBranchEntity"/>
+      <mapping class="com.automate.entity.Ca2BuildLogEntity"/>
+      <mapping class="com.automate.entity.AssemblyLineEntity"/>
+      <mapping class="com.automate.entity.AssemblyLineLogEntity"/>
+      <mapping class="com.automate.entity.Ca2AssemblyLineTaskLogEntity"/>
 
   </session-factory>
 </hibernate-configuration>

@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Scope("singleton")
 public class BackgroundAssemblyManager implements Runnable {
-    private static volatile BackgroundAssemblyManager instance;
+    private static BackgroundAssemblyManager instance;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 

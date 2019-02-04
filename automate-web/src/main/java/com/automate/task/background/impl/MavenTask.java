@@ -1,8 +1,12 @@
 package com.automate.task.background.impl;
 
 import com.automate.exec.ExecCommand;
+import com.automate.exec.IExecStreamMonitor;
 import com.automate.task.background.ITask;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,6 +17,13 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class MavenTask extends ExecTask {
 
+    /*
+    使用-B参数：该参数表示让Maven使用批处理模式构建项目，能够避免一些需要人工参与交互而造成的挂起状态
+    使用-e参数：如果构建出现异常，该参数能让Maven打印完整的stack trace，以方便分析错误原因。
+
+    使用-U参数： 该参数能强制让Maven检查所有SNAPSHOT依赖更新，确保集成基于最新的状态，如果没有该参数，Maven默认以天为单位检查更新，而持续集成的频率应该比这高很多。
+
+     */
 
     public enum Lifecycle{
         clean,
@@ -55,13 +66,17 @@ public class MavenTask extends ExecTask {
         }
 
         if(this.testSkip){
-            cmd.append("  -DskipTests=true");
+            cmd.append(" -DskipTests=true");
         }
         if(StringUtils.isNotEmpty(this.custom)){
             cmd.append(" ").append(this.custom);
         }
+        File file = null;
+        if(StringUtils.isNotBlank(this.dir)){
+            file = new File(this.dir);
+        }
 
-        ExecCommand execCommand = new ExecCommand(cmd.toString());
+        ExecCommand execCommand = new ExecCommand(Arrays.asList(cmd.toString()), null, file, execStreamMonitor);
         return execCommand;
     }
 
@@ -82,5 +97,56 @@ public class MavenTask extends ExecTask {
      */
     private String custom;
 
+    private String dir;
 
+    private IExecStreamMonitor execStreamMonitor = null;
+
+
+    public boolean isClean() {
+        return clean;
+    }
+
+    public void setClean(boolean clean) {
+        this.clean = clean;
+    }
+
+    public boolean isTestSkip() {
+        return testSkip;
+    }
+
+    public void setTestSkip(boolean testSkip) {
+        this.testSkip = testSkip;
+    }
+
+    public String getShortcut() {
+        return shortcut;
+    }
+
+    public void setShortcut(String shortcut) {
+        this.shortcut = shortcut;
+    }
+
+    public String getCustom() {
+        return custom;
+    }
+
+    public void setCustom(String custom) {
+        this.custom = custom;
+    }
+
+    public String getDir() {
+        return dir;
+    }
+
+    public void setDir(String dir) {
+        this.dir = dir;
+    }
+
+    public IExecStreamMonitor getExecStreamMonitor() {
+        return execStreamMonitor;
+    }
+
+    public void setExecStreamMonitor(IExecStreamMonitor execStreamMonitor) {
+        this.execStreamMonitor = execStreamMonitor;
+    }
 }

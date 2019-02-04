@@ -18,7 +18,7 @@
                     HOOK日志
                 </header>
                 <form id="qryFrmId" name="qryFrm" class="query-form" action="/admin/sourcecode/hookList" method="post" data-target="#hookLogTable">
-                    <input type="hidden" name="page" id="pageNo" value="${pager.number + 1}"/>
+                    <input type="hidden" name="pageNo" id="pageNo" value="${pager.number + 1}"/>
                     <input type="hidden" name="pageSize" id="pageSize" value="${pager.size}"/>
                     <input type="hidden" name="totalElements" id="totalElements" value="${pager.totalElements}"/>
                 </form>
