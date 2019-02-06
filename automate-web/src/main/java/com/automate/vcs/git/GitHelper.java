@@ -111,8 +111,9 @@ public class GitHelper extends AbstractCVSHelper {
                         checkoutCommand.call();
 
                         git.fetch().call();
-                        //reset hard  以防万一  其实用不着
+                        //reset hard
                         git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + remoteBranchName).call();
+
                         //从远程库 pull 代码
                         PullResult pullResult = git.pull().setRemoteBranchName(remoteBranchName).setCredentialsProvider(this.credentialsProvider).call();
                         if(!pullResult.isSuccessful()){
@@ -160,6 +161,30 @@ public class GitHelper extends AbstractCVSHelper {
                 list.add(JgitFormat.parse(commit));
             }
             return list;
+        } finally {
+            if(git != null){
+                git.close();
+            }
+            db.close();
+        }
+    }
+
+    @Override
+    public boolean checkOut(String branchName, String commitId) throws Exception {
+        FileRepository db = openFileRepository();
+        Git git = null;
+        try {
+            git = Git.wrap(db);
+
+            git.checkout().setName(branchName).call();
+            if(StringUtils.isNotBlank(commitId)) {
+                Ref resetCommand = git.reset().setMode(ResetCommand.ResetType.HARD).setRef(commitId).call();
+                return resetCommand.getObjectId().toObjectId().name().startsWith(commitId);
+            } else {
+                //reset hard
+                git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + branchName).call();
+                return true;
+            }
         } finally {
             if(git != null){
                 git.close();

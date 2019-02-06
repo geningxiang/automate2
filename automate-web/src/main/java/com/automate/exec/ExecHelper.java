@@ -7,7 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,9 +53,21 @@ public class ExecHelper {
 
             cmds[2] = execCommand.getCommand();
 
-            logger.info(StringUtils.join(cmds, " "));
+            logger.debug(StringUtils.join(cmds, " "));
 
-            process = Runtime.getRuntime().exec(cmds, execCommand.getEnvp(), execCommand.getDir());
+            Map<String, String> envpMap = execCommand.getEnvpMap();
+            if(envpMap == null){
+                envpMap = System.getenv();
+            } else {
+                envpMap.putAll(System.getenv());
+            }
+            String[] evnp = new String[envpMap.size()];
+            int i = 0;
+            for (Map.Entry<String, String> entry : envpMap.entrySet()) {
+                evnp[i++] = entry.getKey() + "=" + entry.getValue();
+            }
+
+            process = Runtime.getRuntime().exec(cmds, evnp, execCommand.getDir());
             execCommand.start();
 
             process.getOutputStream().close();

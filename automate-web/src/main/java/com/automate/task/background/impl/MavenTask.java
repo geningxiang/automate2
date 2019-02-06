@@ -16,6 +16,15 @@ import java.util.Arrays;
  * @date: 2019/2/3 9:59
  */
 public class MavenTask extends AbstractExecTask {
+    @Override
+    public void setSourceCodeId(int sourceCodeId) {
+
+    }
+
+    @Override
+    public String[] getLocks() {
+        return new String[0];
+    }
 
     /*
     使用-B参数：该参数表示让Maven使用批处理模式构建项目，能够避免一些需要人工参与交互而造成的挂起状态

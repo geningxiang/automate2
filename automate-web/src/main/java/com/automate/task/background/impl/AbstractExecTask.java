@@ -1,8 +1,10 @@
 package com.automate.task.background.impl;
 
 import com.automate.entity.AssemblyLineTaskLogEntity;
+import com.automate.entity.SourceCodeEntity;
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecHelper;
+import com.automate.exec.IExecStreamMonitor;
 import com.automate.task.background.ITask;
 
 /**
@@ -15,28 +17,36 @@ import com.automate.task.background.ITask;
 public abstract class AbstractExecTask implements ITask {
     protected ExecCommand execCommand = null;
 
-    private long startTime;
-
+    private AssemblyLineTaskLogEntity assemblyLineTaskLogEntity;
 
     protected abstract ExecCommand buildExecCommand() throws Exception;
 
-    private void beforeInvoke() {
-        startTime = System.currentTimeMillis();
+    @Override
+    public void setAssemblyLineTaskLogEntity(AssemblyLineTaskLogEntity assemblyLineTaskLogEntity){
+        this.assemblyLineTaskLogEntity = assemblyLineTaskLogEntity;
     }
 
     @Override
-    public void invoke() throws Exception {
-        beforeInvoke();
+    public AssemblyLineTaskLogEntity getAssemblyLineTaskLogEntity(){
+        return this.assemblyLineTaskLogEntity;
+    }
+
+
+
+    @Override
+    public void invoke(SourceCodeEntity sourceCodeEntity) throws Exception {
 
         ExecCommand execCommand = buildExecCommand();
         if (execCommand != null) {
             ExecHelper.exec(execCommand);
+
+            if(assemblyLineTaskLogEntity != null){
+                assemblyLineTaskLogEntity.setStatus(execCommand.getExitValue());
+                assemblyLineTaskLogEntity.setContent(execCommand.getOut().toString());
+            }
         }
 
     }
 
-    private void afterInvoke(ExecCommand execCommand) {
-        AssemblyLineTaskLogEntity model = new AssemblyLineTaskLogEntity();
-    }
 
 }

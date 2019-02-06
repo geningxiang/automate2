@@ -14,7 +14,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "CA2_ASSEMBLY_LINE_TASK_LOG")
 public class AssemblyLineTaskLogEntity {
-    private int id;
+    private Integer id;
     private Integer sourceCodeId;
     private String branch;
     private String commitId;
@@ -24,18 +24,18 @@ public class AssemblyLineTaskLogEntity {
     private Short type;
     private Short kind;
     private String content;
-    private Short status;
+    private Integer status;
     private Timestamp startTime;
     private Timestamp endTime;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -131,13 +131,14 @@ public class AssemblyLineTaskLogEntity {
 
     @Basic
     @Column(name = "STATUS", nullable = true)
-    public Short getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
+
 
     @Basic
     @Column(name = "START_TIME", nullable = true)

@@ -5,9 +5,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.AssemblyLineEntity;
 import com.automate.exec.ExecStreamPrintMonitor;
+import com.automate.task.background.BackgroundAssemblyManager;
 import com.automate.task.background.ITask;
+import com.automate.task.background.impl.BaseSourceCodeAssembly;
 import com.automate.task.background.impl.MavenTask;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,9 @@ public class AssemblyLineServiceTest {
 
     @Autowired
     private AssemblyLineService assemblyLineService;
+
+    @Autowired
+    private BackgroundAssemblyManager backgroundAssemblyManager;
 
     @Test
     public void findAll() {
@@ -63,6 +69,18 @@ public class AssemblyLineServiceTest {
         assemblyLineService.save(model);
     }
 
+    @Test
+    public void test() throws Exception {
+        Optional<AssemblyLineEntity> assemblyLineEntity = assemblyLineService.getModel(1);
+
+        backgroundAssemblyManager.execute(BaseSourceCodeAssembly.create(assemblyLineEntity.get(), "master", null));
+
+
+
+        Thread.sleep(10000);
+
+    }
+
     public static void main(String[] args) throws Exception {
 
 
@@ -73,10 +91,11 @@ public class AssemblyLineServiceTest {
         JSONObject json = (JSONObject) JSONObject.toJSON(mavenTask);
         json.put("className", mavenTask.getClass().getName());
         config.add(json);
+        System.out.println(config.toJSONString());
 
 
         MavenTask mavenTask2 = new MavenTask();
-        mavenTask2.setCustom("compile");
+        //mavenTask2.setCustom("compile");
         JSONObject json2 = (JSONObject) JSONObject.toJSON(mavenTask2);
         json2.put("className", mavenTask2.getClass().getName());
         config.add(json2);
@@ -98,7 +117,7 @@ public class AssemblyLineServiceTest {
                     ((MavenTask) task).setExecStreamMonitor(execStreamPrintMonitor);
                     System.out.println(JSON.toJSONString(task));
 
-                    task.invoke();
+//                    task.invoke();
                 }
             }
         }

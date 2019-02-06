@@ -27,7 +27,7 @@ public class ExecFormatter {
         //TODO 从数据库读取
         String[] allows = new String[]{
                 "mvn", "maven"
-                //, "cd", "ls", "dir", "ping"
+                , "cd", "ls", "dir", "ping", "echo"
         };
         for (String allow : allows) {
             ALLOW_MAP.put(allow, null);

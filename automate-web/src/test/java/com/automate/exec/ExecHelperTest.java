@@ -2,6 +2,10 @@ package com.automate.exec;
 
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -14,7 +18,8 @@ public class ExecHelperTest {
 
     public static void main(String[] args) throws IllegalAccessException {
 
-        ExecCommand execCommand = new ExecCommand(ImmutableList.of("ping www.baidu.com", "ping www.fcaimao.com"), new IExecStreamMonitor() {
+        File dir = new File("E:/work/1");
+        ExecCommand execCommand = new ExecCommand(ImmutableList.of("echo %path%"), null, dir, new IExecStreamMonitor() {
             @Override
             public void onStart(String commond) {
                 System.out.println(commond);

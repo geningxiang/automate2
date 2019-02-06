@@ -106,18 +106,13 @@ public class ExecCommand {
         return command;
     }
 
-    public String[] getEnvp() {
+    public Map<String, String> getEnvpMap() {
         //从 ThreadLocal 中的 读取环境变量
         Map<String, String> map = EnvironmentPathUtil.get();
         if (this.envpMap != null && this.envpMap.size() > 0) {
             map.putAll(this.envpMap);
         }
-        String[] evnp = new String[map.size()];
-        int i = 0;
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            evnp[i++] = entry.getKey() + "=" + entry.getValue();
-        }
-        return evnp;
+        return map;
     }
 
     public File getDir() {
@@ -143,5 +138,9 @@ public class ExecCommand {
 
     public IExecStreamMonitor getCmdStreamMonitor() {
         return cmdStreamMonitor;
+    }
+
+    public void setCmdStreamMonitor(IExecStreamMonitor cmdStreamMonitor) {
+        this.cmdStreamMonitor = cmdStreamMonitor;
     }
 }

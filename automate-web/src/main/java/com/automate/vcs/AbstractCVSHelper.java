@@ -24,4 +24,5 @@ public abstract class AbstractCVSHelper implements ICVSHelper {
         this.passWord = repository.getPassWord();
     }
 
+
 }

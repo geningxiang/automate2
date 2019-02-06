@@ -15,6 +15,16 @@ import java.util.Objects;
 @Entity
 @Table(name = "CA2_ASSEMBLY_LINE_LOG")
 public class AssemblyLineLogEntity {
+
+    public enum Status{
+        init,
+        running,
+        cancel,
+        error,
+        success
+    }
+
+
     private Integer id;
     private Integer assemblyLineId;
     private Integer sourceCodeId;
@@ -22,6 +32,7 @@ public class AssemblyLineLogEntity {
     private String commitId;
     private String config;
     private Integer adminId;
+    private Timestamp createTime;
     private Timestamp startTime;
     private Timestamp endTime;
     private Byte status;
@@ -127,4 +138,17 @@ public class AssemblyLineLogEntity {
         this.status = status;
     }
 
+    public void setStatus(Status status) {
+        this.status = (byte)status.ordinal();
+    }
+
+    @Basic
+    @Column(name = "CREATE_TIME", nullable = true)
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
 }
