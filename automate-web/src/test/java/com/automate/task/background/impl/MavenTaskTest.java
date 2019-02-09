@@ -45,7 +45,6 @@ public class MavenTaskTest {
 
         MavenTask task = JSON.parseObject(s, MavenTask.class);
 
-        task.setDir("D:/idea-workspace/Automate2");
         task.setExecStreamMonitor(execStreamMonitor);
 
         ExecCommand execCommand = task.buildExecCommand();

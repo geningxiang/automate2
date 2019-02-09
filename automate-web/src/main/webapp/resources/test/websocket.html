@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket测试</title>
+</head>
+<body>
+
+<script>
+    var ws = null;
+
+    //判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        ws = new WebSocket("ws://" + window.location.host + "/webSocket");
+
+        ws.onopen = function () {
+            console.log("onopen");
+        };
+        //这个事件是接受后端传过来的数据
+        ws.onmessage = function (event) {
+            //根据业务逻辑解析数据
+            console.log(event.data);
+        };
+        ws.onclose = function (event) {
+            console.log("onclose");
+
+        };
+
+        setInterval(function(){
+            ws.send("" + new Date().getTime());
+        }, 1000);
+    }
+</script>
+</body>
+</html>

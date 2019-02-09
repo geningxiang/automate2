@@ -1,11 +1,15 @@
 package com.automate.task.background.impl;
 
+import com.automate.common.SystemConfig;
 import com.automate.entity.AssemblyLineTaskLogEntity;
 import com.automate.entity.SourceCodeEntity;
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecHelper;
 import com.automate.exec.IExecStreamMonitor;
 import com.automate.task.background.ITask;
+
+import javax.activation.FileDataSource;
+import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,6 +42,9 @@ public abstract class AbstractExecTask implements ITask {
 
         ExecCommand execCommand = buildExecCommand();
         if (execCommand != null) {
+
+            execCommand.setDir(new File(SystemConfig.getSourceCodeDir(sourceCodeEntity)));
+
             ExecHelper.exec(execCommand);
 
             if(assemblyLineTaskLogEntity != null){

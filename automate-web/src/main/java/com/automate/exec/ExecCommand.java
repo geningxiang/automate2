@@ -119,6 +119,10 @@ public class ExecCommand {
         return dir;
     }
 
+    public void setDir(File dir) {
+        this.dir = dir;
+    }
+
     public StringBuffer getOut() {
         return out;
     }

@@ -2,7 +2,6 @@ package com.automate.common;
 
 import com.automate.entity.SourceCodeEntity;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -18,7 +17,7 @@ import java.util.Properties;
 /**
  * Created with IntelliJ IDEA.
  * Description:
- * 项目配置参数      读取  config.properties 文件
+ * 项目配置参数      读取  config.PROPERTIES 文件
  *
  * @author: genx
  * @date: 2019/1/29 0:09
@@ -28,7 +27,7 @@ public class SystemConfig {
 
     private static String AUTOMATE_DATA_DIR = null;
 
-    private static final Properties properties = new Properties();
+    private static final Properties PROPERTIES = new Properties();
 
 
     static {
@@ -43,7 +42,7 @@ public class SystemConfig {
                 resource = resourceLoader.getResource(SystemContants.DEFAULT_CONFIG_LOCATION);
             }
             if (resource != null && resource.exists()) {
-                properties.load(resource.getInputStream());
+                PROPERTIES.load(resource.getInputStream());
             } else {
                 logger.error("未读取到配置文件:{}", configLocation);
             }
@@ -75,13 +74,13 @@ public class SystemConfig {
      * @return
      */
     public static String getMavenRepositoryDir() {
-        String dir = trimToEmpty(properties.getProperty(SystemContants.KEY_MAVEN_REPOSITORY));
+        String dir = trimToEmpty(PROPERTIES.getProperty(SystemContants.KEY_MAVEN_REPOSITORY));
         Assert.hasText(dir, "maven.repository is not set");
         return dir;
     }
 
     public static String getProperty(String key) {
-        return trimToEmpty(properties.getProperty(key));
+        return trimToEmpty(PROPERTIES.getProperty(key));
     }
 
     /**
@@ -90,14 +89,14 @@ public class SystemConfig {
     public static void show() {
         //怎么显示的好看些  计算一下key最大长度 对齐等号     ^_^
         int maxKeyLength = 0;
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (Map.Entry<Object, Object> entry : PROPERTIES.entrySet()) {
             maxKeyLength = Math.max(maxKeyLength, trimToEmpty(entry.getKey()).length());
         }
         StringBuilder data = new StringBuilder(2048);
         data.append("\r\n");
         String title = "############ System config ############";
         data.append(title).append("\r\n");
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+        for (Map.Entry<Object, Object> entry : PROPERTIES.entrySet()) {
             int len = trimToEmpty(entry.getKey()).length();
             data.append(trimToEmpty(entry.getKey()));
             data.append(StringUtils.repeat(" ", maxKeyLength - len));
@@ -113,7 +112,7 @@ public class SystemConfig {
      * 初始化 项目文件夹
      */
     private static void initDataDir() {
-        String automateDataDir = trimToEmpty(properties.get(SystemContants.KEY_DATA_DIR));
+        String automateDataDir = trimToEmpty(PROPERTIES.get(SystemContants.KEY_DATA_DIR));
         if (StringUtils.isNotEmpty(automateDataDir)) {
             automateDataDir = automateDataDir.replace("\\", File.separator);
             if (!automateDataDir.endsWith(File.separator)) {
@@ -121,7 +120,7 @@ public class SystemConfig {
             }
             File dir = new File(automateDataDir);
             if (!dir.exists()) {
-                dir.mkdirs();
+                boolean result = dir.mkdirs();
                 AUTOMATE_DATA_DIR = dir.getAbsolutePath();
             } else if (dir.isDirectory()) {
                 AUTOMATE_DATA_DIR = dir.getAbsolutePath();
@@ -146,7 +145,7 @@ public class SystemConfig {
 
                     AUTOMATE_DATA_DIR = webRoot.getAbsolutePath() + "/" + SystemContants.DEFAULT_DATA_DIR_NAME;
                     //设置  用于显示
-                    properties.put(SystemContants.KEY_DATA_DIR, AUTOMATE_DATA_DIR);
+                    PROPERTIES.put(SystemContants.KEY_DATA_DIR, AUTOMATE_DATA_DIR);
                 }
             } catch (Exception e) {
                 logger.error("init dataDir error", e);
@@ -169,7 +168,7 @@ public class SystemConfig {
          * 不推荐直接使用默认配置文件    不利于环境分离
          * PROPERTY_CONFIG_LOCATION 优先级更高
          */
-        private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.properties";
+        private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.PROPERTIES";
 
         /**
          * 默认的 基础文件夹名称

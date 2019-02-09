@@ -81,12 +81,8 @@ public class MavenTask extends AbstractExecTask {
         if(StringUtils.isNotEmpty(this.custom)){
             cmd.append(" ").append(this.custom);
         }
-        File file = null;
-        if(StringUtils.isNotBlank(this.dir)){
-            file = new File(this.dir);
-        }
 
-        ExecCommand execCommand = new ExecCommand(Arrays.asList(cmd.toString()), null, file, execStreamMonitor);
+        ExecCommand execCommand = new ExecCommand(Arrays.asList(cmd.toString()), null, null, execStreamMonitor);
         return execCommand;
     }
 
@@ -107,7 +103,6 @@ public class MavenTask extends AbstractExecTask {
      */
     private String custom;
 
-    private String dir;
 
     private IExecStreamMonitor execStreamMonitor = null;
 
@@ -142,14 +137,6 @@ public class MavenTask extends AbstractExecTask {
 
     public void setCustom(String custom) {
         this.custom = custom;
-    }
-
-    public String getDir() {
-        return dir;
-    }
-
-    public void setDir(String dir) {
-        this.dir = dir;
     }
 
     public IExecStreamMonitor getExecStreamMonitor() {

@@ -23,7 +23,7 @@ public class BackgroundLock {
      * 操作 map 时的锁
      * 用 ConcurrentHashMap 的话  一直想不出来 如何在删除元素时 保持原子性
      */
-    private static final Object lock = new Object();
+    private static final Object LOCK = new Object();
 
     public static void acquire(AbstractBackgroundAssembly task) throws InterruptedException {
         if (task.getLocks() != null) {
@@ -31,7 +31,7 @@ public class BackgroundLock {
             for (int i = 0; i < task.getLocks().length; i++) {
 
                 String key = task.getLocks()[i];
-//                synchronized (lock) {
+//                synchronized (LOCK) {
                 Semaphore s = new Semaphore(1);
                 Semaphore value = LOCK_MAP.putIfAbsent(key, s);
                 if (value == null) {
@@ -55,7 +55,7 @@ public class BackgroundLock {
     public static void release(AbstractBackgroundAssembly task) {
         if (task.getLocks() != null) {
             for (int i = task.getLocks().length - 1; i >= 0; i--) {
-                synchronized (lock) {
+                synchronized (LOCK) {
                     Semaphore s = LOCK_MAP.get(task.getLocks()[i]);
                     if (s != null) {
                         //释放资源

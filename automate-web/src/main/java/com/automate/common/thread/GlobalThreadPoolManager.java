@@ -1,10 +1,7 @@
 package com.automate.common.thread;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AtomicLongMap;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,10 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date: 2019/2/1 21:42
  */
 public class GlobalThreadPoolManager {
-    private static final GlobalThreadPoolManager instance = new GlobalThreadPoolManager();
+    private static final GlobalThreadPoolManager INSTANCE = new GlobalThreadPoolManager();
 
     public static final GlobalThreadPoolManager getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     private final GlobalThreadPool globalThreadPool = new GlobalThreadPool();

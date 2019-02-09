@@ -77,7 +77,7 @@ public class AssemblyLineServiceTest {
 
 
 
-        Thread.sleep(10000);
+        Thread.sleep(20000);
 
     }
 

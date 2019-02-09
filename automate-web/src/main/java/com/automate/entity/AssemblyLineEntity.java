@@ -46,7 +46,7 @@ public class AssemblyLineEntity {
     /**
      * 是否自动触发
      */
-    private boolean autoTrigger = true;
+    private Boolean autoTrigger;
 
     /**
      * 定时触发 cron 表达式
@@ -162,11 +162,11 @@ public class AssemblyLineEntity {
 
     @Basic
     @Column(name = "AUTO_TRIGGER", nullable = false)
-    public boolean getAutoTrigger() {
+    public Boolean getAutoTrigger() {
         return autoTrigger;
     }
 
-    public void setAutoTrigger(boolean autoTrigger) {
+    public void setAutoTrigger(Boolean autoTrigger) {
         this.autoTrigger = autoTrigger;
     }
 

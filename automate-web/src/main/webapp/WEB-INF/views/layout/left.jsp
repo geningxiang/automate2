@@ -26,7 +26,7 @@
             <a href="javascript:;"> <i class="fa fa-twitter"></i> <span>任务</span> </a>
             <ul class="sub">
                 <li><a href="/admin/background/dashboard" target="mainContent">任务中心</a></li>
-                <li><a href="/admin/sourcecode/branchList" target="mainContent">流水线</a></li>
+                <li><a href="/admin/assembly/list" target="mainContent">流水线</a></li>
                 <li><a href="/admin/sourcecode/branchList" target="mainContent">任务日志</a></li>
             </ul>
         </li>
