@@ -80,6 +80,6 @@ public class GogsHook extends AbstractGitHook {
             hookLogEntity.setHandleStatus(HookLogEntity.HandleStatus.IGNORE);
             hookLogEntity.setHandleResult("不需要关注的事件");
         }
-        hookLogRepository.save(hookLogEntity);
+        hookLogService.save(hookLogEntity);
     }
 }

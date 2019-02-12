@@ -20,29 +20,23 @@
                 <div class="panel-body">
                     <div class="clearfix">
                         <div class="btn-group">
-                            <button id="editable-sample_new" class="btn green" onclick="window.open('detail')">
+                            <button id="editable-sample_new" class="btn green" onclick="window.open('/admin/assembly/detail')">
                                 Add New <i class="fa fa-plus"></i>
                             </button>
                         </div>
-                        <div class="btn-group pull-right">
-                            <button class="btn dropdown-toggle" data-toggle="dropdown">Tools <i class="fa fa-angle-down"></i>
-                            </button>
-                            <ul class="dropdown-menu pull-right">
-                                <li><a href="#">Print</a></li>
-                                <li><a href="#">Save as PDF</a></li>
-                                <li><a href="#">Export to Excel</a></li>
-                            </ul>
-                        </div>
+
                     </div>
 
                 <table class="table table-striped table-advance table-hover">
                     <thead>
                     <tr>
-                        <th>源码仓库ID</th>
-                        <th>分支名称</th>
-                        <th>最后提交SHA1</th>
-                        <th>最后提交者</th>
-                        <th>最后提交时间</th>
+                        <th>源码仓库</th>
+                        <th>流水线名称</th>
+                        <th>备注</th>
+                        <th>关联分支</th>
+                        <th>是否自动触发</th>
+                        <th>定时</th>
+                        <th>最后触发时间</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -54,16 +48,23 @@
                     </c:if>
                     <c:forEach var="_item" items="${list}" varStatus="status">
                         <tr>
-                            <td>${_item.sourceCodeId}</td>
-                            <td>${_item.branchName}</td>
-                            <td>${_item.lastCommitId}</td>
-                            <td>${_item.lastCommitUser}</td>
                             <td>
-                                <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${_item.lastCommitTime}" />
+                                【${_item.sourceCodeId}】${sourceCodeMap[_item.sourceCodeId].name}
+                            </td>
+                            <td>${_item.name}</td>
+                            <td>${_item.remark}</td>
+                            <td>${_item.branches}</td>
+                            <td>
+                                ${_item.autoTrigger}
                             </td>
                             <td>
-                                <button class="btn btn-success btn-xs" onclick="sourceCodeBranchDetail(${_item.id})"><i class="fa fa-comments"></i> 提交日志 </button>
-                                &nbsp;&nbsp;<button class="btn btn-warning btn-xs"><i class="fa fa-refresh"></i> 同步 </button>
+                                ${_item.triggerCron}
+                            </td>
+                            <td>
+                                <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${_item.lastRunTime}" />
+                            </td>
+                            <td>
+                                <button class="btn btn-info btn-xs" onclick="assemblyDetail(${_item.id})"><i class="fa fa-pencil"></i> 编辑</button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -79,9 +80,9 @@
 <jsp:include page="../common/common_js.jsp"></jsp:include>
 <script>
 
-    function sourceCodeBranchDetail(id) {
+    function assemblyDetail(id) {
         if(id && id > 0)
-            window.open("/admin/sourcecode/branchDetail?id=" + id);
+            window.open("/admin/assembly/detail?id=" + id);
     }
 </script>
 </body>

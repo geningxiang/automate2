@@ -48,7 +48,9 @@
                                     <tr>
                                         <td>${_item.id}</td>
                                         <td>${_item.source}</td>
-                                        <td>2019-02-02 18:00:00</td>
+                                        <td>
+                                            <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${_item.createTime}" />
+                                        </td>
                                         <td>${_item.event}</td>
                                         <td>${_item.delivery}</td>
                                         <td>

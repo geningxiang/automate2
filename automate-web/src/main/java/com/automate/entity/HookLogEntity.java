@@ -1,6 +1,7 @@
 package com.automate.entity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -73,6 +74,8 @@ public class HookLogEntity {
      * 关联的项目    如果可以关联上
      */
     private Integer projectId;
+
+    private Timestamp createTime;
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -179,4 +182,13 @@ public class HookLogEntity {
         this.projectId = projectId;
     }
 
+    @Basic
+    @Column(name = "CREATE_TIME", nullable = true)
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
 }

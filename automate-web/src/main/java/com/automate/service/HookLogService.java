@@ -1,16 +1,15 @@
 package com.automate.service;
 
-import com.automate.repository.HookLogRepository;
 import com.automate.entity.HookLogEntity;
+import com.automate.repository.HookLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.sql.Timestamp;
 import java.util.Optional;
 
 /**
@@ -48,13 +47,9 @@ public class HookLogService {
      * 添加对象
      **/
     public void save(HookLogEntity model) {
-        hookLogRepository.save(model);
-    }
-
-    /**
-     * 更新对象
-     **/
-    public void update(HookLogEntity model) {
+        if(model.getCreateTime() == null) {
+            model.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        }
         hookLogRepository.save(model);
     }
 

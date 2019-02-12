@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <html>
 <head>
@@ -17,7 +17,7 @@
                 <header class="panel-heading">
                     代码仓库列表
                 </header>
-                <table class="table table-striped table-advance table-hover">
+                <table class="table table-hover p-table">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -54,13 +54,18 @@
                                 </c:choose>
                             </td>
                             <td>
-                                <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${_item.createTime}" />
+                                <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${_item.createTime}"/>
                             </td>
                             <td>
-                                <button class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> 修改 </button>
-
-                                &nbsp;&nbsp;<button class="btn btn-warning btn-xs" onclick="sourceCodeSync(${_item.id})"><i class="fa  fa-refresh"></i> 同步 </button>
-
+                                <button class="btn btn-primary btn-xs" onclick="sourceCodeDetail(${_item.id})"><i
+                                        class="fa fa-eye"></i> 详情
+                                </button>
+                                &nbsp;&nbsp;
+                                <button class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> 修改</button>
+                                &nbsp;&nbsp;
+                                <button class="btn btn-warning btn-xs" onclick="sourceCodeSync(${_item.id})"><i
+                                        class="fa  fa-refresh"></i> 同步
+                                </button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -95,11 +100,17 @@
 
     });
 
-    function sourceCodeSync(id){
-        $.post("/api/sourcecode/sync", {id: id}, function(data){
+    function sourceCodeDetail(id) {
+        if (id && id > 0)
+            window.open("/admin/sourcecode/detail?id=" + id);
+
+    }
+
+    function sourceCodeSync(id) {
+        $.post("/api/sourcecode/sync", {id: id}, function (data) {
             console.log(data);
-            if(data.status == 200){
-                if(data.data > 0){
+            if (data.status == 200) {
+                if (data.data > 0) {
                     toastr.success("成功同步" + data.data + "个分支", "提示")
                 } else {
                     toastr.info("当前已经是最新的", "提示")

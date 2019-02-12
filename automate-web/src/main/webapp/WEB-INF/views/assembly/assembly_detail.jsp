@@ -43,46 +43,46 @@
         <div class="col-lg-12">
             <section class="panel">
                 <header class="panel-heading">
-                    流水线
+                    <h2>流水线详情</h2>
                 </header>
                 <div class="panel-body">
                     <form class="form-horizontal tasi-form" method="post" id="myForm">
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">流水线名称</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="name">
+                                <form:hidden path="assemblyLineEntity.id"/>
+                                <form:input path="assemblyLineEntity.name" cssClass="form-control"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">代码仓库ID</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="sourceCodeId">
-
+                                <form:input path="assemblyLineEntity.sourceCodeId" cssClass="form-control"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">相关分支</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="branches">
+                                <form:input path="assemblyLineEntity.branches" cssClass="form-control"/>
                                 <span class="help-block">正则表达式</span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">备注</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" name="remark"></textarea>
+                                <form:textarea path="assemblyLineEntity.remark" cssClass="form-control"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">是否自动触发</label>
                             <div class="col-sm-10">
-                                <input type="checkbox" name="autoTrigger" value="true" checked>
+                                <form:checkbox path="assemblyLineEntity.autoTrigger" value="true"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">定时</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="triggerCron">
+                                <form:input path="assemblyLineEntity.triggerCron" cssClass="form-control"/>
                                 <span class="help-block">cron表达式</span>
                             </div>
                         </div>
@@ -95,6 +95,9 @@
     <div class="row">
         <div class="col-lg-2">
             <section class="panel clearfix">
+                <header class="panel-heading">
+                    步骤
+                </header>
                 <div class="panel-body">
                     <ul class="step-ul" id="step-ul">
 
@@ -104,8 +107,8 @@
                             <div class="btn-group">
                                 <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button" aria-expanded="false"> 新增任务 <i class="fa fa-plus"></i> </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">Maven任务</a></li>
-                                    <li><a href="#">自定义Exec任务</a></li>
+                                    <li><a href="javascript:addTask('com.automate.task.background.impl.MavenTask')">Maven任务</a></li>
+                                    <li><a href="javascript:addTask('com.automate.task.background.impl.ExecTask')">自定义Exec任务</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -128,16 +131,21 @@
         </div>
 
     </div>
-
-    <button id="doSubmit">保存</button>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <button class="btn btn-success btn-lg" id="doSubmit">保存</button>
+        </div>
+    </div>
     <!-- page end-->
 </section>
 
 <jsp:include page="../common/common_js.jsp"></jsp:include>
 <script src="/resources/assets/assembly/assembly.js"></script>
 <script>
+    var config = '${assemblyLineEntity.config}';
 $(function(){
-    AssemblyUtil.init('[{"testSkip":true,"custom":"install","className":"com.automate.task.background.impl.MavenTask","clean":true,"locks":[]},{"testSkip":true,"custom":"install","className":"com.automate.task.background.impl.MavenTask","clean":true,"locks":[]},{"testSkip":true,"custom":"install","className":"com.automate.task.background.impl.MavenTask","clean":true,"locks":[]}]');
+
+    AssemblyUtil.init(config);
 })
 
 </script>

@@ -6,9 +6,7 @@ import com.automate.entity.SourceCodeEntity;
 import com.automate.service.SourceCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
@@ -23,9 +21,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/sourcecode")
 public class SourceCodeController {
+
     @Autowired
     private SourceCodeService sourceCodeService;
 
+    /**
+     * 代码仓库列表
+     *
+     * @return
+     */
     @RequestMapping("/list")
     public ResponseEntity<JSONArray> list() {
         Iterable<SourceCodeEntity> list = sourceCodeService.findAll();
@@ -36,13 +40,19 @@ public class SourceCodeController {
         return ResponseEntity.ok(array);
     }
 
+    /**
+     * 同步单个代码仓库
+     *
+     * @param id
+     * @return
+     */
     @RequestMapping("/sync")
     public ResponseEntity sync(Integer id) {
-        if(id == null || id <= 0){
+        if (id == null || id <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
         }
         Optional<SourceCodeEntity> sourceCodeEntity = sourceCodeService.getModel(id);
-        if(!sourceCodeEntity.isPresent()){
+        if (!sourceCodeEntity.isPresent()) {
             return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的代码仓库");
         }
         int updated = 0;

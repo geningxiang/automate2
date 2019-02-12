@@ -17,7 +17,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -107,6 +109,15 @@ public class SourceCodeService {
 
     public Iterable<SourceCodeEntity> findAll() {
         return sourceCodeRepository.findAll(Sort.by("id"));
+    }
+
+    public Map<Integer, SourceCodeEntity> findAllWidthMap() {
+        Iterable<SourceCodeEntity> list = this.findAll();
+        Map<Integer, SourceCodeEntity> map = new HashMap<>(64);
+        for (SourceCodeEntity sourceCodeEntity : list) {
+            map.put(sourceCodeEntity.getId(), sourceCodeEntity);
+        }
+        return map;
     }
 
     /**

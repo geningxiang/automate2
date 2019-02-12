@@ -3,6 +3,7 @@ package com.automate.vcs.git;
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.SourceCodeEntity;
 import com.automate.repository.HookLogRepository;
+import com.automate.service.HookLogService;
 import com.automate.service.SourceCodeService;
 import com.automate.vcs.ICVSHelper;
 import com.automate.vcs.vo.CommitLog;
@@ -26,7 +27,7 @@ public abstract class AbstractGitHook {
     protected SourceCodeService sourceCodeService;
 
     @Autowired
-    protected HookLogRepository hookLogRepository;
+    protected HookLogService hookLogService;
 
     public abstract boolean match(HttpServletRequest request, JSONObject data);
 

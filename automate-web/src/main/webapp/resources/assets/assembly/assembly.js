@@ -7,7 +7,7 @@
                 return '<div class="form-group">\n' +
                     '                            <label class="col-sm-2 col-sm-2 control-label">任务名称</label>\n' +
                     '                            <div class="col-sm-10">\n' +
-                    '                                <input type="text" class="form-control" value="Maven任务">\n' +
+                    '                                <input type="text" class="form-control" value="'+(data.name || 'Maven任务')+'">\n' +
                     '                            </div>\n' +
                     '                        </div>\n' +
                     '                        <div class="form-group">\n' +
@@ -19,12 +19,12 @@
                     '                        <div class="form-group">\n' +
                     '                            <label class="col-sm-2 col-sm-2 control-label">Lifecycle</label>\n' +
                     '                            <div class="col-sm-10">\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="clean"> clean</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="validate"> validate</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="compile" checked> compile</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="test"> test</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="package"> package</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="install"> install</label></div>\n' +
+                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="clean" '+(data.lifecycle == 'clean' ? 'checked' : '')+'> clean</label></div>\n' +
+                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="validate" '+(data.lifecycle == 'validate' ? 'checked' : '')+'> validate</label></div>\n' +
+                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="compile" '+(!data.lifecycle || data.lifecycle == 'compile' ? 'checked' : '')+'> compile</label></div>\n' +
+                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="test" '+(data.lifecycle == 'test' ? 'checked' : '')+'> test</label></div>\n' +
+                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="package" '+(data.lifecycle == 'package' ? 'checked' : '')+'> package</label></div>\n' +
+                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="install" '+(data.lifecycle == 'install' ? 'checked' : '')+'> install</label></div>\n' +
                     '                            </div>\n' +
                     '                        </div>';
             }
@@ -54,6 +54,23 @@
         var data = tempMap[taskKey];
 
         $("#taskContent").html(ASSEMBLY_MAP[data.className].build(data));
+    };
+
+    window.addTask = function(clsName){
+        console.log('addTask', clsName);
+
+        if(!ASSEMBLY_MAP[clsName]){
+            alert('任务类型错误:' + clsName);
+            return;
+        }
+        var item = {};
+        item.className = clsName;
+        item.key = '' + keyIndex++;
+        tempMap[item.key] = item;
+        $("#step-ul li.active").removeClass("active");
+        $("#step-ul").append('<li class="active" data-task-key="' + item.key + '">' + ASSEMBLY_MAP[item.className].name + '<i class="fa fa-times"></i></li>');
+        showContent(item.key);
+
     };
 
     var saveTask = function () {

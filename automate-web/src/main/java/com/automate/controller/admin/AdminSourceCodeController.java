@@ -51,6 +51,7 @@ public class AdminSourceCodeController extends BaseController {
     public String branchList(HttpServletRequest request, ModelMap modelMap) {
         Iterable<SourceCodeBranchEntity> list = sourceCodeBranchService.findAll();
         modelMap.put("list", Lists.newArrayList(list));
+        modelMap.put("sourceCodeMap", sourceCodeService.findAllWidthMap());
         return "sourcecode/sourcecode_branch_list";
     }
 
