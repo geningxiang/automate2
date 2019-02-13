@@ -14,4 +14,5 @@
 
     <!-- 项目启动时将当前的配置参数输出到控制台 -->
     <bean class="com.automate.common.SystemConfig" init-method="show"></bean>
+
 </beans>

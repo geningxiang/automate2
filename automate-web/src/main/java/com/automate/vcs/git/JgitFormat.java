@@ -19,7 +19,7 @@ public class JgitFormat {
             return null;
         }
         CommitLog commitLog = new CommitLog();
-        commitLog.setId(revCommit.getTree().getId().getName());
+        commitLog.setId(revCommit.toObjectId().getName());
         commitLog.setAuthor(parse(revCommit.getAuthorIdent()));
         commitLog.setCommitter(parse(revCommit.getCommitterIdent()));
         commitLog.setCommitTime(revCommit.getCommitTime() * 1000L);

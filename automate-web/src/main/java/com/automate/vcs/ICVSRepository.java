@@ -9,6 +9,8 @@ package com.automate.vcs;
  */
 public interface ICVSRepository {
 
+    Integer getId();
+
     String getLocalDir();
 
     String getRemoteUrl();

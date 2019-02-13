@@ -45,13 +45,12 @@ public class BaseSourceCodeAssembly extends AbstractBackgroundAssembly {
 
     public static BaseSourceCodeAssembly create(AssemblyLineEntity assemblyLineEntity, @NonNull String branchName, @Nullable String commitId) throws Exception {
         Set<String> locks = new HashSet<>(16);
+        locks.add("SOURCE_CODE_" + assemblyLineEntity.getSourceCodeId());
         List<ITask> tasks = TaskConfigFormat.parse(assemblyLineEntity.getConfig());
 
 
         AssemblyLineLogService assemblyLineLogService = SpringContextUtil.getBean("assemblyLineLogService", AssemblyLineLogService.class);
         AssemblyLineTaskLogService assemblyLineTaskLogService = SpringContextUtil.getBean("assemblyLineTaskLogService", AssemblyLineTaskLogService.class);
-
-
 
         AssemblyLineLogEntity assemblyLineLogEntity = new AssemblyLineLogEntity();
         assemblyLineLogEntity.setAssemblyLineId(assemblyLineEntity.getId());

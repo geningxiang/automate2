@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -15,4 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AssemblyLineRepository extends PagingAndSortingRepository<AssemblyLineEntity, Integer>, JpaSpecificationExecutor<AssemblyLineEntity> {
 
+    List<AssemblyLineEntity> getAllBySourceCodeId(int sourceCodeId);
+
+    List<AssemblyLineEntity> getAllBySourceCodeIdAndAutoTrigger(int sourceCodeId, boolean autoTrigger);
 }

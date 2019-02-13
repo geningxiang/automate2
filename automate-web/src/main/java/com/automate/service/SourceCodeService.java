@@ -3,11 +3,15 @@ package com.automate.service;
 import com.alibaba.fastjson.JSON;
 import com.automate.entity.SourceCodeBranchEntity;
 import com.automate.entity.SourceCodeEntity;
+import com.automate.event.EventCenter;
+import com.automate.event.handle.IEventHandler;
+import com.automate.event.po.SourceCodePushEvent;
 import com.automate.repository.SourceCodeBranchRepository;
 import com.automate.repository.SourceCodeRepository;
 import com.automate.vcs.ICVSHelper;
 import com.automate.vcs.git.GitHelper;
 import com.automate.vcs.vo.CommitLog;
+import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +34,7 @@ import java.util.Optional;
  * @date: 2019/1/24 23:26
  */
 @Service
-public class SourceCodeService {
+public class SourceCodeService{
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -69,10 +73,10 @@ public class SourceCodeService {
         return total;
     }
 
-    public int sync(SourceCodeEntity projectEntity, ICVSHelper cvsHelper, List<String> branchList) throws Exception {
+    public int sync(SourceCodeEntity sourceCodeEntity, ICVSHelper cvsHelper, List<String> branchList) throws Exception {
         for (String branchName : branchList) {
             List<CommitLog> commitLogs = cvsHelper.commitLogs(branchName);
-            this.updateBranch(projectEntity.getId(), branchName, commitLogs);
+            this.updateBranch(sourceCodeEntity.getId(), branchName, commitLogs);
         }
         return branchList.size();
     }

@@ -1,6 +1,8 @@
 package com.automate.service;
 
 import com.automate.entity.SourceCodeEntity;
+import com.automate.vcs.git.GitHelper;
+import com.automate.vcs.git.hook.GithubHook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -74,5 +78,16 @@ public class SourceCodeServiceTest {
     public void sync() throws Exception {
         Optional<SourceCodeEntity> sourceCodeEntity = sourceCodeService.getModel(1);
         sourceCodeService.sync(sourceCodeEntity.get());
+    }
+
+    @Test
+    public void syncWidthBranchList() throws Exception {
+        Optional<SourceCodeEntity> sourceCodeEntity = sourceCodeService.getModel(1);
+        GitHelper gitHelper = new GitHelper(sourceCodeEntity.get());
+        List<String> branchList = new ArrayList<>();
+        branchList.add("master");
+        branchList.add("develop1");
+        branchList.add("develop2");
+        sourceCodeService.sync(sourceCodeEntity.get(), gitHelper, branchList);
     }
 }

@@ -1,7 +1,10 @@
 package com.automate.vcs.git;
 
 import com.automate.vcs.ICVSRepository;
+import com.automate.vcs.vo.CommitLog;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -24,12 +27,47 @@ public class GitHelperTest {
 
 
     @Test
-    public void commitLogs() {
+    public void commitLogs() throws Exception {
+        GitHelper gitHelper = new GitHelper(new ICVSRepository() {
+            @Override
+            public Integer getId() {
+                return 1;
+            }
+
+            @Override
+            public String getLocalDir() {
+                return "E:\\automate-data\\sourcecode\\1";
+            }
+
+            @Override
+            public String getRemoteUrl() {
+                return "http://60.190.13.162:6104/genx/SpringBootDemo.git";
+            }
+
+            public String getUserName(){
+                return "genx";
+            }
+
+            public String getPassWord(){
+                return "ge10111011";
+            }
+        });
+
+         List<CommitLog> list =  gitHelper.commitLogs("master");
+        for (CommitLog commitLog : list) {
+            System.out.println(commitLog.getId());
+        }
+
     }
 
     @Test
     public void checkOut() throws Exception {
         GitHelper gitHelper = new GitHelper(new ICVSRepository() {
+            @Override
+            public Integer getId() {
+                return null;
+            }
+
             @Override
             public String getLocalDir() {
                 return "E:\\automate-data\\sourcecode\\1";

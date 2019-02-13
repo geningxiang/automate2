@@ -1,5 +1,7 @@
 package com.automate.vcs.git;
 
+import com.automate.event.EventCenter;
+import com.automate.event.po.SourceCodePushEvent;
 import com.automate.vcs.AbstractCVSHelper;
 import com.automate.vcs.ICVSRepository;
 import com.automate.vcs.vo.CommitLog;
@@ -121,6 +123,10 @@ public class GitHelper extends AbstractCVSHelper {
                             continue;
                         }
                         if(id == null || !id.equals(pullResult.getMergeResult().getNewHead().getName())){
+
+                            //TODO pushed
+                            EventCenter.post(new SourceCodePushEvent(super.sourceCodeId, remoteBranchName, pullResult.getMergeResult().getNewHead().getName()));
+
                             updateBranchList.add(remoteBranchName);
                         }
 
