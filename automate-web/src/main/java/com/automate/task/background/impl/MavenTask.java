@@ -54,6 +54,7 @@ public class MavenTask extends AbstractExecTask {
     @Override
     public ExecCommand buildExecCommand() throws Exception {
         StringBuilder cmd = new StringBuilder("mvn");
+
         String shortcut = StringUtils.trimToEmpty(this.shortcut);
 
         //3个命令需要特殊处理
@@ -78,6 +79,15 @@ public class MavenTask extends AbstractExecTask {
         if(this.testSkip){
             cmd.append(" -DskipTests=true");
         }
+
+        /*
+            使用-B参数：该参数表示让Maven使用批处理模式构建项目，能够避免一些需要人工参与交互而造成的挂起状态
+            使用-e参数：如果构建出现异常，该参数能让Maven打印完整的stack trace，以方便分析错误原因。
+         */
+
+
+        cmd.append(" -B -e");
+
         if(StringUtils.isNotEmpty(this.custom)){
             cmd.append(" ").append(this.custom);
         }

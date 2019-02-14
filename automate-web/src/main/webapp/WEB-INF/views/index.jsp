@@ -1,12 +1,13 @@
-<%@ page pageEncoding="UTF-8"%>
+<%@ page pageEncoding="UTF-8" %>
 <html>
 <head>
     <jsp:include page="common/head.jsp"/>
     <style>
-        #container{
+        #container {
             padding: 0;
         }
-        #main-content{
+
+        #main-content {
             width: 100%;
             height: 100%;
             box-sizing: border-box;
@@ -14,6 +15,7 @@
             margin: 0;
             border: none;
         }
+
         @media (max-width: 768px) {
             #main-content {
                 padding-left: 0 !important;
@@ -42,5 +44,32 @@
 
 </section>
 <jsp:include page="common/common_js.jsp"/>
+
+<script>
+
+    "use strict";
+
+
+    //chrome://inspect/#workers 调试
+
+    var worker = new SharedWorker('/resources/js/ws-shared-worker.js');
+    worker.onerror = function(e){
+        console.error(e);
+    }
+    worker.port.onmessage = function (e) {
+        console.log(e.data);
+    };
+    worker.port.onerror = function(e) {
+        console.log('ERROR: Line ', e.lineno, ' in ', e.filename, ': ', e.message);
+    }
+    worker.port.start();
+
+
+    setInterval(function () {
+        console.log("send",  new Date().getTime());
+        worker.port.postMessage("" + new Date().getTime());
+    }, 3000);
+
+</script>
 </body>
 </html>

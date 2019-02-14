@@ -1,10 +1,16 @@
 package com.automate.controller.admin;
 
+import com.automate.controller.BaseController;
 import com.automate.entity.AssemblyLineEntity;
+import com.automate.entity.AssemblyLineLogEntity;
+import com.automate.entity.HookLogEntity;
+import com.automate.service.AssemblyLineLogService;
 import com.automate.service.AssemblyLineService;
 import com.automate.service.SourceCodeService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +26,16 @@ import java.util.Optional;
  */
 @Controller
 @RequestMapping("/admin/assembly")
-public class AdminAssemblyController {
+public class AdminAssemblyController extends BaseController {
 
     @Autowired
     private SourceCodeService sourceCodeService;
 
     @Autowired
     private AssemblyLineService assemblyLineService;
+
+    @Autowired
+    private AssemblyLineLogService assemblyLineLogService;
 
 
     @RequestMapping("/list")
@@ -51,5 +60,14 @@ public class AdminAssemblyController {
         }
         modelMap.put("assemblyLineEntity", assemblyLineEntity);
         return "assembly/assembly_detail";
+    }
+
+    @RequestMapping("/assemblyLoglist")
+    public String assemblyLoglist(Integer pageNo, Integer pageSize, ModelMap modelMap){
+        Page<AssemblyLineLogEntity> pager = assemblyLineLogService.findAll(buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id")));
+        modelMap.put("pager", pager);
+        modelMap.put("assemblyLineMap", assemblyLineService.findAllWidthMap());
+        modelMap.put("sourceCodeMap", sourceCodeService.findAllWidthMap());
+        return "assembly/assembly_log_list";
     }
 }

@@ -1,7 +1,7 @@
 package com.automate.vcs.git;
 
 import com.automate.event.EventCenter;
-import com.automate.event.po.SourceCodePushEvent;
+import com.automate.event.po.SourceCodePullEvent;
 import com.automate.vcs.AbstractCVSHelper;
 import com.automate.vcs.ICVSRepository;
 import com.automate.vcs.vo.CommitLog;
@@ -125,7 +125,7 @@ public class GitHelper extends AbstractCVSHelper {
                         if(id == null || !id.equals(pullResult.getMergeResult().getNewHead().getName())){
 
                             //TODO pushed
-                            EventCenter.post(new SourceCodePushEvent(super.sourceCodeId, remoteBranchName, pullResult.getMergeResult().getNewHead().getName()));
+                            EventCenter.post(new SourceCodePullEvent(super.sourceCodeId, remoteBranchName, pullResult.getMergeResult().getNewHead().getName()));
 
                             updateBranchList.add(remoteBranchName);
                         }
@@ -176,7 +176,7 @@ public class GitHelper extends AbstractCVSHelper {
     }
 
     @Override
-    public boolean checkOut(String branchName, String commitId) throws Exception {
+    public String checkOut(String branchName, String commitId) throws Exception {
         FileRepository db = openFileRepository();
         Git git = null;
         try {
@@ -185,11 +185,11 @@ public class GitHelper extends AbstractCVSHelper {
             git.checkout().setName(branchName).call();
             if(StringUtils.isNotBlank(commitId)) {
                 Ref resetCommand = git.reset().setMode(ResetCommand.ResetType.HARD).setRef(commitId).call();
-                return resetCommand.getObjectId().toObjectId().name().startsWith(commitId);
+                return resetCommand.getObjectId().toObjectId().name();
             } else {
                 //reset hard
-                git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + branchName).call();
-                return true;
+                Ref ref = git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + branchName).call();
+                return ref.getObjectId().toObjectId().name();
             }
         } finally {
             if(git != null){

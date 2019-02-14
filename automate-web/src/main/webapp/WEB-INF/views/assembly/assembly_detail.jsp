@@ -143,11 +143,13 @@
 <script src="/resources/assets/assembly/assembly.js"></script>
 <script>
     var config = '${assemblyLineEntity.config}';
-$(function(){
+    $(function(){
 
-    AssemblyUtil.init(config);
-})
+        AssemblyUtil.init(config);
+    })
 
+
+    console.log('window.opener', window.opener);
 </script>
 </body>
 </html>

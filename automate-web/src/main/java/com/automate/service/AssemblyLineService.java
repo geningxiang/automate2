@@ -2,8 +2,9 @@ package com.automate.service;
 
 import com.alibaba.fastjson.JSON;
 import com.automate.entity.AssemblyLineEntity;
+import com.automate.entity.SourceCodeEntity;
 import com.automate.event.handle.IEventHandler;
-import com.automate.event.po.SourceCodePushEvent;
+import com.automate.event.po.SourceCodePullEvent;
 import com.automate.repository.AssemblyLineRepository;
 import com.automate.task.background.BackgroundAssemblyManager;
 import com.automate.task.background.impl.BaseSourceCodeAssembly;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -39,6 +42,15 @@ public class AssemblyLineService implements IEventHandler {
 
     public Iterable<AssemblyLineEntity> findAll() {
         return assemblyLineRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    }
+
+    public Map<Integer, AssemblyLineEntity> findAllWidthMap() {
+        Iterable<AssemblyLineEntity> list = this.findAll();
+        Map<Integer, AssemblyLineEntity> map = new HashMap<>(64);
+        for (AssemblyLineEntity assemblyLineEntity : list) {
+            map.put(assemblyLineEntity.getId(), assemblyLineEntity);
+        }
+        return map;
     }
 
     /**
@@ -65,18 +77,18 @@ public class AssemblyLineService implements IEventHandler {
 
 
     @Subscribe
-    public void sourceCodePushed(SourceCodePushEvent sourceCodePushEvent) {
-        logger.debug("pushed:{}", JSON.toJSONString(sourceCodePushEvent));
+    public void sourceCodePushed(SourceCodePullEvent sourceCodePullEvent) {
+        logger.debug("pushed:{}", JSON.toJSONString(sourceCodePullEvent));
 
-        List<AssemblyLineEntity> list = this.getAllBySourceCodeIdWidthAutoTrigger(sourceCodePushEvent.getSourceCodeId());
+        List<AssemblyLineEntity> list = this.getAllBySourceCodeIdWidthAutoTrigger(sourceCodePullEvent.getSourceCodeId());
         if(list.size() > 0){
             for (AssemblyLineEntity assemblyLineEntity : list) {
 
 
-                if(StringUtils.isNotBlank(assemblyLineEntity.getBranches()) && isMatch(assemblyLineEntity.getBranches(), sourceCodePushEvent.getBranchName())){
+                if(StringUtils.isNotBlank(assemblyLineEntity.getBranches()) && isMatch(assemblyLineEntity.getBranches(), sourceCodePullEvent.getBranchName())){
                     logger.debug("触发自动化流水线:id={}" , assemblyLineEntity.getId());
                     try {
-                        backgroundAssemblyManager.execute(BaseSourceCodeAssembly.create(assemblyLineEntity, sourceCodePushEvent.getBranchName(), sourceCodePushEvent.getCommitId()));
+                        backgroundAssemblyManager.execute(BaseSourceCodeAssembly.create(assemblyLineEntity, sourceCodePullEvent.getBranchName(), sourceCodePullEvent.getCommitId()));
                     } catch (Exception e) {
                         logger.error("发布后台任务失败", e);
                     }

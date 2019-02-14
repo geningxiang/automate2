@@ -90,8 +90,14 @@
     var keyIndex = 1;
     window.AssemblyUtil = {
         init: function (jsonStr) {
-            var jsonArray = JSON.parse(jsonStr);
-            console.log(jsonArray);
+            var jsonArray = [];
+            try{
+                jsonArray = JSON.parse(jsonStr);
+                console.log(jsonArray);
+            }catch (e) {
+                console.warn(e);
+            }
+
 
             var item;
             for (var i = 0; i < jsonArray.length; i++) {

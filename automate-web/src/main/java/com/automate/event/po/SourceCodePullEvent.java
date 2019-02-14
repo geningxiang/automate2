@@ -7,13 +7,13 @@ package com.automate.event.po;
  * @author: genx
  * @date: 2019/2/13 22:38
  */
-public class SourceCodePushEvent implements IEvent {
+public class SourceCodePullEvent implements IEvent {
 
     private final Integer sourceCodeId;
     private final String branchName;
     private final String commitId;
 
-    public SourceCodePushEvent(Integer sourceCodeId, String branchName, String commitId) {
+    public SourceCodePullEvent(Integer sourceCodeId, String branchName, String commitId) {
         this.sourceCodeId = sourceCodeId;
         this.branchName = branchName;
         this.commitId = commitId;

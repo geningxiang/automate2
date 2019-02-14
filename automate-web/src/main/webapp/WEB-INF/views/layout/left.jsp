@@ -19,8 +19,7 @@
             <a href="javascript:;"> <i class="fa fa-youtube-play"></i> <span>构建</span> </a>
             <ul class="sub">
                 <li><a href="/admin/assembly/list" target="mainContent">流水线</a></li>
-                <li><a href="/admin/sourcecode/list" target="mainContent">build记录</a></li>
-                <li><a href="/admin/sourcecode/branchList" target="mainContent">包管理</a></li>
+                <li><a href="/admin/assembly/assemblyLoglist" target="mainContent">构建记录</a></li>
             </ul>
         </li>
         <li class="sub-menu">

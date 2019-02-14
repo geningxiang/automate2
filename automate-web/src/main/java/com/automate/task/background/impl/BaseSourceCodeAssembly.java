@@ -1,5 +1,6 @@
 package com.automate.task.background.impl;
 
+import com.automate.common.SystemConfig;
 import com.automate.common.utils.SpringContextUtil;
 import com.automate.entity.AssemblyLineEntity;
 import com.automate.entity.AssemblyLineLogEntity;
@@ -15,11 +16,11 @@ import com.automate.vcs.git.GitHelper;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,12 +35,14 @@ public class BaseSourceCodeAssembly extends AbstractBackgroundAssembly {
     private final String branchName;
     private final String commitId;
     private final List<ITask> tasks;
+    private final AssemblyLineLogEntity assemblyLineLogEntity;
 
-    private BaseSourceCodeAssembly(AssemblyLineEntity assemblyLineEntity, @NonNull String branchName, @Nullable String commitId, List<ITask> tasks, Set<String> locks) {
+    private BaseSourceCodeAssembly(AssemblyLineEntity assemblyLineEntity, @NonNull String branchName, @Nullable String commitId, AssemblyLineLogEntity assemblyLineLogEntity,List<ITask> tasks, Set<String> locks) {
         super(locks);
         this.assemblyLineEntity = assemblyLineEntity;
         this.branchName = branchName;
         this.commitId = commitId;
+        this.assemblyLineLogEntity = assemblyLineLogEntity;
         this.tasks = tasks;
     }
 
@@ -82,7 +85,7 @@ public class BaseSourceCodeAssembly extends AbstractBackgroundAssembly {
             task.setAssemblyLineTaskLogEntity(model);
 
         }
-        return new BaseSourceCodeAssembly(assemblyLineEntity, branchName, commitId, tasks, locks);
+        return new BaseSourceCodeAssembly(assemblyLineEntity, branchName, commitId, assemblyLineLogEntity, tasks, locks);
     }
 
 
@@ -95,30 +98,56 @@ public class BaseSourceCodeAssembly extends AbstractBackgroundAssembly {
     @Override
     public void run() {
         if (tasks != null) {
+            SourceCodeService sourceCodeService = SpringContextUtil.getBean("sourceCodeService", SourceCodeService.class);
+            AssemblyLineTaskLogService assemblyLineTaskLogService = SpringContextUtil.getBean("assemblyLineTaskLogService", AssemblyLineTaskLogService.class);
+            AssemblyLineLogService assemblyLineLogService = SpringContextUtil.getBean("assemblyLineLogService", AssemblyLineLogService.class);
 
 
+            int finished = 0;
             try {
-                SourceCodeService sourceCodeService = SpringContextUtil.getBean("sourceCodeService", SourceCodeService.class);
-                AssemblyLineTaskLogService assemblyLineTaskLogService = SpringContextUtil.getBean("assemblyLineTaskLogService", AssemblyLineTaskLogService.class);
 
+                assemblyLineLogEntity.setStartTime(new Timestamp(System.currentTimeMillis()));
+                assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.running);
 
                 //
                 Optional<SourceCodeEntity> sourceCodeEntity = sourceCodeService.getModel(this.assemblyLineEntity.getSourceCodeId());
                 if(sourceCodeEntity.isPresent()){
                     //先将代码仓库切换到指定版本
                     GitHelper gitHelper = new GitHelper(sourceCodeEntity.get());
-                    gitHelper.checkOut(this.branchName, this.commitId);
+                    assemblyLineLogEntity.setCommitId(gitHelper.checkOut(this.branchName, this.commitId));
 
                     for (ITask task : tasks) {
                         task.invoke(sourceCodeEntity.get());
 
                         assemblyLineTaskLogService.save(task.getAssemblyLineTaskLogEntity());
+                        finished++;
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw, true));
+
+                for (int i = finished; i < tasks.size(); i++) {
+                    AssemblyLineTaskLogEntity taskLog = tasks.get(i).getAssemblyLineTaskLogEntity();
+                    if(i == finished){
+                        taskLog.setContent(sw.toString());
+                    }
+                    taskLog.setStatus(-1);
+                    if(taskLog.getStartTime() == null){
+                        taskLog.setStartTime(new Timestamp(System.currentTimeMillis()));
+                    }
+                    taskLog.setEndTime(new Timestamp(System.currentTimeMillis()));
+                    assemblyLineTaskLogService.save(taskLog);
+                }
             } finally {
                 //TODO 终止处理
+                assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
+                if(finished == tasks.size()){
+                    assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.success);
+                } else {
+                    assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.error);
+                }
+                assemblyLineLogService.save(assemblyLineLogEntity);
             }
 
         }

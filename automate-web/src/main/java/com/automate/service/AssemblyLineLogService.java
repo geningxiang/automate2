@@ -3,6 +3,8 @@ package com.automate.service;
 import com.automate.entity.AssemblyLineLogEntity;
 import com.automate.repository.AssemblyLineLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,10 @@ public class AssemblyLineLogService {
 
     @Autowired
     private AssemblyLineLogRepository assemblyLineLogRepository;
+
+    public Page<AssemblyLineLogEntity> findAll(Pageable pageable) {
+        return assemblyLineLogRepository.findAll(pageable);
+    }
 
 
     public Iterable<AssemblyLineLogEntity> findAll() {

@@ -1,6 +1,6 @@
 package com.automate.event;
 
-import com.automate.event.po.SourceCodePushEvent;
+import com.automate.event.po.SourceCodePullEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,7 +20,7 @@ public class EventCenterTest {
 
     @Test
     public void test() throws InterruptedException {
-        SourceCodePushEvent event = new SourceCodePushEvent(1, "master", "ec58318d01eadd8c7f16854024b1bcdb694ea107");
+        SourceCodePullEvent event = new SourceCodePullEvent(1, "master", "ec58318d01eadd8c7f16854024b1bcdb694ea107");
 
         EventCenter.post(event);
 

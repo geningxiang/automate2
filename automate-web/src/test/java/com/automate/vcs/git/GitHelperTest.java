@@ -44,16 +44,16 @@ public class GitHelperTest {
                 return "http://60.190.13.162:6104/genx/SpringBootDemo.git";
             }
 
-            public String getUserName(){
+            public String getUserName() {
                 return "genx";
             }
 
-            public String getPassWord(){
+            public String getPassWord() {
                 return "ge10111011";
             }
         });
 
-         List<CommitLog> list =  gitHelper.commitLogs("master");
+        List<CommitLog> list = gitHelper.commitLogs("master");
         for (CommitLog commitLog : list) {
             System.out.println(commitLog.getId());
         }
@@ -78,16 +78,16 @@ public class GitHelperTest {
                 return "http://60.190.13.162:6104/genx/SpringBootDemo.git";
             }
 
-            public String getUserName(){
+            public String getUserName() {
                 return "genx";
             }
 
-            public String getPassWord(){
+            public String getPassWord() {
                 return "ge10111011";
             }
         });
 
-        boolean result = gitHelper.checkOut("master", "76e5731e0ef0cd49374c94bdd2b773d34071d11e");
+        gitHelper.checkOut("master", "76e5731e0ef0cd49374c94bdd2b773d34071d11e");
         //        System.out.println(result);
 
 //        boolean result = gitHelper.checkOut("develop1", "06cd27b092b798dc8926f076a619dd482e9ecee0");
