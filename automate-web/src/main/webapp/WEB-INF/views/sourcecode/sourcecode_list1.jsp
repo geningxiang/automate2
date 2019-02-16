@@ -9,33 +9,35 @@
 </head>
 <body>
 
-<section class="">
+<section class="wrapper site-min-height">
     <!-- page start-->
-
-    <section class="panel">
-        <header class="panel-heading clearfix">
-            <h3 class="pull-left">项目列表</h3>
-        </header>
-    </section>
-
-
-    <div class="wrapper panel-body" style="padding:15px 30px;">
-        <div class="row antd-pro-pages-list-card-list-cardList">
-            <div class="col-lg-4">
-                <div class="ant-list-item-content ant-list-item-content-single">
-                    <button type="button" class="ant-btn antd-pro-pages-list-card-list-newButton ant-btn-dashed" onclick="$('#createProjectModal').modal('show');">
-                        <i aria-label="图标: plus" class="anticon anticon-plus">
-                        <svg viewBox="64 64 896 896" class="" data-icon="plus" width="1em" height="1em"
-                             fill="currentColor" aria-hidden="true">
-                            <path d="M848 474H550V152h-76v322H176c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h298v322h76V550h298c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path>
-                        </svg>
-                    </i><span> 新建项目</span></button>
-                </div>
-            </div>
-
-            <div id="sourceCodeListBody">
-
-            </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading clearfix">
+                    <h3 class="pull-left">代码仓库列表</h3>
+                    <div class="pull-right">
+                        <a class="btn btn-info" style="margin-top: 20px;" data-toggle="modal" href="#createProjectModal">
+                            <i class="fa fa-plus"></i> 创建项目
+                        </a>
+                    </div>
+                </header>
+                <table class="table table-hover p-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>备注</th>
+                        <th>VCS地址</th>
+                        <th><i class=" fa fa-edit"></i> Status</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="sourceCodeListBody">
+                    </tbody>
+                </table>
+            </section>
         </div>
     </div>
     <!-- page end-->
@@ -120,40 +122,7 @@
     <!-- vertical center large Modal end -->
 </section>
 
-
 <script id="sourceCodeListTemplate" type="text/html">
-    {{if data }}
-    {{each data item i}}
-    <div class="col-lg-4">
-        <div class="ant-card antd-pro-pages-list-card-list-card ant-card-bordered ant-card-hoverable">
-            <div class="ant-card-body">
-                <div class="ant-card-meta">
-                    <div class="ant-card-meta-avatar">
-                        <img alt="" src="https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/java/java.png">
-                    </div>
-                    <div class="ant-card-meta-detail">
-                        <div class="ant-card-meta-title">{{item.name}}</div>
-                        <div class="ant-card-meta-description">
-                            <div class="antd-pro-components-ellipsis-index-ellipsis antd-pro-pages-list-card-list-item antd-pro-components-ellipsis-index-lineClamp">
-                                {{item.remark}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ul class="ant-card-actions">
-                <li style="width: 50%;"><span><a href="javascript:sourceCodeDetail('{{item.id}}')">详情</a></span></li>
-                <li style="width: 50%;"><span><a>操作二</a></span></li>
-            </ul>
-        </div>
-    </div>
-    {{/each}}
-    {{else}}
-    <tr><td align="center" colspan="6">没有找到相关的记录！</td></tr>
-    {{/if}}
-</script>
-
-<script id="sourceCodeListTemplate1" type="text/html">
     {{if data }}
         {{each data item i}}
             <tr>

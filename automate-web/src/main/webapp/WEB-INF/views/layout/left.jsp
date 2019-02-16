@@ -8,9 +8,9 @@
         </li>
 
         <li class="sub-menu">
-            <a href="javascript:;"> <i class="fa fa-code"></i> <span>代码</span> </a>
+            <a href="javascript:;"> <i class="fa fa-code"></i> <span>项目管理</span> </a>
             <ul class="sub">
-                <li><a href="/admin/sourcecode/list" target="mainContent">代码仓库</a></li>
+                <li><a href="/admin/sourcecode/list" target="mainContent">项目列表</a></li>
                 <li><a href="/admin/sourcecode/branchList" target="mainContent">分支列表</a></li>
                 <li><a href="/admin/sourcecode/hookList" target="mainContent">hook日志</a></li>
             </ul>

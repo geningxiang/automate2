@@ -4480,11 +4480,11 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 }
 
 .ui-sortable > li {
-    padding: 15px 0 15px 35px !important ;
+    padding: 15px 0 15px 35px;
     position: relative;
     background: #f5f6f8;
     margin-bottom: 2px;
-    border-bottom   : none !important;
+    border-bottom: none;
 }
 
 .ui-sortable li.list-primary {
@@ -6264,3 +6264,38 @@ header.blue-bg .search:focus {
     height: 34px;
 }
 
+
+
+/** add by genx */
+.pageFooter .pagination{
+    margin: 0;
+    float: right;
+    padding-right: 12px;
+}
+.pageFooter > .pageInfo{
+    float: left;
+    padding: 7px 12px;
+}
+.pageFooter .pagination > li > a{
+    padding: 7px 12px;
+}
+
+
+.modal.modal-dialog-center .modal-dialog {
+    margin: 0 auto;
+}
+
+form{
+    margin: 0;
+}
+
+form label.error {
+    display: inline;
+    margin: 5px 0;
+    color: #B94A48;
+    font-weight: 400;
+}
+
+body{
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}

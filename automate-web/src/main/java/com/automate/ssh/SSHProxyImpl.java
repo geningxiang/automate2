@@ -110,7 +110,6 @@ public class SSHProxyImpl implements ISSHProxy {
 
             channel.setCommand(cmd);
 
-            channel.setInputStream(null);
             channel.setOutputStream(null);
 
             ByteArrayOutputStream errStream = new ByteArrayOutputStream();

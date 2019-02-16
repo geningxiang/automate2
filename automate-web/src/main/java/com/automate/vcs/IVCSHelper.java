@@ -11,7 +11,7 @@ import java.util.List;
  * @author: genx
  * @date: 2019/1/26 22:21
  */
-public interface ICVSHelper {
+public interface IVCSHelper {
 
     /**
      * 初始化项目  clone
@@ -45,6 +45,7 @@ public interface ICVSHelper {
 
     String checkOut(String branchName, String commitId) throws Exception;
 
+    void testConnetction() throws Exception;
 
     boolean isLocalRepositoryExist();
 }

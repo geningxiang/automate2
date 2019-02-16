@@ -9,7 +9,7 @@
     <style>
         .step-ul li {
             width: 100%;
-            min-height: 32px;
+            height: 32px;
             line-height: 32px;
             border: 1px solid #DCDEE3;
             border-radius: 3px;
@@ -23,9 +23,6 @@
             background-color: rgb(0, 193, 222);
             border-color: rgb(0, 193, 222);
             color: #fff;
-        }
-        .step-ul li.ui-state-highlight {
-            border-style: dashed;
         }
 
         .step-ul li i {
@@ -96,26 +93,31 @@
 
     </div>
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-2">
             <section class="panel clearfix">
-                <header class="panel-heading clearfix">
+                <header class="panel-heading">
                     步骤
-                    <div class="btn-group pull-right">
-                        <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button" aria-expanded="false"> 新增任务 <i class="fa fa-plus"></i> </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="javascript:addTask('com.automate.task.background.impl.MavenTask')">Maven任务</a></li>
-                            <li><a href="javascript:addTask('com.automate.task.background.impl.ExecTask')">自定义Exec任务</a></li>
-                        </ul>
-                    </div>
                 </header>
                 <div class="panel-body">
                     <ul class="step-ul" id="step-ul">
 
                     </ul>
+                    <div class="btn-row">
+                        <div class="btn-group">
+                            <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button" aria-expanded="false"> 新增任务 <i class="fa fa-plus"></i> </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="javascript:addTask('com.automate.task.background.impl.MavenTask')">Maven任务</a></li>
+                                    <li><a href="javascript:addTask('com.automate.task.background.impl.ExecTask')">自定义Exec任务</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
-        <div class="col-lg-8">
+
+        <div class="col-lg-10">
             <section class="panel clearfix">
                 <header class="panel-heading">
                     任务内容
@@ -142,16 +144,12 @@
 <script>
     var config = '${assemblyLineEntity.config}';
     $(function(){
+
         AssemblyUtil.init(config);
-
-        $( "#step-ul" ).sortable({
-            placeholder: "ui-state-highlight"
-        });
-        $( "#step-ul" ).disableSelection();
-
     })
 
 
+    console.log('window.opener', window.opener);
 </script>
 </body>
 </html>

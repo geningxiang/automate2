@@ -6,6 +6,21 @@
 <html>
 <head>
     <jsp:include page="../common/head.jsp"/>
+    <style>
+        .pagination a{
+            margin: 0 8px;
+            border-radius: 4px;
+        }
+        .pagination a.disabled{
+            color: #ddd;
+            cursor: not-allowed;
+        }
+        .pagination a.active{
+            z-index: 1;
+            border-color: #1890ff;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
 
@@ -17,58 +32,10 @@
                 <header class="panel-heading">
                     HOOK日志
                 </header>
-                <form id="qryFrmId" name="qryFrm" class="query-form" action="/admin/sourcecode/hookList" method="post" data-target="#hookLogTable">
-                    <input type="hidden" name="pageNo" id="pageNo" value="${pager.number + 1}"/>
-                    <input type="hidden" name="pageSize" id="pageSize" value="${pager.size}"/>
-                    <input type="hidden" name="totalElements" id="totalElements" value="${pager.totalElements}"/>
-                </form>
                 <div class="panel-body">
                     <div class="adv-table">
-                        <div id="hookListTable" class="dataTables_wrapper form-inline" role="grid">
+                        <div id="hookListContent" class="dataTables_wrapper form-inline" role="grid">
 
-                            <table id="hookLogTable" class="table table-advance table-hover">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>来源</th>
-                                    <th>时间</th>
-                                    <th>事件</th>
-                                    <th>Delivery</th>
-                                    <th>处理结果</th>
-                                    <th>关联</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <c:if test="${pager.size == 0}">
-                                    <tr>
-                                        <td align="center" colspan="6">没有找到相关的记录！</td>
-                                    </tr>
-                                </c:if>
-                                <c:forEach var="_item" items="${pager.content}" varStatus="status">
-                                    <tr>
-                                        <td>${_item.id}</td>
-                                        <td>${_item.source}</td>
-                                        <td>
-                                            <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${_item.createTime}" />
-                                        </td>
-                                        <td>${_item.event}</td>
-                                        <td>${_item.delivery}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${_item.handleStatus == 1}">
-                                                    <span class="label label-success label-mini">${_item.handleResult}</span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="label label-warning label-mini">${_item.handleResult}</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                </c:forEach>
-
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -77,10 +44,75 @@
     </div>
     <!-- page end-->
 </section>
+<script id="hookListTemplate" type="text/html">
+    <table class="table table-advance table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>来源</th>
+            <th>时间</th>
+            <th>事件</th>
+            <th>Delivery</th>
+            <th>处理结果</th>
+            <th>关联</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{if content}}
+            {{each content item i}}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.source}}</td>
+                <td>{{item.createTime}}</td>
+                <td>{{item.event}}</td>
+                <td>{{item.delivery}}</td>
+                <td>
+                    {{if item.handleStatus == 1}}
+                    <span class="label label-success label-mini">{{item.handleResult}}</span>
+                    {{else}}
+                    <span class="label label-warning label-mini">{{item.handleResult}}</span>
+                    {{/if}}
+                </td>
+                <td></td>
+            </tr>
 
+            {{/each}}
+        {{else}}
+            <tr><td align="center" colspan="6">没有找到相关的记录！</td></tr>
+        {{/if}}
+        </tbody>
+    </table>
+    {{@pageFooter($data)}}
+</script>
 <jsp:include page="../common/common_js.jsp"></jsp:include>
 <script>
 
+    var pageNo = 1;
+    var pageSize = 20;
+    $(function(){
+        query();
+    });
+
+    function query() {
+        Core.post('/api/sourcecode/hookList', {pageNo: pageNo, pageSize: pageSize}, function(msg){
+
+            $("#hookListContent").html(template('hookListTemplate', msg.data));
+        });
+    }
+
+    function changePage(n){
+        pageNo = n;
+        query();
+    }
+
+    function changePageSize(val){
+        console.log('changePageSize', val);
+        if(val){
+            pageNo = 1;
+            pageSize = val;
+            query();
+        }
+    }
 </script>
 </body>
 </html>

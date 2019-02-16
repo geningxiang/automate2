@@ -35,6 +35,10 @@ public class SourceCodeBranchService {
         return sourceCodeBranchRepository.findAll(Sort.by("lastCommitTime").descending());
     }
 
+    public List<SourceCodeBranchEntity> getList(int sourceCodeId) {
+        return sourceCodeBranchRepository.getAllBySourceCodeIdOrderByLastCommitTime(sourceCodeId);
+    }
+
     /**
      * 查询对象
      **/

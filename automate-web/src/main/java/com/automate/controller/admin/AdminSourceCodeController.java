@@ -41,10 +41,14 @@ public class AdminSourceCodeController extends BaseController {
     private HookLogService hookLogService;
 
     @RequestMapping("/list")
-    public String list(HttpServletRequest request, ModelMap modelMap) {
-        Iterable<SourceCodeEntity> list = sourceCodeService.findAll();
-        modelMap.put("list", Lists.newArrayList(list));
+    public String list() {
         return "sourcecode/sourcecode_list";
+    }
+
+    @RequestMapping("/detail")
+    public String detail(Integer id, HttpServletRequest request, ModelMap modelMap) {
+        modelMap.put("id", id);
+        return "sourcecode/sourcecode_detail";
     }
 
     @RequestMapping("/branchList")

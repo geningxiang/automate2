@@ -2,7 +2,7 @@ package com.automate.entity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.automate.common.SystemConfig;
-import com.automate.vcs.ICVSRepository;
+import com.automate.vcs.IVCSRepository;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 import javax.persistence.*;
@@ -17,7 +17,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "CA2_SOURCE_CODE")
-public class SourceCodeEntity implements ICVSRepository {
+public class SourceCodeEntity implements IVCSRepository {
     public enum Type {
         /**
          * java项目
@@ -61,7 +61,7 @@ public class SourceCodeEntity implements ICVSRepository {
      *
      * @see Type
      */
-    private Byte type;
+    private int type;
 
     /**
      * 名称
@@ -78,7 +78,7 @@ public class SourceCodeEntity implements ICVSRepository {
      *
      * @see VcsType
      */
-    private Byte vcsType;
+    private int vcsType;
 
     /**
      * 版本控制地址
@@ -101,7 +101,7 @@ public class SourceCodeEntity implements ICVSRepository {
      *
      * @see CompileType
      */
-    private Byte compileType;
+    private int compileType;
 
     /**
      * 创建时间
@@ -111,7 +111,7 @@ public class SourceCodeEntity implements ICVSRepository {
     /**
      * 归属人
      *
-     * @see AdminUserEntity#id
+     * @see AdminUserEntity
      */
     private Integer adminId;
 
@@ -120,8 +120,9 @@ public class SourceCodeEntity implements ICVSRepository {
      *
      * @see Status
      */
-    private Byte status;
+    private Integer status;
 
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
@@ -136,16 +137,16 @@ public class SourceCodeEntity implements ICVSRepository {
 
     @Basic
     @Column(name = "TYPE", nullable = true)
-    public Byte getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(Byte type) {
-        this.type = type;
+    public void setType(Integer type) {
+        this.type = type != null ? type : 0;
     }
 
     public void setType(Type type) {
-        this.type = (byte)type.ordinal();
+        this.type = type.ordinal();
     }
 
     @Basic
@@ -168,18 +169,19 @@ public class SourceCodeEntity implements ICVSRepository {
         this.remark = remark;
     }
 
+    @Override
     @Basic
     @Column(name = "VCS_TYPE", nullable = true)
-    public Byte getVcsType() {
+    public Integer getVcsType() {
         return vcsType;
     }
 
-    public void setVcsType(Byte vcsType) {
-        this.vcsType = vcsType;
+    public void setVcsType(Integer vcsType) {
+        this.vcsType = vcsType != null ? vcsType : 0;
     }
 
     public void setVcsType(VcsType vcsType) {
-        this.vcsType = (byte)vcsType.ordinal();
+        this.vcsType = vcsType.ordinal();
     }
 
     @Basic
@@ -216,16 +218,16 @@ public class SourceCodeEntity implements ICVSRepository {
 
     @Basic
     @Column(name = "COMPILE_TYPE", nullable = true)
-    public Byte getCompileType() {
+    public Integer getCompileType() {
         return compileType;
     }
 
-    public void setCompileType(Byte compileType) {
-        this.compileType = compileType;
+    public void setCompileType(Integer compileType) {
+        this.compileType = compileType != null ? compileType : 0;
     }
 
     public void setCompileType(CompileType compileType) {
-        this.compileType = (byte)compileType.ordinal();
+        this.compileType = compileType.ordinal();
     }
 
     @Basic
@@ -250,16 +252,16 @@ public class SourceCodeEntity implements ICVSRepository {
 
     @Basic
     @Column(name = "STATUS", nullable = true)
-    public Byte getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
     public void setStatus(Status status) {
-        this.status = (byte)status.ordinal();
+        this.status = status.ordinal();
     }
 
     @Transient
@@ -284,7 +286,7 @@ public class SourceCodeEntity implements ICVSRepository {
         data.put("vcsType", this.vcsType);
         data.put("vcsUrl", this.vcsUrl);
         data.put("compileType", this.compileType);
-        data.put("createTime", FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss").format(createTime));
+        data.put("createTime", createTime != null ? FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss").format(createTime) : "");
         data.put("status", this.status);
         return data;
     }

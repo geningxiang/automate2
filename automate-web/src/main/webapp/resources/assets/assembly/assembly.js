@@ -2,79 +2,50 @@
     var ASSEMBLY_MAP = {
         'com.automate.task.background.impl.MavenTask': {
             name: 'Maven任务',
-            build: function (data) {
-                data = data || {};
-                return '<div class="form-group">\n' +
-                    '                            <label class="col-sm-2 col-sm-2 control-label">任务名称</label>\n' +
-                    '                            <div class="col-sm-10">\n' +
-                    '                                <input type="text" class="form-control" value="'+(data.name || 'Maven任务')+'">\n' +
-                    '                            </div>\n' +
-                    '                        </div>\n' +
-                    '                        <div class="form-group">\n' +
-                    '                            <label class="col-sm-2 col-sm-2 control-label">Skip Tests</label>\n' +
-                    '                            <div class="col-sm-10">\n' +
-                    '                                <div class="checkbox"><label><input type="checkbox" value="" ' + (data.testSkip == false ? '' : 'checked') + '> 是否忽略Tests</label></div>\n' +
-                    '                            </div>\n' +
-                    '                        </div>\n' +
-                    '                        <div class="form-group">\n' +
-                    '                            <label class="col-sm-2 col-sm-2 control-label">Lifecycle</label>\n' +
-                    '                            <div class="col-sm-10">\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="clean" '+(data.lifecycle == 'clean' ? 'checked' : '')+'> clean</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="validate" '+(data.lifecycle == 'validate' ? 'checked' : '')+'> validate</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="compile" '+(!data.lifecycle || data.lifecycle == 'compile' ? 'checked' : '')+'> compile</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="test" '+(data.lifecycle == 'test' ? 'checked' : '')+'> test</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="package" '+(data.lifecycle == 'package' ? 'checked' : '')+'> package</label></div>\n' +
-                    '                                <div class="radio"><label><input type="radio" name="lifecycle" value="install" '+(data.lifecycle == 'install' ? 'checked' : '')+'> install</label></div>\n' +
-                    '                            </div>\n' +
-                    '                        </div>';
-            }
+            tpl: '/resources/assets/assembly/mavenTask.tpl'
         },
         'com.automate.task.background.impl.ExecTask': {
             name: '自定义Exec任务',
-            build: function (data) {
-                return '<div class="form-group">\n' +
-                    '                            <label class="col-sm-2 col-sm-2 control-label">任务名称</label>\n' +
-                    '                            <div class="col-sm-10">\n' +
-                    '                                <input type="text" class="form-control">\n' +
-                    '                            </div>\n' +
-                    '                        </div>\n' +
-                    '                        <div class="form-group">\n' +
-                    '                            <label class="col-sm-2 col-sm-2 control-label">Exec命令</label>\n' +
-                    '                            <div class="col-sm-10">\n' +
-                    '                                <p class="help-block">多命令请以换行分割, 支持#注释</p>\n' +
-                    '                                <textarea type="text" class="form-control" rows="10"></textarea>\n' +
-                    '                            </div>\n' +
-                    '                        </div>';
-            }
-        },
+            tpl: '/resources/assets/assembly/execTask.tpl'
+        }
     }
 
+    //存数据
     var tempMap = {};
+
     var showContent = function (taskKey) {
         var data = tempMap[taskKey];
-
-        $("#taskContent").html(ASSEMBLY_MAP[data.className].build(data));
+        var task = ASSEMBLY_MAP[data.className];
+        $("#taskContent").html(Core.templateTpl(task.tpl, data));
     };
 
+
+    var checkForm = function(){
+        return $("#taskContent").valid();
+    }
+    /**
+     * 添加任务
+     * @param clsName
+     */
     window.addTask = function(clsName){
-        console.log('addTask', clsName);
+        console.log('添加任务', clsName);
 
         if(!ASSEMBLY_MAP[clsName]){
             alert('任务类型错误:' + clsName);
             return;
         }
-        var item = {};
-        item.className = clsName;
-        item.key = '' + keyIndex++;
-        tempMap[item.key] = item;
-        $("#step-ul li.active").removeClass("active");
-        $("#step-ul").append('<li class="active" data-task-key="' + item.key + '">' + ASSEMBLY_MAP[item.className].name + '<i class="fa fa-times"></i></li>');
-        showContent(item.key);
-
+        if(checkForm()){
+            var item = {};
+            item.className = clsName;
+            item.key = '' + keyIndex++;
+            tempMap[item.key] = item;
+            $("#step-ul li.active").removeClass("active");
+            $("#step-ul").append('<li class="active" data-task-key="' + item.key + '">' + ASSEMBLY_MAP[item.className].name + '<i class="fa fa-times"></i></li>');
+            showContent(item.key);
+        }
     };
 
     var saveTask = function () {
-
         var taskKey = $("#step-ul li.active").attr("data-task-key");
         if (taskKey) {
             var data = tempMap[taskKey];
@@ -84,6 +55,7 @@
                 data[item.name] = item.value;
             }
             tempMap[taskKey] = data;
+            console.log('save', data);
         }
     };
 
@@ -123,6 +95,11 @@
                 }
             });
 
+            $("#taskContent").change(function() {
+                if ($("#taskContent").valid()) {
+                    saveTask();
+                }
+            });
 
             $("#doSubmit").click(function () {
                 saveTask();

@@ -26,6 +26,10 @@ public class ResponseEntity<T> {
         return new ResponseEntity(HttpStatus.OK,"", data);
     }
 
+    public static ResponseEntity ok() {
+        return new ResponseEntity(HttpStatus.OK,"", null);
+    }
+
     public static ResponseEntity of(HttpStatus status, String msg) {
         return new ResponseEntity(status, msg, null);
     }

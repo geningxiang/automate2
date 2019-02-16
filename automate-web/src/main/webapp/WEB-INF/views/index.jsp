@@ -52,23 +52,23 @@
 
     //chrome://inspect/#workers 调试
 
-    var worker = new SharedWorker('/resources/js/ws-shared-worker.js');
-    worker.onerror = function(e){
-        console.error(e);
-    }
-    worker.port.onmessage = function (e) {
-        console.log(e.data);
-    };
-    worker.port.onerror = function(e) {
-        console.log('ERROR: Line ', e.lineno, ' in ', e.filename, ': ', e.message);
-    }
-    worker.port.start();
-
-
-    setInterval(function () {
-        console.log("send",  new Date().getTime());
-        worker.port.postMessage("" + new Date().getTime());
-    }, 3000);
+    // var worker = new SharedWorker('/resources/js/ws-shared-worker.js');
+    // worker.onerror = function(e){
+    //     console.error(e);
+    // }
+    // worker.port.onmessage = function (e) {
+    //     console.log(e.data);
+    // };
+    // worker.port.onerror = function(e) {
+    //     console.log('ERROR: Line ', e.lineno, ' in ', e.filename, ': ', e.message);
+    // }
+    // worker.port.start();
+    //
+    //
+    // setInterval(function () {
+    //     console.log("send",  new Date().getTime());
+    //     worker.port.postMessage("" + new Date().getTime());
+    // }, 3000);
 
 </script>
 </body>

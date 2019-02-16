@@ -60,8 +60,9 @@ public class SystemConfig {
      * @return
      */
     public static String getSourceCodeDir(SourceCodeEntity sourceCodeEntity) {
-        Assert.notNull(sourceCodeEntity, "sourceCodeEntity is null");
-        Assert.notNull(sourceCodeEntity.getId(), "sourceCodeEntity.id is null");
+        if(sourceCodeEntity == null || sourceCodeEntity.getId() == null){
+            return null;
+        }
         Assert.hasText(AUTOMATE_DATA_DIR, "AUTOMATE_DATA_DIR is null");
         return new StringBuilder(AUTOMATE_DATA_DIR).append(File.separator)
                 .append(SystemContants.SOURCE_CODE_DIR_NAME).append(File.separator)

@@ -2,11 +2,12 @@ package com.automate.vcs.git;
 
 import com.automate.event.EventCenter;
 import com.automate.event.po.SourceCodePullEvent;
-import com.automate.vcs.AbstractCVSHelper;
-import com.automate.vcs.ICVSRepository;
+import com.automate.vcs.AbstractVCSHelper;
+import com.automate.vcs.IVCSRepository;
 import com.automate.vcs.vo.CommitLog;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -26,13 +27,13 @@ import java.util.*;
  * @author: genx
  * @date: 2019/1/26 22:23
  */
-public class GitHelper extends AbstractCVSHelper {
+public class GitHelper extends AbstractVCSHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(GitHelper.class);
 
     private CredentialsProvider credentialsProvider = null;
 
-    public GitHelper(ICVSRepository repository) {
+    public GitHelper(IVCSRepository repository) {
         super(repository);
         if (StringUtils.isNotEmpty(this.userName) && StringUtils.isNotEmpty(this.passWord)) {
             credentialsProvider = new UsernamePasswordCredentialsProvider(this.userName, this.passWord);
@@ -160,7 +161,8 @@ public class GitHelper extends AbstractCVSHelper {
         try {
             git = Git.wrap(db);
             git.checkout().setName(branchName).call();
-            Iterator<RevCommit> commits = git.log().all().call().iterator();
+            //.all()       标识查看所有分支的日志
+            Iterator<RevCommit> commits = git.log().call().iterator();
             List<CommitLog> list = new ArrayList<>(256);
             for (Iterator<RevCommit> it = commits; it.hasNext(); ) {
                 RevCommit commit = it.next();
@@ -212,6 +214,16 @@ public class GitHelper extends AbstractCVSHelper {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void testConnetction() throws Exception {
+        LsRemoteCommand lsRemoteCommand = Git.lsRemoteRepository();
+        lsRemoteCommand.setCredentialsProvider(this.credentialsProvider);
+        lsRemoteCommand.setRemote(this.remoteUrl);
+
+        lsRemoteCommand.setTimeout(5);
+        lsRemoteCommand.call();
     }
 
     private FileRepository openFileRepository() throws IOException {

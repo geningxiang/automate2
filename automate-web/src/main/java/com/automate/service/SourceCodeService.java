@@ -5,7 +5,7 @@ import com.automate.entity.SourceCodeBranchEntity;
 import com.automate.entity.SourceCodeEntity;
 import com.automate.repository.SourceCodeBranchRepository;
 import com.automate.repository.SourceCodeRepository;
-import com.automate.vcs.ICVSHelper;
+import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.git.GitHelper;
 import com.automate.vcs.vo.CommitLog;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +44,7 @@ public class SourceCodeService{
      */
     @Deprecated
     public void init(SourceCodeEntity sourceCodeEntity) throws Exception {
-        ICVSHelper cvsHelper = new GitHelper(sourceCodeEntity);
+        IVCSHelper cvsHelper = new GitHelper(sourceCodeEntity);
         List<String> branchList = cvsHelper.init();
         sync(sourceCodeEntity, cvsHelper, branchList);
     }
@@ -55,7 +55,7 @@ public class SourceCodeService{
      */
     public int sync(@NonNull SourceCodeEntity sourceCodeEntity) throws Exception {
         logger.info("开始同步代码仓库:{}", sourceCodeEntity.toJson());
-        ICVSHelper cvsHelper = new GitHelper(sourceCodeEntity);
+        IVCSHelper cvsHelper = new GitHelper(sourceCodeEntity);
         //检查一下
         List<String> updateBranchList;
         int total = 0;
@@ -69,7 +69,7 @@ public class SourceCodeService{
         return total;
     }
 
-    public int sync(SourceCodeEntity sourceCodeEntity, ICVSHelper cvsHelper, List<String> branchList) throws Exception {
+    public int sync(SourceCodeEntity sourceCodeEntity, IVCSHelper cvsHelper, List<String> branchList) throws Exception {
         for (String branchName : branchList) {
             List<CommitLog> commitLogs = cvsHelper.commitLogs(branchName);
             this.updateBranch(sourceCodeEntity.getId(), branchName, commitLogs);
@@ -131,6 +131,9 @@ public class SourceCodeService{
      * 添加对象
      **/
     public void save(SourceCodeEntity model) {
+        if(model.getCreateTime() == null){
+            model.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        }
         sourceCodeRepository.save(model);
     }
 

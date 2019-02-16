@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -18,9 +20,16 @@ public interface SourceCodeBranchRepository extends PagingAndSortingRepository<S
     /**
      * 根据 源码库ID，分支名称查找
      *
-     * @param sourceId
+     * @param sourceCodeId
      * @param branchName
      * @return
      */
-    SourceCodeBranchEntity findFirstBySourceCodeIdAndBranchName(int sourceId, String branchName);
+    SourceCodeBranchEntity findFirstBySourceCodeIdAndBranchName(int sourceCodeId, String branchName);
+
+    /**
+     *
+     * @param sourceCodeId
+     * @return
+     */
+    List<SourceCodeBranchEntity> getAllBySourceCodeIdOrderByLastCommitTime(int sourceCodeId);
 }

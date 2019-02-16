@@ -2,10 +2,9 @@ package com.automate.vcs.git;
 
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.SourceCodeEntity;
-import com.automate.repository.HookLogRepository;
 import com.automate.service.HookLogService;
 import com.automate.service.SourceCodeService;
-import com.automate.vcs.ICVSHelper;
+import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.vo.CommitLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -59,7 +58,7 @@ public abstract class AbstractGitHook {
             throw new IllegalArgumentException("未找到相应的项目");
         }
 
-        ICVSHelper cvsHelper = new GitHelper(sourceCodeEntity);
+        IVCSHelper cvsHelper = new GitHelper(sourceCodeEntity);
 
         List<String> updatedBranchList = cvsHelper.update(branchName);
 
