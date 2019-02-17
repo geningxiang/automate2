@@ -46,7 +46,6 @@
             }
         },
         dateFormat: function (d, fmt) {
-            console.log('dateFormat', d);
             var date;
             if (!d) {
                 return '';

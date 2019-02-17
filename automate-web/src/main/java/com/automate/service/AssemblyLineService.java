@@ -97,7 +97,7 @@ public class AssemblyLineService implements IEventHandler {
         }
     }
 
-    private boolean isMatch(String pattern, String branchName){
+    public boolean isMatch(String pattern, String branchName){
         try{
             return Pattern.matches(pattern, branchName);
         }catch (Exception e){

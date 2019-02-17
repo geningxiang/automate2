@@ -64,12 +64,11 @@
         init: function (jsonStr) {
             var jsonArray = [];
             try{
-                jsonArray = JSON.parse(jsonStr);
+                jsonArray = JSON.parse(jsonStr.replace(/[\r]/g, "\\r").replace(/[\n]/g, "\\n"));
                 console.log(jsonArray);
             }catch (e) {
                 console.warn(e);
             }
-
 
             var item;
             for (var i = 0; i < jsonArray.length; i++) {

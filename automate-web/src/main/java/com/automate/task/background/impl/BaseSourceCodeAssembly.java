@@ -67,7 +67,7 @@ public class BaseSourceCodeAssembly extends AbstractBackgroundAssembly {
         assemblyLineLogService.save(assemblyLineLogEntity);
 
         for (ITask task : tasks) {
-            task.setSourceCodeId(assemblyLineEntity.getSourceCodeId());
+            //task.setSourceCodeId(assemblyLineEntity.getSourceCodeId());
             if (task.getLocks() != null) {
                 for (String lock : task.getLocks()) {
                     locks.add(lock);

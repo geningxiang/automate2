@@ -12,11 +12,18 @@ import com.automate.entity.SourceCodeEntity;
  */
 public interface ITask {
 
-    void setSourceCodeId(int sourceCodeId);
-
     default String[] getLocks(){
         return null;
     }
+
+    void setName(String name);
+
+    String getName();
+
+    /**
+     * 验证字段正确性
+     */
+    void valid() throws Exception;
 
     void invoke(SourceCodeEntity sourceCodeEntity) throws Exception;
 

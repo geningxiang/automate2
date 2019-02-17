@@ -28,6 +28,7 @@
         {{/if}}
         <li>
             <select class="form-control" onchange="changePageSize(this.value)">
+                <option value="20" {{pageSize == 10 ? 'selected': ''}} >10条/页</option>
                 <option value="20" {{pageSize == 20 ? 'selected': ''}} >20条/页</option>
                 <option value="50" {{pageSize == 50 ? 'selected': ''}} >50条/页</option>
                 <option value="100" {{pageSize == 100 ? 'selected': ''}} >100条/页</option>

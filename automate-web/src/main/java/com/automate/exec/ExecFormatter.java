@@ -34,7 +34,7 @@ public class ExecFormatter {
         }
 
         ILLEGAL_CHARACTERS = new String[]{
-                "&", "\"", "|"
+//                "&", "\"", "|"
         };
     }
 

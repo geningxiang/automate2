@@ -49,13 +49,13 @@ public class AdminAssemblyController extends BaseController {
     @RequestMapping("/detail")
     public String detail(Integer id, ModelMap modelMap) {
         AssemblyLineEntity assemblyLineEntity = null;
-        if(id != null && id > 0){
+        if (id != null && id > 0) {
             Optional<AssemblyLineEntity> model = assemblyLineService.getModel(id);
-            if(model.isPresent()){
+            if (model.isPresent()) {
                 assemblyLineEntity = model.get();
             }
         }
-        if(assemblyLineEntity == null){
+        if (assemblyLineEntity == null) {
             assemblyLineEntity = new AssemblyLineEntity();
         }
         modelMap.put("assemblyLineEntity", assemblyLineEntity);
@@ -63,11 +63,17 @@ public class AdminAssemblyController extends BaseController {
     }
 
     @RequestMapping("/assemblyLoglist")
-    public String assemblyLoglist(Integer pageNo, Integer pageSize, ModelMap modelMap){
+    public String assemblyLoglist(Integer pageNo, Integer pageSize, ModelMap modelMap) {
         Page<AssemblyLineLogEntity> pager = assemblyLineLogService.findAll(buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id")));
         modelMap.put("pager", pager);
         modelMap.put("assemblyLineMap", assemblyLineService.findAllWidthMap());
         modelMap.put("sourceCodeMap", sourceCodeService.findAllWidthMap());
         return "assembly/assembly_log_list";
+    }
+
+    @RequestMapping("/assemblyLogDetail")
+    public String assemblyLogDetail(Integer id, ModelMap modelMap) {
+        modelMap.put("id", id);
+        return "assembly/assembly_log_detail";
     }
 }

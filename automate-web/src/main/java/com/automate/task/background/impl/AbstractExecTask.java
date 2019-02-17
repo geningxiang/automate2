@@ -20,6 +20,7 @@ import java.sql.Timestamp;
  * @date: 2019/2/2 16:15
  */
 public abstract class AbstractExecTask implements ITask {
+    private String name;
     protected ExecCommand execCommand = null;
 
     private AssemblyLineTaskLogEntity assemblyLineTaskLogEntity;
@@ -62,5 +63,13 @@ public abstract class AbstractExecTask implements ITask {
 
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 }

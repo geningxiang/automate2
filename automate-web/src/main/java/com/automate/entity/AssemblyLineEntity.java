@@ -180,4 +180,6 @@ public class AssemblyLineEntity {
         this.triggerCron = triggerCron;
     }
 
+
+
 }

@@ -16,7 +16,8 @@ import java.util.Arrays;
  * @date: 2019/2/3 9:59
  */
 public class MavenTask extends AbstractExecTask {
-    @Override
+
+
     public void setSourceCodeId(int sourceCodeId) {
 
     }
@@ -24,6 +25,11 @@ public class MavenTask extends AbstractExecTask {
     @Override
     public String[] getLocks() {
         return new String[0];
+    }
+
+    @Override
+    public void valid() throws Exception {
+
     }
 
     /*

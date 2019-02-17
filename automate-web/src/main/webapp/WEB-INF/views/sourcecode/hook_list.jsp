@@ -6,21 +6,6 @@
 <html>
 <head>
     <jsp:include page="../common/head.jsp"/>
-    <style>
-        .pagination a{
-            margin: 0 8px;
-            border-radius: 4px;
-        }
-        .pagination a.disabled{
-            color: #ddd;
-            cursor: not-allowed;
-        }
-        .pagination a.active{
-            z-index: 1;
-            border-color: #1890ff;
-            font-weight: 500;
-        }
-    </style>
 </head>
 <body>
 

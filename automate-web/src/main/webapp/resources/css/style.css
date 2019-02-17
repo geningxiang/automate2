@@ -6271,6 +6271,7 @@ header.blue-bg .search:focus {
     margin: 0;
     float: right;
     padding-right: 12px;
+
 }
 .pageFooter > .pageInfo{
     float: left;
@@ -6279,7 +6280,24 @@ header.blue-bg .search:focus {
 .pageFooter .pagination > li > a{
     padding: 7px 12px;
 }
-
+.pagination a{
+    margin: 0 8px;
+    border-radius: 4px;
+}
+.pagination a.disabled{
+    color: #ddd;
+    cursor: not-allowed;
+}
+.pagination a.active{
+    z-index: 1;
+    border-color: #1890ff;
+    font-weight: 500;
+}
+.pagination > li > select.form-control{
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+}
 
 .modal.modal-dialog-center .modal-dialog {
     margin: 0 auto;

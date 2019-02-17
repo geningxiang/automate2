@@ -96,7 +96,7 @@
 
     </div>
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <section class="panel clearfix">
                 <header class="panel-heading clearfix">
                     步骤
@@ -115,7 +115,7 @@
                 </div>
             </section>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <section class="panel clearfix">
                 <header class="panel-heading">
                     任务内容
