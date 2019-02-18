@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,6 +23,10 @@ public class AssemblyLineTaskLogService {
     @Autowired
     private AssemblyLineTaskLogRepository assemblyLineTaskLogRepository;
 
+
+    public List<AssemblyLineTaskLogEntity> findAllByAssemblyLineLogId(int assemblyLineLogId) {
+        return assemblyLineTaskLogRepository.findAllByAssemblyLineLogIdOrderById(assemblyLineLogId);
+    }
 
     public Iterable<AssemblyLineTaskLogEntity> findAll() {
         return assemblyLineTaskLogRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));

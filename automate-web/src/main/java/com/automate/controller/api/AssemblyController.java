@@ -1,12 +1,13 @@
 package com.automate.controller.api;
 
-import com.alibaba.fastjson.JSON;
 import com.automate.common.ResponseEntity;
 import com.automate.controller.BaseController;
 import com.automate.entity.AssemblyLineEntity;
 import com.automate.entity.AssemblyLineLogEntity;
+import com.automate.entity.AssemblyLineTaskLogEntity;
 import com.automate.service.AssemblyLineLogService;
 import com.automate.service.AssemblyLineService;
+import com.automate.service.AssemblyLineTaskLogService;
 import com.automate.task.background.BackgroundAssemblyManager;
 import com.automate.task.background.impl.BaseSourceCodeAssembly;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +42,11 @@ public class AssemblyController extends BaseController {
     private AssemblyLineLogService assemblyLineLogService;
 
     @Autowired
+    private AssemblyLineTaskLogService assemblyLineTaskLogService;
+
+    @Autowired
     private BackgroundAssemblyManager backgroundAssemblyManager;
+
 
     @RequestMapping(value = "/list")
     public ResponseEntity list(Integer sourceCodeId) {
@@ -67,7 +72,7 @@ public class AssemblyController extends BaseController {
     }
 
     @RequestMapping(value = "/assemblyLine", method = RequestMethod.POST)
-        public ResponseEntity<String> createAssemblyLine(AssemblyLineEntity assemblyLineEntity) {
+    public ResponseEntity<String> createAssemblyLine(AssemblyLineEntity assemblyLineEntity) {
 
         //缺少了 验证
         if (assemblyLineEntity.getId() != null && assemblyLineEntity.getId() > 0) {
@@ -114,4 +119,14 @@ public class AssemblyController extends BaseController {
         Page<AssemblyLineLogEntity> pager = assemblyLineLogService.findAll(buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id")));
         return ResponseEntity.ok(pager);
     }
+
+    @RequestMapping(value = "/logDetail")
+    public ResponseEntity logDetail(Integer id) {
+        if (id == null || id <= 0) {
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
+        }
+        List<AssemblyLineTaskLogEntity> list = assemblyLineTaskLogService.findAllByAssemblyLineLogId(id);
+        return ResponseEntity.ok(list);
+    }
+
 }
