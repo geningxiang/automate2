@@ -23,10 +23,7 @@
                 </ul>
             </div>
             <article>
-                <pre class="line-numbers">
-                    <!--language-javastacktrace-->
-                <code class="language-shell" id="taskContent"></code>
-                </pre>
+                <pre id="taskContent"></pre>
             </article>
         </div>
     </section>

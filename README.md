@@ -1,19 +1,18 @@
-## 自动化部署2.0 #
+## Automate2
+持续集成、项目发布管理
+
+![Screenshot](http://47.100.63.232/resources/images/1.png)
+
+![Screenshot](http://47.100.63.232/resources/images/2.png)
+
+![Screenshot](http://47.100.63.232/resources/images/3.png)
 
 #### 开发环境配置
- 请在项目的默认 jvm启动参数中 配置一下 config.properties的路径
+ 推荐使用 jvm启动参数中 指定config.properties文件地址  
+ 在本项目的设计中没有对构建做环境分离,推荐大家使用 jvm参数,保证不同环境的代码一致性
 ~~~~
 -Dconfig.location=file:{userPath}/dev/config.properties
 ~~~~
 
-#### 生产环境也推荐设置配置文件路径 来达到不同环境相同代码的效果
 
 
-#### 基本定义
-- 源码仓库  
-    相当于CVS仓库的镜像,通过hook来保持最新
-- 项目  
-    项目和源码仓库可以是多对一,相当于源码中的一个可部署模块
-- 服务器  
-    服务器资源  
-    容器资源 —— 具体应用
