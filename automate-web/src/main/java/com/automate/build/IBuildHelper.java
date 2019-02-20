@@ -9,3 +9,7 @@ package com.automate.build;
  */
 public interface IBuildHelper {
 }
+
+class MyCat{
+
+}

@@ -4,9 +4,18 @@ import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
+
+/**
+ * Created with IntelliJ IDEA.
+ * Description:
+ *
+ * @author: genx
+ * @date: 2019/2/2 13:34
+ */
 public class DiskSpaceDetail {
 
     /**
+     * 获取磁盘信息
      * @return Map<String ,   String>: key:磁盘盘符, value:磁盘剩余空间
      */
     public static Map<String, String> getHdInfo() {
@@ -30,6 +39,10 @@ public class DiskSpaceDetail {
         return map;
     }
 
+    /**
+     * 啦啦啦
+     * @param args
+     */
     public static void main(String[] args) {
 
         System.out.println(getHdInfo().entrySet());
