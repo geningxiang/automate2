@@ -58,7 +58,11 @@
                     <span class="label label-warning label-mini">{{item.handleResult}}</span>
                     {{/if}}
                 </td>
-                <td></td>
+                <td>
+                    {{if item.projectId && item.projectId > 0}}
+                    【{{item.projectId}}】
+                    {{/if}}
+                </td>
             </tr>
 
             {{/each}}

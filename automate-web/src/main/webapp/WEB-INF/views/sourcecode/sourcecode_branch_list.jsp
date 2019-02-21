@@ -47,7 +47,7 @@
                             </td>
                             <td>
                                 <button class="btn btn-success btn-xs" onclick="sourceCodeBranchDetail(${_item.id})"><i class="fa fa-comments"></i> 提交日志 </button>
-                                &nbsp;&nbsp;<button class="btn btn-warning btn-xs"><i class="fa fa-refresh"></i> 同步分支 </button>
+                                &nbsp;&nbsp;<button class="btn btn-warning btn-xs" onclick="sourceCodeSync(${_item.sourceCodeId})"><i class="fa fa-refresh"></i> 同步分支 </button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -65,6 +65,21 @@
     function sourceCodeBranchDetail(id) {
         if(id && id > 0)
             window.open("/admin/sourcecode/branchDetail?id=" + id);
+    }
+
+    function sourceCodeSync(id) {
+        Core.post("/api/sourcecode/sync", {id: id}, function (data) {
+            console.log(data);
+            if (data.status == 200) {
+                if (data.data > 0) {
+                    toastr.success("成功同步" + data.data + "个分支", "提示")
+                } else {
+                    toastr.info("当前已经是最新的", "提示")
+                }
+            } else {
+                toastr.error(data.msg, "提示")
+            }
+        })
     }
 </script>
 </body>

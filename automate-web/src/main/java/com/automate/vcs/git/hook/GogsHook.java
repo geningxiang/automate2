@@ -2,6 +2,7 @@ package com.automate.vcs.git.hook;
 
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.HookLogEntity;
+import com.automate.event.EventCenter;
 import com.automate.vcs.git.AbstractGitHook;
 import com.automate.vcs.git.GitContants;
 import org.slf4j.Logger;
