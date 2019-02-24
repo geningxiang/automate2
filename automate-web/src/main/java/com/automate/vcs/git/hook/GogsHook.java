@@ -28,6 +28,7 @@ public class GogsHook extends AbstractGitHook {
 
     @Override
     public boolean match(HttpServletRequest request, JSONObject data) {
+
         return GOGS_SERVER.equals(request.getHeader("user-agent"));
     }
 
