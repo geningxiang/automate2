@@ -45,7 +45,7 @@ public class ExecCommand {
     /**
      * 默认的超时时间时 10分钟
      */
-    private long timeout = 10;
+    private int timeout = 10;
     private TimeUnit unit = TimeUnit.MINUTES;
 
     public ExecCommand(String command) throws IllegalAccessException {
@@ -67,7 +67,7 @@ public class ExecCommand {
         this.cmdStreamMonitor = cmdStreamMonitor;
     }
 
-    public void setTimeOut(TimeUnit unit, long timeout) {
+    public void setTimeOut(TimeUnit unit, int timeout) {
         if (unit == null || timeout <= 0) {
             throw new IllegalArgumentException(" this timeout is not allow : " + timeout + " / " + unit);
         }
@@ -132,7 +132,7 @@ public class ExecCommand {
         return exitValue;
     }
 
-    public long getTimeout() {
+    public int getTimeout() {
         return timeout;
     }
 

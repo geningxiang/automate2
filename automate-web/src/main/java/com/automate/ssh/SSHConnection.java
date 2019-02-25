@@ -1,9 +1,27 @@
 package com.automate.ssh;
 
+import com.automate.common.Charsets;
+import com.automate.common.utils.SystemUtil;
+import com.automate.exec.ExecCommand;
+import com.automate.exec.ExecHelper;
+import com.automate.exec.ExecStreamReader;
+import com.automate.exec.ExecThreadPool;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -15,11 +33,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SSHConnection {
 
+    private static final Logger logger = LoggerFactory.getLogger(SSHConnection.class);
+
     private final AtomicBoolean useing = new AtomicBoolean(false);
 
+    private final String host;
+    private final int port;
+    private final String username;
+    private final String password;
     private final Session session;
 
+    private long releaseTime = System.currentTimeMillis();
+
     public SSHConnection(String host, int port, String username, String password) throws Exception {
+        this.host = host;
+        this.port = port;
+        this.username = username;
+        this.password = password;
+
         session = new JSch().getSession(username, host, port);
         session.setPassword(password);
         Properties config = new Properties();
@@ -30,20 +61,115 @@ public class SSHConnection {
         session.connect();
     }
 
-    public void close(){
+    public void close() {
         session.disconnect();
+    }
+
+    public boolean isConnected() {
+        return session.isConnected();
     }
 
     /**
      * 开始使用
+     *
      * @return
      */
-    public boolean acquire(){
+    public boolean acquire() {
         return useing.compareAndSet(false, true);
     }
 
 
-    public void release(){
+    public void release() {
         useing.set(false);
+        this.releaseTime = System.currentTimeMillis();
+    }
+
+    /**
+     * 执行 exec语句
+     *
+     * @param execCommand
+     */
+    public void exec(ExecCommand execCommand) {
+        final ChannelExec channel;
+        ExecStreamReader inputReader = null;
+        Future<Integer> executeFuture = null;
+        try {
+            channel = (ChannelExec) this.session.openChannel("exec");
+
+            channel.setCommand(execCommand.getCommand());
+            channel.setOutputStream(null);
+            execCommand.start();
+            channel.getOutputStream().close();
+
+            inputReader = new ExecStreamReader(channel.getInputStream(), execCommand, false);
+            ExecThreadPool.execute(inputReader);
+
+            channel.connect();
+
+            executeFuture = ExecThreadPool.submit(() -> {
+                //这里需要等待一会  否则 exitStatus = -1  就是这么奇怪
+                Thread.sleep(100);
+                return channel.getExitStatus();
+            });
+
+
+            int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
+            System.out.println("channel.getExitStatus()=" + channel.getExitStatus());
+            if (exitValue != 0) {
+                List<String> lines = IOUtils.readLines(channel.getErrStream(), SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
+                for (String line : lines) {
+                    execCommand.errorRead(line);
+                }
+            }
+            execCommand.end(exitValue);
+        } catch (Exception e) {
+            execCommand.errorRead("【error by exec】" + e.getClass().getName());
+            // 1 表示 通用未知错误　
+            execCommand.end(1);
+            logger.error("exec error", e);
+        } finally {
+            if (executeFuture != null) {
+                try {
+                    executeFuture.cancel(true);
+                } catch (Exception ignore) {
+                    ignore.printStackTrace();
+                }
+            }
+            if (inputReader != null) {
+                inputReader.close();
+            }
+
+        }
+
+    }
+
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean match(String host, int port, String username, String password) {
+        EqualsBuilder equalsBuilder = new EqualsBuilder();
+        equalsBuilder.append(this.host, host);
+        equalsBuilder.append(this.port, port);
+        equalsBuilder.append(this.username, username);
+        equalsBuilder.append(this.password, password);
+        return equalsBuilder.isEquals();
+    }
+
+    public long getReleaseTime() {
+        return releaseTime;
     }
 }

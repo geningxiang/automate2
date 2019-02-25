@@ -25,12 +25,6 @@ public class ExecHelper {
     private static final Logger logger = LoggerFactory.getLogger(ExecHelper.class);
 
     /**
-     * 管理 用于 CMD 操作 的线程
-     */
-    private static ExecutorService pool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 3L, TimeUnit.SECONDS,
-            new SynchronousQueue(), new CustomThreadFactory());
-
-    /**
      * 执行命令
      * !该方法会阻塞  直到运行结束或超时
      *
@@ -73,12 +67,12 @@ public class ExecHelper {
             process.getOutputStream().close();
 
             inputReader = new ExecStreamReader(process.getInputStream(), execCommand, false);
-            pool.execute(inputReader);
+            ExecThreadPool.execute(inputReader);
             // TODO 如果以 ExecStreamReader 的方式读取 errorStream  当发生超时时 close errorStream 时会阻塞
             //errorReader = new ExecStreamReader(process.getErrorStream(), execCommand, true);
             //pool.execute(errorReader);
 
-            executeFuture = pool.submit(() -> process.waitFor());
+            executeFuture = ExecThreadPool.submit(() -> process.waitFor());
             int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
             if (exitValue != 0) {
                 List<String> lines = IOUtils.readLines(process.getErrorStream(), SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
@@ -106,14 +100,5 @@ public class ExecHelper {
         }
     }
 
-    private static class CustomThreadFactory implements ThreadFactory {
-        private AtomicInteger count = new AtomicInteger(0);
 
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setName("CmdHelperThread-" + count.addAndGet(1));
-            return t;
-        }
-    }
 }
