@@ -78,6 +78,10 @@ public class SSHConnection {
         return useing.compareAndSet(false, true);
     }
 
+    public boolean isUseing() {
+        return useing.get();
+    }
+
 
     public void release() {
         useing.set(false);
@@ -114,7 +118,6 @@ public class SSHConnection {
 
 
             int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
-            System.out.println("channel.getExitStatus()=" + channel.getExitStatus());
             if (exitValue != 0) {
                 List<String> lines = IOUtils.readLines(channel.getErrStream(), SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
                 for (String line : lines) {

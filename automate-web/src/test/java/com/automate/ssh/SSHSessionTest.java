@@ -19,8 +19,21 @@ public class SSHSessionTest {
         SSHSession s = new SSHSession("47.100.63.232", 22, "root", "Genx@linux");
 
         s.doWork(sshConnection -> {
-            System.out.println("lalala");
-            ExecCommand execCommand = new ExecCommand("ps aux ww | grep -v grep | grep -E \"java|nginx|redis\"");
+            ExecCommand execCommand = new ExecCommand("/cmd/tomcat-automate.sh stop");
+
+            sshConnection.exec(execCommand);
+
+
+            System.out.println(execCommand.getExitValue());
+
+
+            System.out.println(execCommand.getOut());
+        });
+
+        SSHSession s1 = new SSHSession("47.100.63.232", 22, "root", "Genx@linux");
+
+        s1.doWork(sshConnection -> {
+            ExecCommand execCommand = new ExecCommand("/cmd/tomcat-automate.sh start");
 
             sshConnection.exec(execCommand);
 
@@ -29,16 +42,6 @@ public class SSHSessionTest {
             System.out.println(execCommand.getExitValue());
         });
 
-        s.doWork(sshConnection -> {
-            System.out.println("lalala");
-        });
 
-        s.doWork(sshConnection -> {
-            System.out.println("lalala");
-        });
-
-        s.doWork(sshConnection -> {
-            System.out.println("lalala");
-        });
     }
 }

@@ -57,9 +57,9 @@ public class ExecFormatter {
                     } else {
                         fn = s;
                     }
-                    if (!ALLOW_MAP.containsKey(fn)) {
-                        throw new IllegalAccessException("the command 【" + fn + "】 is not allow");
-                    }
+//                    if (!ALLOW_MAP.containsKey(fn)) {
+//                        throw new IllegalAccessException("the command 【" + fn + "】 is not allow");
+//                    }
                     list.add(s);
                 }
             }
