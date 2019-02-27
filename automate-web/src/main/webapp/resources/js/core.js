@@ -3,6 +3,7 @@
 
 !(function (window, $, template) {
 
+    var loadingHtml = '<div class="loading-box"><div class="loading-center"><svg class="lds-default" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><circle cx="75" cy="50" fill="undefined" r="4.60148"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-1.375s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-1.375s"></animate></circle><circle cx="71.651" cy="62.5" fill="undefined" r="4.73185"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-1.25s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-1.25s"></animate></circle><circle cx="62.5" cy="71.651" fill="undefined" r="4.06518"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-1.125s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-1.125s"></animate></circle><circle cx="50" cy="75" fill="undefined" r="3.39852"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-1s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-1s"></animate></circle><circle cx="37.5" cy="71.651" fill="undefined" r="3"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-0.875s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-0.875s"></animate></circle><circle cx="28.349" cy="62.5" fill="undefined" r="3"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-0.75s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-0.75s"></animate></circle><circle cx="25" cy="50" fill="undefined" r="3"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-0.625s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-0.625s"></animate></circle><circle cx="28.349" cy="37.5" fill="undefined" r="3"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-0.5s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-0.5s"></animate></circle><circle cx="37.5" cy="28.349" fill="undefined" r="3"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-0.375s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-0.375s"></animate></circle><circle cx="50" cy="25" fill="undefined" r="3"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-0.25s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-0.25s"></animate></circle><circle cx="62.5" cy="28.349" fill="undefined" r="3.26815"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="-0.125s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="-0.125s"></animate></circle><circle cx="71.651" cy="37.5" fill="undefined" r="3.93482"><animate attributeName="r" values="3;3;5;3;3" times="0;0.1;0.2;0.3;1" dur="1.5s" repeatCount="indefinite" begin="0s"></animate><animate attributeName="fill" values="#a3d9ef;#a3d9ef;#82bbe4;#a3d9ef;#a3d9ef" repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1.5s" begin="0s"></animate></circle></svg></div></div>';
 
     //模板缓存 暂时只用内存缓存  可以考虑用 window.localStorage
     var templateCache = {};
@@ -92,7 +93,7 @@
                 total: total
             });
         },
-        get: function (url, data, callBack, dataType) {
+        get: function (url, data, callBack) {
             $.get(url, data, callBack, dataType || 'json');
         },
         post: function (url, data, callBack, dataType) {
@@ -102,6 +103,20 @@
             if (settings) {
                 settings.dataType = settings.dataType || 'json';
                 $.ajax(settings);
+            }
+        },
+        showLoading: function(){
+            var el = $(".loading-box");
+            if(el.length > 0){
+                el.show();
+            } else {
+                $("body").append(loadingHtml);
+            }
+        },
+        closeLoading: function(){
+            var el = $(".loading-box");
+            if(el.length > 0){
+                el.hide();
             }
         }
     };

@@ -94,36 +94,35 @@ public class SSHConnection {
      * @param execCommand
      */
     public void exec(ExecCommand execCommand) {
-        final ChannelExec channel;
+        ChannelExec channel = null;
         ExecStreamReader inputReader = null;
+        ExecStreamReader errorReader = null;
         Future<Integer> executeFuture = null;
         try {
             channel = (ChannelExec) this.session.openChannel("exec");
 
             channel.setCommand(execCommand.getCommand());
             channel.setOutputStream(null);
-            execCommand.start();
             channel.getOutputStream().close();
 
             inputReader = new ExecStreamReader(channel.getInputStream(), execCommand, false);
-            ExecThreadPool.execute(inputReader);
+            errorReader = new ExecStreamReader(channel.getErrStream(), execCommand, true);
 
+            ExecThreadPool.execute(inputReader);
+            ExecThreadPool.execute(errorReader);
+
+            execCommand.start();
             channel.connect();
 
+            final ChannelExec temp = channel;
             executeFuture = ExecThreadPool.submit(() -> {
                 //这里需要等待一会  否则 exitStatus = -1  就是这么奇怪
                 Thread.sleep(100);
-                return channel.getExitStatus();
+                return temp.getExitStatus();
             });
 
 
             int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
-            if (exitValue != 0) {
-                List<String> lines = IOUtils.readLines(channel.getErrStream(), SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
-                for (String line : lines) {
-                    execCommand.errorRead(line);
-                }
-            }
             execCommand.end(exitValue);
         } catch (Exception e) {
             execCommand.errorRead("【error by exec】" + e.getClass().getName());
@@ -138,10 +137,16 @@ public class SSHConnection {
                     ignore.printStackTrace();
                 }
             }
+
             if (inputReader != null) {
                 inputReader.close();
             }
-
+            if(errorReader != null){
+                errorReader.close();
+            }
+            if(channel != null){
+                channel.disconnect();
+            }
         }
 
     }

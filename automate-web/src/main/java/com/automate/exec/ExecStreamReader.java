@@ -46,7 +46,7 @@ public class ExecStreamReader implements Runnable {
             inputStream = null;
         } catch (IOException e) {
             //读取超时时  会通过关闭 stream 来结束该进程
-            logger.info("Runtime.getRuntime().exec stream read error, timeout ?");
+            logger.info("stream read error, {}", e.getMessage());
         }
     }
 

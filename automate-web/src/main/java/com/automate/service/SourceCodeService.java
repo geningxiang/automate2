@@ -1,6 +1,7 @@
 package com.automate.service;
 
 import com.alibaba.fastjson.JSON;
+import com.automate.common.utils.SpringContextUtil;
 import com.automate.entity.SourceCodeBranchEntity;
 import com.automate.entity.SourceCodeEntity;
 import com.automate.repository.SourceCodeBranchRepository;
@@ -8,7 +9,12 @@ import com.automate.repository.SourceCodeRepository;
 import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.git.GitHelper;
 import com.automate.vcs.vo.CommitLog;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +22,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,6 +41,15 @@ import java.util.Optional;
 @Service
 public class SourceCodeService{
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    /**
+     *  initialCapacity 设置cache的初始大小，要合理设置该值
+     */
+    private static Cache<Integer, SourceCodeEntity> sourceCodeCache = Caffeine.newBuilder()
+            .initialCapacity(256)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build();
+
 
     @Autowired
     private SourceCodeRepository sourceCodeRepository;
@@ -127,6 +145,15 @@ public class SourceCodeService{
         return sourceCodeRepository.findById(id);
     }
 
+    private static SourceCodeEntity getModelStatic(int id) {
+        Optional<SourceCodeEntity> model = SpringContextUtil.getBean("sourceCodeService", SourceCodeService.class).getModel(id);
+        return model.isPresent() ? model.get() : null;
+    }
+
+    public static SourceCodeEntity getModelByCache(int id) {
+        return sourceCodeCache.get(id, SourceCodeService::getModelStatic);
+    }
+
     /**
      * 添加对象
      **/
@@ -135,6 +162,8 @@ public class SourceCodeService{
             model.setCreateTime(new Timestamp(System.currentTimeMillis()));
         }
         sourceCodeRepository.save(model);
+
+        sourceCodeCache.put(model.getId(), model);
     }
 
     /**
@@ -142,6 +171,8 @@ public class SourceCodeService{
      **/
     public void deleteById(int id) {
         sourceCodeRepository.deleteById(id);
+
+        sourceCodeCache.invalidate(id);
     }
 
 

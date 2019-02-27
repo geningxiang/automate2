@@ -35,6 +35,7 @@
             <a href="javascript:;"> <i class="fa fa-laptop"></i> <span>服务器</span> </a>
             <ul class="sub">
                 <li><a href="/admin/server/list.do" target="mainContent">服务器列表</a></li>
+                <li><a href="/admin/container/list.do" target="mainContent">容器列表</a></li>
             </ul>
         </li>
         <li class="sub-menu">

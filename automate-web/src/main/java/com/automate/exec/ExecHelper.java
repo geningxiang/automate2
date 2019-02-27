@@ -75,6 +75,8 @@ public class ExecHelper {
             executeFuture = ExecThreadPool.submit(() -> process.waitFor());
             int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
             if (exitValue != 0) {
+                //TODO 有阻塞风险
+
                 List<String> lines = IOUtils.readLines(process.getErrorStream(), SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
                 for (String line : lines) {
                     execCommand.errorRead(line);

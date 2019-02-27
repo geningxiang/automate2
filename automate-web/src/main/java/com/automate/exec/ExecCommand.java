@@ -32,6 +32,8 @@ public class ExecCommand {
 
     private StringBuffer out = new StringBuffer(2048);
 
+    private StringBuffer error = new StringBuffer(256);
+
     /**
      * 返回状态码
      */
@@ -83,7 +85,7 @@ public class ExecCommand {
     }
 
     public void errorRead(String line) {
-        this.out.append(line).append(System.lineSeparator());
+        this.error.append(line).append(System.lineSeparator());
         if (this.cmdStreamMonitor != null) {
             this.cmdStreamMonitor.onMsg(line);
         }
@@ -127,6 +129,9 @@ public class ExecCommand {
         return out;
     }
 
+    public StringBuffer getError() {
+        return error;
+    }
 
     public int getExitValue() {
         return exitValue;

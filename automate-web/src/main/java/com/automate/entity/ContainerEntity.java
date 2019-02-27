@@ -1,5 +1,7 @@
 package com.automate.entity;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -20,6 +22,7 @@ public class ContainerEntity {
     private String remark;
     private String scriptStart;
     private String scriptStop;
+    private String scriptCheck;
     private Integer adminId;
 
     @Id
@@ -94,6 +97,16 @@ public class ContainerEntity {
     }
 
     @Basic
+    @Column(name = "SCRIPT_CHECK", nullable = true, length = 512)
+    public String getScriptCheck() {
+        return scriptCheck;
+    }
+
+    public void setScriptCheck(String scriptCheck) {
+        this.scriptCheck = scriptCheck;
+    }
+
+    @Basic
     @Column(name = "ADMIN_ID", nullable = true)
     public Integer getAdminId() {
         return adminId;
@@ -101,6 +114,17 @@ public class ContainerEntity {
 
     public void setAdminId(Integer adminId) {
         this.adminId = adminId;
+    }
+
+    public JSONObject toJson(){
+        JSONObject json = new JSONObject();
+        json.put("id", this.id);
+        json.put("serverId", this.serverId);
+        json.put("name", this.name);
+        json.put("type", this.type);
+        json.put("remark", this.remark);
+        json.put("adminId", this.adminId);
+        return json;
     }
 
 }

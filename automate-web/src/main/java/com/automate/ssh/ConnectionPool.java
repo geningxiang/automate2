@@ -38,6 +38,7 @@ public class ConnectionPool {
             }
         }
         SSHConnection sshConnection = new SSHConnection(hostname, port, username, password);
+        sshConnection.acquire();
         logger.debug("创建SSH连接,{}:{}", sshConnection.getHost(), sshConnection.getPort());
         connections.add(sshConnection);
         return sshConnection;

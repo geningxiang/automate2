@@ -13,6 +13,8 @@ import com.automate.service.SourceCodeService;
 import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.TestVCSRepository;
 import com.automate.vcs.VCSHelper;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
