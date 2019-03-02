@@ -2,10 +2,7 @@ package com.automate.ssh;
 
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecStreamPrintMonitor;
-import com.automate.exec.IExecStreamMonitor;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +16,7 @@ public class SSHSessionTest {
     @Test
     public void doWork() throws Exception {
         SSHSession s = new SSHSession("192.168.1.190", 22, "root", "genx@linux");
-        ExecCommand execCommand = new ExecCommand("/cmd/tomcat-automate.sh status");
+        ExecCommand execCommand = new ExecCommand("/cmd/tomcat-automate.sh start");
 
         execCommand.setCmdStreamMonitor(new ExecStreamPrintMonitor());
 
@@ -32,7 +29,6 @@ public class SSHSessionTest {
 
         System.out.println(execCommand.getOut());
 
-        System.out.println(execCommand.getError());
 
 //        SSHSession s1 = new SSHSession("47.100.63.232", 22, "root", "Genx@linux");
 //

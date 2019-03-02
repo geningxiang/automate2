@@ -129,6 +129,7 @@ public class SSHProxyImpl implements ISSHProxy {
             //接受远程服务器执行命令的结果
             String lineTemp;
             while ((lineTemp = br.readLine()) != null) {
+                System.out.println("@" + lineTemp);
                 sshResult.addResult(lineTemp);
             }
 

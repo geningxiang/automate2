@@ -93,15 +93,38 @@
                 total: total
             });
         },
-        get: function (url, data, callBack) {
-            $.get(url, data, callBack, dataType || 'json');
+        get: function (url, data, callBack, showLoading) {
+            this.ajax({
+                type: "GET",
+                url: url,
+                data: data,
+                success: callBack,
+                showLoading: showLoading
+            });
         },
-        post: function (url, data, callBack, dataType) {
-            $.post(url, data, callBack, dataType || 'json');
+        post: function (url, data, callBack, showLoading) {
+            this.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                success: callBack,
+                showLoading: showLoading
+            });
         },
         ajax: function (settings) {
             if (settings) {
                 settings.dataType = settings.dataType || 'json';
+
+                if(settings.showLoading == true){
+                    Core.showLoading();
+
+                    var completeFn = settings.complete;
+                    settings.complete = function(){
+                        Core.closeLoading();
+                        completeFn && completeFn(arguments);
+                    }
+                }
+
                 $.ajax(settings);
             }
         },

@@ -58,9 +58,9 @@
         <td>{{item.type}}</td>
         <td>{{item.remark}}</td>
         <td>
-            <button type="button" class="btn btn-success btn-sm"><i class="fa fa-play"></i> 启动</button>
+            <button type="button" class="btn btn-success btn-sm" onclick="containerStart('{{item.id}}')"><i class="fa fa-play"></i> 启动</button>
             &nbsp;&nbsp;
-            <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-stop"></i> 停止</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="containerStop('{{item.id}}')"><i class="fa fa-stop"></i> 停止</button>
             &nbsp;&nbsp;
             <button type="button" class="btn btn-warning btn-sm" onclick="containerCheck('{{item.id}}')"><i class="fa fa-stethoscope"></i> 检查</button>
         </td>
@@ -112,17 +112,40 @@
 
     var containerCheck = function(id){
         if(id) {
-            Core.showLoading();
             Core.post("/api/container/" + id + "/check", {}, function (data) {
-                Core.closeLoading();
                 console.log('运行检查脚本：', data);
                 if (data.status == 200) {
 
                 }
                 alert(data.msg);
-            });
+            }, true);
         }
-    }
+    };
+
+    var containerStart = function(id){
+        if(id) {
+            Core.post("/api/container/" + id + "/start", {}, function (data) {
+                console.log('运行检查脚本：', data);
+                if (data.status == 200) {
+
+                }
+                alert(data.msg);
+            }, true);
+        }
+    };
+
+    var containerStop = function(id){
+        if(id) {
+            Core.post("/api/container/" + id + "/stop", {}, function (data) {
+                console.log('运行检查脚本：', data);
+                if (data.status == 200) {
+
+                }
+                alert(data.msg);
+            }, true);
+        }
+    };
+
 
 </script>
 </body>

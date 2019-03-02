@@ -29,6 +29,72 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
+
+  <!-- DruidStatView start-->
+  <servlet>
+    <servlet-name>DruidStatView</servlet-name>
+    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+    <!-- 允许访问的IP地址 -->
+    <!-- <init-param>
+        <param-name>allow</param-name>
+        <param-value>192.168.28.94,192.168.28.100</param-value>
+    </init-param> -->
+    <!-- 拒绝访问的IP地址 -->
+    <!-- <init-param>
+        <param-name>deny</param-name>
+        <param-value>192.168.28.110</param-value>
+    </init-param> -->
+    <init-param>
+      <!-- 允许清空统计数据 -->
+      <param-name>resetEnable</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <!-- 用户名 -->
+      <param-name>loginUsername</param-name>
+      <param-value>druid</param-value>
+    </init-param>
+    <init-param>
+      <!-- 密码 -->
+      <param-name>loginPassword</param-name>
+      <param-value>wlyd_druid</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DruidStatView</servlet-name>
+    <url-pattern>/druid/*</url-pattern>
+  </servlet-mapping>
+
+  <filter>
+    <filter-name>DruidWebStatFilter</filter-name>
+    <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+    <!-- 经常需要排除一些不必要的url，比如*.js,/jslib/*等等 -->
+    <init-param>
+      <param-name>exclusions</param-name>
+      <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+    </init-param>
+    <!-- 缺省sessionStatMaxCount是1000个。 -->
+    <init-param>
+      <param-name>sessionStatMaxCount</param-name>
+      <param-value>1000</param-value>
+    </init-param>
+    <!-- 你可以关闭session统计功能 -->
+    <init-param>
+      <param-name>sessionStatEnable</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <!-- druid 0.2.7版本开始支持profile，配置profileEnable能够监控单个url调用的sql列表 -->
+    <init-param>
+      <param-name>profileEnable</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>DruidWebStatFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!-- DruidStatView end-->
+
   <!-- 乱码处理 -->
   <filter>
     <filter-name>characterEncodingFilter</filter-name>

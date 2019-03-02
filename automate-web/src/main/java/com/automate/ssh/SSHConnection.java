@@ -15,9 +15,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -95,27 +93,27 @@ public class SSHConnection {
      */
     public void exec(ExecCommand execCommand) {
         ChannelExec channel = null;
-        ExecStreamReader inputReader = null;
-        ExecStreamReader errorReader = null;
         Future<Integer> executeFuture = null;
         try {
             channel = (ChannelExec) this.session.openChannel("exec");
 
             channel.setCommand(execCommand.getCommand());
             channel.setOutputStream(null);
-            channel.getOutputStream().close();
 
-            inputReader = new ExecStreamReader(channel.getInputStream(), execCommand, false);
-            errorReader = new ExecStreamReader(channel.getErrStream(), execCommand, true);
-
-            ExecThreadPool.execute(inputReader);
-            ExecThreadPool.execute(errorReader);
-
+            ByteArrayOutputStream errStream = new ByteArrayOutputStream();
+            channel.setErrStream(errStream);
             execCommand.start();
             channel.connect();
 
+            BufferedReader br = new BufferedReader(new InputStreamReader(channel.getInputStream(), Charsets.UTF_8));
+
             final ChannelExec temp = channel;
             executeFuture = ExecThreadPool.submit(() -> {
+                //接受远程服务器执行命令的结果
+                String lineTemp;
+                while ((lineTemp = br.readLine()) != null) {
+                    execCommand.inputRead(lineTemp);
+                }
                 //这里需要等待一会  否则 exitStatus = -1  就是这么奇怪
                 Thread.sleep(100);
                 return temp.getExitStatus();
@@ -124,6 +122,10 @@ public class SSHConnection {
 
             int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
             execCommand.end(exitValue);
+
+            if(exitValue != 0){
+                execCommand.errorRead(errStream.toString(Charsets.UTF_8.name()));
+            }
         } catch (Exception e) {
             execCommand.errorRead("【error by exec】" + e.getClass().getName());
             // 1 表示 通用未知错误　
@@ -138,12 +140,6 @@ public class SSHConnection {
                 }
             }
 
-            if (inputReader != null) {
-                inputReader.close();
-            }
-            if(errorReader != null){
-                errorReader.close();
-            }
             if(channel != null){
                 channel.disconnect();
             }

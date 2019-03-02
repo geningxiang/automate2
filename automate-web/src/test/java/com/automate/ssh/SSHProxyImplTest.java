@@ -17,9 +17,9 @@ public class SSHProxyImplTest {
 
     @Test
     public void execCommand() throws Exception {
-        ISSHProxy isshProxy = new SSHProxyImpl("60.190.13.162", 6122, "caimaoapp", "87677911");
+        ISSHProxy isshProxy = new SSHProxyImpl("192.168.1.190", 22, "root", "genx@linux");
 
-        CmdResult sshResult = isshProxy.execCommand("ps aux ww | grep -v grep | grep -E \"java|nginx|redis\"");
+        CmdResult sshResult = isshProxy.execCommand("/cmd/tomcat-automate.sh start");
 
         System.out.println(sshResult.getExitStatus());
 
@@ -27,19 +27,19 @@ public class SSHProxyImplTest {
 
 
         for (String s : sshResult.getResult()) {
-//            System.out.println(s);
+            System.out.println(s);
 
-            //USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-            String[] ss = s.split("\\s+");
-            if(ss.length >= 11){
-                String command = ss[10];
-
-
-
-
-                String[] tt = Arrays.copyOfRange(ss, 10, ss.length);
-                System.out.println(StringUtils.join(tt, " "));
-            }
+//            //USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+//            String[] ss = s.split("\\s+");
+//            if(ss.length >= 11){
+//                String command = ss[10];
+//
+//
+//
+//
+//                String[] tt = Arrays.copyOfRange(ss, 10, ss.length);
+//                System.out.println(StringUtils.join(tt, " "));
+//            }
         }
 
 

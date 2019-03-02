@@ -10,7 +10,6 @@ import com.automate.task.background.ITask;
 import com.automate.task.background.impl.BaseSourceCodeAssembly;
 import com.automate.task.background.impl.MavenTask;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

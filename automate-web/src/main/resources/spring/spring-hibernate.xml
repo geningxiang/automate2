@@ -27,9 +27,10 @@
 
         <property name="timeBetweenLogStatsMillis" value="300000"/>
 
-        <!--
-        <property name="filters" value="stat"/>
-         -->
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="wall,stat" />
+
+        <property name="statLogger" ref="myDruidDataSourceStatLogger" />
     </bean>
 
     <!--指定实现JPA的适配器 -->

@@ -9,6 +9,7 @@ import com.automate.controller.BaseController;
 import com.automate.entity.ContainerEntity;
 import com.automate.entity.ServerEntity;
 import com.automate.exec.ExecCommand;
+import com.automate.exec.ExecStreamPrintMonitor;
 import com.automate.service.ContainerService;
 import com.automate.service.ContainerTypeService;
 import com.automate.service.ServerService;
@@ -93,6 +94,12 @@ public class ContainerController extends BaseController {
     }
 
 
+    /**
+     * 查询容器状态
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/container/{id}/check", produces = "application/json;charset=UTF-8")
     public ResponseEntity containerCheck(@PathVariable(value = "id") Integer id) throws Exception {
         ContainerEntity containerEntity = getContainerEntitySafe(id);
@@ -109,11 +116,71 @@ public class ContainerController extends BaseController {
         sshSession.doWork(sshConnection -> sshConnection.exec(execCommand));
 
         if(execCommand.getExitValue() == 0){
-            return ResponseEntity.ok("该容器正在运行中");
+            return ResponseEntity.of(HttpStatus.OK,"该容器正在运行中");
         } else if(execCommand.getExitValue() == 3){
             return ResponseEntity.of(HttpStatus.NO_CONTENT, "该容器未运行");
         } else {
-            return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, execCommand.getError().toString());
+            return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, "exit=" + execCommand.getExitValue());
+        }
+    }
+
+    /**
+     * 启动容器
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/container/{id}/start", produces = "application/json;charset=UTF-8")
+    public ResponseEntity containerStart(@PathVariable(value = "id") Integer id) throws Exception {
+        ContainerEntity containerEntity = getContainerEntitySafe(id);
+        Assert.hasText(containerEntity.getScriptStart(), "当前未配置容器检查脚本");
+        if(containerEntity.getServerId() == null || containerEntity.getServerId() <= 0){
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "当前容器未绑定服务器");
+        }
+
+        ServerEntity serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
+        Assert.notNull(serverEntity, "未找到相应的服务器");
+        SSHSession sshSession = new SSHSession(serverEntity);
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStart());
+
+        execCommand.setCmdStreamMonitor(new ExecStreamPrintMonitor());
+
+        sshSession.doWork(sshConnection -> sshConnection.exec(execCommand));
+
+        if(execCommand.getExitValue() == 0){
+            return ResponseEntity.of(HttpStatus.OK,"启动成功");
+        } else if(execCommand.getExitValue() == 2){
+            return ResponseEntity.of(HttpStatus.OK,"容器正在运行,请勿重复启动");
+        }  else {
+            return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, "exit=" + execCommand.getExitValue());
+        }
+    }
+
+    /**
+     * 关闭容器
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/container/{id}/stop", produces = "application/json;charset=UTF-8")
+    public ResponseEntity containerStop(@PathVariable(value = "id") Integer id) throws Exception {
+        ContainerEntity containerEntity = getContainerEntitySafe(id);
+        Assert.hasText(containerEntity.getScriptStop(), "当前未配置容器检查脚本");
+        if(containerEntity.getServerId() == null || containerEntity.getServerId() <= 0){
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "当前容器未绑定服务器");
+        }
+
+        ServerEntity serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
+        Assert.notNull(serverEntity, "未找到相应的服务器");
+        SSHSession sshSession = new SSHSession(serverEntity);
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStop());
+
+        sshSession.doWork(sshConnection -> sshConnection.exec(execCommand));
+
+        if(execCommand.getExitValue() == 0){
+            return ResponseEntity.of(HttpStatus.OK,"关闭成功");
+        } else {
+            return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, "exit=" + execCommand.getExitValue());
         }
     }
 

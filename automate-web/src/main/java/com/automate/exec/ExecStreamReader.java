@@ -33,10 +33,11 @@ public class ExecStreamReader implements Runnable {
     @Override
     public void run() {
         try {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream,  SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {
+                System.out.println("@" + line);
                 if (this.isError) {
                     execCommand.errorRead(line);
                 } else {
