@@ -5,10 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.AssemblyLineEntity;
 import com.automate.exec.ExecStreamPrintMonitor;
-import com.automate.task.background.BackgroundAssemblyManager;
-import com.automate.task.background.ITask;
-import com.automate.task.background.impl.BaseSourceCodeAssembly;
-import com.automate.task.background.impl.MavenTask;
+import com.automate.task.background.BackgroundTaskManager;
+import com.automate.task.background.assembly.IAssemblyStepTask;
+import com.automate.task.background.assembly.BackgroundAssemblyTask;
+import com.automate.task.background.assembly.impl.MavenAssemblyStepTask;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class AssemblyLineServiceTest {
     private AssemblyLineService assemblyLineService;
 
     @Autowired
-    private BackgroundAssemblyManager backgroundAssemblyManager;
+    private BackgroundTaskManager backgroundTaskManager;
 
     @Test
     public void findAll() {
@@ -72,7 +72,7 @@ public class AssemblyLineServiceTest {
     public void test() throws Exception {
         Optional<AssemblyLineEntity> assemblyLineEntity = assemblyLineService.getModel(1);
 
-        backgroundAssemblyManager.execute(BaseSourceCodeAssembly.create(assemblyLineEntity.get(), "master", null));
+        backgroundTaskManager.execute(BackgroundAssemblyTask.create(assemblyLineEntity.get(), "master", null));
 
 
 
@@ -85,7 +85,7 @@ public class AssemblyLineServiceTest {
 
         JSONArray config = new JSONArray();
 
-        MavenTask mavenTask = new MavenTask();
+        MavenAssemblyStepTask mavenTask = new MavenAssemblyStepTask();
         mavenTask.setCustom("install");
         JSONObject json = (JSONObject) JSONObject.toJSON(mavenTask);
         json.put("className", mavenTask.getClass().getName());
@@ -93,7 +93,7 @@ public class AssemblyLineServiceTest {
         System.out.println(config.toJSONString());
 
 
-        MavenTask mavenTask2 = new MavenTask();
+        MavenAssemblyStepTask mavenTask2 = new MavenAssemblyStepTask();
         //mavenTask2.setCustom("compile");
         JSONObject json2 = (JSONObject) JSONObject.toJSON(mavenTask2);
         json2.put("className", mavenTask2.getClass().getName());
@@ -109,11 +109,11 @@ public class AssemblyLineServiceTest {
                 System.out.println(className);
                 Class cls = Class.forName(className);
 
-                if (ITask.class.isAssignableFrom(cls)) {
+                if (IAssemblyStepTask.class.isAssignableFrom(cls)) {
 
-                    ITask task = (ITask) JSONObject.parseObject(item.toJSONString(), cls);
+                    IAssemblyStepTask task = (IAssemblyStepTask) JSONObject.parseObject(item.toJSONString(), cls);
 
-                    ((MavenTask) task).setExecStreamMonitor(execStreamPrintMonitor);
+                    ((MavenAssemblyStepTask) task).setExecStreamMonitor(execStreamPrintMonitor);
                     System.out.println(JSON.toJSONString(task));
 
 //                    task.invoke();

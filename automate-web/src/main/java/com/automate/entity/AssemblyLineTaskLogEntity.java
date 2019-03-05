@@ -23,7 +23,7 @@ public class AssemblyLineTaskLogEntity {
     private Integer assemblyLineLogId;
     private Short type;
     private Short kind;
-    private String content;
+    private StringBuffer content;
     private Integer status;
     private Timestamp startTime;
     private Timestamp endTime;
@@ -122,11 +122,21 @@ public class AssemblyLineTaskLogEntity {
     @Basic
     @Column(name = "CONTENT", nullable = true, length = -1)
     public String getContent() {
-        return content;
+        return content.toString();
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.content = new StringBuffer(content);
+    }
+    public void appendContent(String content) {
+        if(this.content == null){
+            synchronized (this){
+                if(this.content == null){
+                    this.content = new StringBuffer(1024);
+                }
+            }
+        }
+        this.content.append(content);
     }
 
     @Basic
@@ -137,6 +147,10 @@ public class AssemblyLineTaskLogEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public void setStatus(AssemblyLineLogEntity.Status status){
+        this.status = status.ordinal();
     }
 
 

@@ -124,7 +124,7 @@ public class GitHelper extends AbstractVCSHelper {
                             continue;
                         }
                         if(id == null || !id.equals(pullResult.getMergeResult().getNewHead().getName())){
-
+                            logger.error("pushed, before:{}, after:{}", id, pullResult.getMergeResult().getNewHead().getName());
                             //TODO pushed
                             EventCenter.post(new SourceCodePullEvent(super.sourceCodeId, remoteBranchName, pullResult.getMergeResult().getNewHead().getName()));
 

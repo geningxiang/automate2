@@ -16,14 +16,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:/spring/*.xml"})
-public class BackgroundAssemblyManagerTest {
+public class BackgroundTaskManagerTest {
 
     @Autowired
-    BackgroundAssemblyManager backgroundAssemblyManager;
+    BackgroundTaskManager backgroundTaskManager;
 
     @Test
     public void test() {
-        backgroundAssemblyManager.setBackgroundTaskMonitor(new IBackgroundMonitor() {
+        backgroundTaskManager.setBackgroundTaskMonitor(new IBackgroundMonitor() {
             @Override
             public void onWait(long uniqueId, String name, int waitingSize) {
                 System.out.println(String.format("【onwait】%s-%s, waiting:%d", uniqueId, name, waitingSize));
@@ -41,7 +41,7 @@ public class BackgroundAssemblyManagerTest {
         });
         for (int i = 0; i < 500; i++) {
             final int index = i;
-            backgroundAssemblyManager.execute(new AbstractBackgroundAssembly(null) {
+            backgroundTaskManager.execute(new AbstractBackgroundTask(null) {
                 @Override
                 public String getName() {
                     return "I am " + index;

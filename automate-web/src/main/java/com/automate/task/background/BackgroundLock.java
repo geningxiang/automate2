@@ -25,7 +25,7 @@ public class BackgroundLock {
      */
     private static final Object LOCK = new Object();
 
-    public static void acquire(AbstractBackgroundAssembly task) throws InterruptedException {
+    public static void acquire(AbstractBackgroundTask task) throws InterruptedException {
         if (task.getLocks() != null) {
             task.updateStatus(BackgroundStatus.acquire);
             for (int i = 0; i < task.getLocks().length; i++) {
@@ -52,7 +52,7 @@ public class BackgroundLock {
         }
     }
 
-    public static void release(AbstractBackgroundAssembly task) {
+    public static void release(AbstractBackgroundTask task) {
         if (task.getLocks() != null) {
             for (int i = task.getLocks().length - 1; i >= 0; i--) {
                 synchronized (LOCK) {

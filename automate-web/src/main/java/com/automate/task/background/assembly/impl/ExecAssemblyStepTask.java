@@ -1,4 +1,4 @@
-package com.automate.task.background.impl;
+package com.automate.task.background.assembly.impl;
 
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecFormatter;
@@ -12,7 +12,7 @@ import java.util.Arrays;
  * @author: genx
  * @date: 2019/2/17 9:51
  */
-public class ExecTask extends AbstractExecTask {
+public class ExecAssemblyStepTask extends AbstractExecAssemblyStepTask {
 
     private String scripts;
 

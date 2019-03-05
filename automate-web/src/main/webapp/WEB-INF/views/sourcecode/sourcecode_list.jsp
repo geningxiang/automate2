@@ -143,7 +143,7 @@
             </div>
             <ul class="ant-card-actions">
                 <li style="width: 50%;"><span><a href="javascript:sourceCodeDetail('{{item.id}}')">详情</a></span></li>
-                <li style="width: 50%;"><span><a>操作二</a></span></li>
+                <li style="width: 50%;"><span><a href="javascript:sourceCodeSync('{{item.id}}')">VCS同步</a></span></li>
             </ul>
         </div>
     </div>

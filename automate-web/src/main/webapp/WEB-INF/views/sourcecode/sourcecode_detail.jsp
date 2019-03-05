@@ -164,7 +164,9 @@
             <td>{{item.autoTrigger ? '是' : '否'}}</td>
             <td>{{item.triggerCron}}</td>
             <td>
-                <button class="btn btn-success btn-xs" onclick="showRun('{{item.id}}', '{{item.name}}')"><i class="fa fa-play"></i> 运行</button>
+                <button class="btn btn-info btn-xs" onclick="assemblyDetail('{{item.id}}')"><i class="fa fa-play"></i> 编辑</button>
+                &nbsp;&nbsp;
+                <button class="btn btn-success btn-xs" onclick="showRun('{{item.id}}', '{{item.name}}')"><i class="fa  fa-cog"></i> 运行</button>
             </td>
         </tr>
         {{/each}}
@@ -278,7 +280,7 @@
                 console.log('运行流水线', msg);
                 if(msg.status == 200){
                     $("#assemblyRunContent").modal('hide');
-                    alert("开始执行:您可以");
+                    alert("开始执行:您可以先去逛逛,一会在回来看看呗");
                     changePage(1);
                 } else {
                     alert(msg.msgs);
@@ -290,6 +292,11 @@
 
     function showLogDetail(assemblyLineLogId){
         window.open('/admin/assembly/assemblyLogDetail?id=' + assemblyLineLogId||'');
+    }
+
+    function assemblyDetail(id) {
+        if(id && id > 0)
+            window.open("/admin/assembly/detail?id=" + id);
     }
 </script>
 </body>

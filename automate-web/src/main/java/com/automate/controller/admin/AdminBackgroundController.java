@@ -1,7 +1,7 @@
 package com.automate.controller.admin;
 
-import com.automate.task.background.AbstractBackgroundAssembly;
-import com.automate.task.background.BackgroundAssemblyManager;
+import com.automate.task.background.AbstractBackgroundTask;
+import com.automate.task.background.BackgroundTaskManager;
 import com.automate.task.background.IBackgroundMonitor;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,14 +25,14 @@ import java.util.Set;
 public class AdminBackgroundController {
 
     @Autowired
-    private BackgroundAssemblyManager backgroundAssemblyManager;
+    private BackgroundTaskManager backgroundTaskManager;
 
 
     @RequestMapping("/dashboard")
     public String dashboard(ModelMap modelMap) {
-        modelMap.put("runningList", backgroundAssemblyManager.runningList());
+        modelMap.put("runningList", backgroundTaskManager.runningList());
 
-        modelMap.put("waitingList", backgroundAssemblyManager.waitingList());
+        modelMap.put("waitingList", backgroundTaskManager.waitingList());
 
         return "background/dashboard";
     }
@@ -49,7 +47,7 @@ public class AdminBackgroundController {
     @ResponseBody
     @RequestMapping("/mock")
     public String mock(ModelMap modelMap) {
-        backgroundAssemblyManager.setBackgroundTaskMonitor(new IBackgroundMonitor() {
+        backgroundTaskManager.setBackgroundTaskMonitor(new IBackgroundMonitor() {
             @Override
             public void onWait(long uniqueId, String name, int waitingSize) {
                 //System.out.println(String.format("【onwait】%s-%s, waiting:%d", uniqueId, name, waitingSize));
@@ -67,7 +65,7 @@ public class AdminBackgroundController {
         });
         for (int i = 0; i < 2000; i++) {
             final int index = i;
-            backgroundAssemblyManager.execute(new AbstractBackgroundAssembly(bulidLocks()) {
+            backgroundTaskManager.execute(new AbstractBackgroundTask(bulidLocks()) {
                 @Override
                 public String getName() {
                     return "I am " + index;

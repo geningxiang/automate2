@@ -8,8 +8,8 @@ import com.automate.entity.AssemblyLineTaskLogEntity;
 import com.automate.service.AssemblyLineLogService;
 import com.automate.service.AssemblyLineService;
 import com.automate.service.AssemblyLineTaskLogService;
-import com.automate.task.background.BackgroundAssemblyManager;
-import com.automate.task.background.impl.BaseSourceCodeAssembly;
+import com.automate.task.background.BackgroundTaskManager;
+import com.automate.task.background.assembly.BackgroundAssemblyTask;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class AssemblyController extends BaseController {
     private AssemblyLineTaskLogService assemblyLineTaskLogService;
 
     @Autowired
-    private BackgroundAssemblyManager backgroundAssemblyManager;
+    private BackgroundTaskManager backgroundTaskManager;
 
 
     @RequestMapping(value = "/list")
@@ -102,7 +102,7 @@ public class AssemblyController extends BaseController {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "分支不匹配:" + branchName + " | " + assemblyLineEntity.get().getBranches());
         }
         try {
-            backgroundAssemblyManager.execute(BaseSourceCodeAssembly.create(assemblyLineEntity.get(), branchName, commitId));
+            backgroundTaskManager.execute(BackgroundAssemblyTask.create(assemblyLineEntity.get(), branchName, commitId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

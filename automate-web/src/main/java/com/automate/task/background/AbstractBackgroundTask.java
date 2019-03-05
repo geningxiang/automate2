@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author: genx
  * @date: 2019/2/2 8:53
  */
-public abstract class AbstractBackgroundAssembly implements Runnable {
+public abstract class AbstractBackgroundTask implements Runnable {
 
     private static final AtomicLong INDEX = new AtomicLong(0);
 
@@ -26,7 +26,7 @@ public abstract class AbstractBackgroundAssembly implements Runnable {
     private final String[] locks;
     private int lockIndex;
 
-    public AbstractBackgroundAssembly(Set<String> locks){
+    public AbstractBackgroundTask(Set<String> locks){
         this.uniqueId = INDEX.incrementAndGet();
         if(locks != null && locks.size() > 0) {
             String[] temp = new String[locks.size()];

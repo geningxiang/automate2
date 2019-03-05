@@ -1,11 +1,9 @@
-package com.automate.task.background.impl;
+package com.automate.task.background.assembly.impl;
 
 import com.automate.exec.ExecCommand;
 import com.automate.exec.IExecStreamMonitor;
-import com.automate.task.background.ITask;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -15,7 +13,7 @@ import java.util.Arrays;
  * @author: genx
  * @date: 2019/2/3 9:59
  */
-public class MavenTask extends AbstractExecTask {
+public class MavenAssemblyStepTask extends AbstractExecAssemblyStepTask {
 
 
     public void setSourceCodeId(int sourceCodeId) {

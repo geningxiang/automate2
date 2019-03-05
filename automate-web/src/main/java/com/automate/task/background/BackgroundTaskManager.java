@@ -19,15 +19,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created with IntelliJ IDEA.
  * Description:
- * 后台流水线 管理器
+ * 后台任务管理器
  *
  * @author: genx
  * @date: 2019/2/2 8:51
  */
 @Component
 @Scope("singleton")
-public class BackgroundAssemblyManager implements Runnable {
-    private static BackgroundAssemblyManager instance;
+public class BackgroundTaskManager implements Runnable {
+    private static BackgroundTaskManager instance;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -44,12 +44,12 @@ public class BackgroundAssemblyManager implements Runnable {
     /**
      * 等待执行的队列
      */
-    private final ArrayBlockingQueue<AbstractBackgroundAssembly> waitingQueue = new ArrayBlockingQueue(BackgroundContants.MAX_WAIT_SIZE);
+    private final ArrayBlockingQueue<AbstractBackgroundTask> waitingQueue = new ArrayBlockingQueue(BackgroundContants.MAX_WAIT_SIZE);
 
     private IBackgroundMonitor backgroundTaskMonitor;
 
-    private BackgroundAssemblyManager() {
-        synchronized (BackgroundAssemblyManager.class) {
+    private BackgroundTaskManager() {
+        synchronized (BackgroundTaskManager.class) {
             if (instance != null) {
                 throw new RuntimeException("BackgroundTaskManager is singleton, can not be instantiation many");
             }
@@ -74,7 +74,7 @@ public class BackgroundAssemblyManager implements Runnable {
      * @param r
      * @return
      */
-    public boolean execute(AbstractBackgroundAssembly r) {
+    public boolean execute(AbstractBackgroundTask r) {
         if (r == null) {
             throw new NullPointerException();
         }
@@ -90,7 +90,7 @@ public class BackgroundAssemblyManager implements Runnable {
      *
      * @return
      */
-    public Collection<AbstractBackgroundAssembly> runningList() {
+    public Collection<AbstractBackgroundTask> runningList() {
         return this.backgroundThreadPool.currentMap.values();
     }
 
@@ -108,7 +108,7 @@ public class BackgroundAssemblyManager implements Runnable {
      *
      * @return
      */
-    public List<AbstractBackgroundAssembly> waitingList() {
+    public List<AbstractBackgroundTask> waitingList() {
         return Lists.newArrayList(this.waitingQueue.iterator());
     }
 
@@ -125,8 +125,8 @@ public class BackgroundAssemblyManager implements Runnable {
     public void run() {
         while (true) {
             try {
-                AbstractBackgroundAssembly abstractBackgroundAssembly = waitingQueue.take();
-                postExecuteToThreadPool(abstractBackgroundAssembly);
+                AbstractBackgroundTask abstractBackgroundTask = waitingQueue.take();
+                postExecuteToThreadPool(abstractBackgroundTask);
             } catch (InterruptedException e) {
                 return;
             } catch (Exception e) {
@@ -138,13 +138,13 @@ public class BackgroundAssemblyManager implements Runnable {
     /**
      * 线程池 采用 AbortPolicy 拒绝策略，  被拒绝后等待1秒再重发
      *
-     * @param abstractBackgroundAssembly
+     * @param abstractBackgroundTask
      * @throws InterruptedException
      */
-    private void postExecuteToThreadPool(AbstractBackgroundAssembly abstractBackgroundAssembly) throws InterruptedException {
-        while (!abstractBackgroundAssembly.isCancel()) {
+    private void postExecuteToThreadPool(AbstractBackgroundTask abstractBackgroundTask) throws InterruptedException {
+        while (!abstractBackgroundTask.isCancel()) {
             try {
-                backgroundThreadPool.execute(abstractBackgroundAssembly);
+                backgroundThreadPool.execute(abstractBackgroundTask);
                 return;
             } catch (RejectedExecutionException e) {
                 //线程池的并行度满了
@@ -159,7 +159,7 @@ public class BackgroundAssemblyManager implements Runnable {
     }
 
     private class BackgroundThreadPool extends ThreadPoolExecutor {
-        private final Map<Long, AbstractBackgroundAssembly> currentMap;
+        private final Map<Long, AbstractBackgroundTask> currentMap;
 
         private BackgroundThreadPool(int maximumPoolSize) {
             super(0,
@@ -167,7 +167,7 @@ public class BackgroundAssemblyManager implements Runnable {
                     5L,
                     TimeUnit.SECONDS,
                     new SynchronousQueue<>(),
-                    new BackgroundAssemblyManager.CustomThreadFactory()
+                    new BackgroundTaskManager.CustomThreadFactory()
 //                    new ThreadPoolExecutor.AbortPolicy()
             );
 
@@ -177,26 +177,26 @@ public class BackgroundAssemblyManager implements Runnable {
         @Override
         protected void beforeExecute(Thread t, Runnable r) {
             super.beforeExecute(t, r);
-            if (r instanceof AbstractBackgroundAssembly) {
-                ((AbstractBackgroundAssembly) r).setStartTime(System.currentTimeMillis());
-                currentMap.put(((AbstractBackgroundAssembly) r).getUniqueId(), (AbstractBackgroundAssembly) r);
+            if (r instanceof AbstractBackgroundTask) {
+                ((AbstractBackgroundTask) r).setStartTime(System.currentTimeMillis());
+                currentMap.put(((AbstractBackgroundTask) r).getUniqueId(), (AbstractBackgroundTask) r);
                 if (backgroundTaskMonitor != null) {
                     backgroundTaskMonitor.onStart(
-                            ((AbstractBackgroundAssembly) r).getUniqueId(),
-                            ((AbstractBackgroundAssembly) r).getName(),
+                            ((AbstractBackgroundTask) r).getUniqueId(),
+                            ((AbstractBackgroundTask) r).getName(),
                             this.currentMap.size(),
                             waitingQueue.size());
                 }
 
-                if (((AbstractBackgroundAssembly) r).getLocks() != null) {
+                if (((AbstractBackgroundTask) r).getLocks() != null) {
                     try {
                         //申请锁
-                        BackgroundLock.acquire((AbstractBackgroundAssembly) r);
+                        BackgroundLock.acquire((AbstractBackgroundTask) r);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-                ((AbstractBackgroundAssembly) r).updateStatus(BackgroundStatus.running);
+                ((AbstractBackgroundTask) r).updateStatus(BackgroundStatus.running);
             }
 
             EnvironmentPathUtil.remove();
@@ -205,19 +205,19 @@ public class BackgroundAssemblyManager implements Runnable {
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
             try {
-                if (r instanceof AbstractBackgroundAssembly) {
-                    ((AbstractBackgroundAssembly) r).setEndTime(System.currentTimeMillis());
-                    this.currentMap.remove(((AbstractBackgroundAssembly) r).getUniqueId());
+                if (r instanceof AbstractBackgroundTask) {
+                    ((AbstractBackgroundTask) r).setEndTime(System.currentTimeMillis());
+                    this.currentMap.remove(((AbstractBackgroundTask) r).getUniqueId());
 
-                    if (((AbstractBackgroundAssembly) r).getLocks() != null) {
+                    if (((AbstractBackgroundTask) r).getLocks() != null) {
                         //释放锁
-                        BackgroundLock.release((AbstractBackgroundAssembly) r);
+                        BackgroundLock.release((AbstractBackgroundTask) r);
                     }
 
                     if (backgroundTaskMonitor != null) {
                         backgroundTaskMonitor.onComplete(
-                                ((AbstractBackgroundAssembly) r).getUniqueId(),
-                                ((AbstractBackgroundAssembly) r).getName(),
+                                ((AbstractBackgroundTask) r).getUniqueId(),
+                                ((AbstractBackgroundTask) r).getName(),
                                 t == null ? BackgroundStatus.success.name() : BackgroundStatus.error.name(),
                                 this.currentMap.size(),
                                 waitingQueue.size());
@@ -235,11 +235,11 @@ public class BackgroundAssemblyManager implements Runnable {
             if (command == null) {
                 throw new NullPointerException();
             }
-            //只允许 自定义的 AbstractBackgroundAssembly
-            if (command instanceof AbstractBackgroundAssembly) {
+            //只允许 自定义的 AbstractBackgroundTask
+            if (command instanceof AbstractBackgroundTask) {
                 super.execute(command);
             } else {
-                throw new IllegalArgumentException("this is allow for AbstractBackgroundAssembly");
+                throw new IllegalArgumentException("this is allow for AbstractBackgroundTask");
             }
         }
 

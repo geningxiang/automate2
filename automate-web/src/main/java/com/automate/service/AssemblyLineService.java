@@ -2,12 +2,11 @@ package com.automate.service;
 
 import com.alibaba.fastjson.JSON;
 import com.automate.entity.AssemblyLineEntity;
-import com.automate.entity.SourceCodeEntity;
 import com.automate.event.handle.IEventHandler;
 import com.automate.event.po.SourceCodePullEvent;
 import com.automate.repository.AssemblyLineRepository;
-import com.automate.task.background.BackgroundAssemblyManager;
-import com.automate.task.background.impl.BaseSourceCodeAssembly;
+import com.automate.task.background.BackgroundTaskManager;
+import com.automate.task.background.assembly.BackgroundAssemblyTask;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public class AssemblyLineService implements IEventHandler {
     private AssemblyLineRepository assemblyLineRepository;
 
     @Autowired
-    private BackgroundAssemblyManager backgroundAssemblyManager;
+    private BackgroundTaskManager backgroundTaskManager;
 
 
     public Iterable<AssemblyLineEntity> findAll() {
@@ -88,7 +87,7 @@ public class AssemblyLineService implements IEventHandler {
                 if(StringUtils.isNotBlank(assemblyLineEntity.getBranches()) && isMatch(assemblyLineEntity.getBranches(), sourceCodePullEvent.getBranchName())){
                     logger.debug("触发自动化流水线:id={}" , assemblyLineEntity.getId());
                     try {
-                        backgroundAssemblyManager.execute(BaseSourceCodeAssembly.create(assemblyLineEntity, sourceCodePullEvent.getBranchName(), sourceCodePullEvent.getCommitId()));
+                        backgroundTaskManager.execute(BackgroundAssemblyTask.create(assemblyLineEntity, sourceCodePullEvent.getBranchName(), sourceCodePullEvent.getCommitId()));
                     } catch (Exception e) {
                         logger.error("发布后台任务失败", e);
                     }

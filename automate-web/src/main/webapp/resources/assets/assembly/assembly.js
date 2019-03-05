@@ -1,13 +1,17 @@
 !function (window, $) {
     var ASSEMBLY_MAP = {
-        'com.automate.task.background.impl.MavenTask': {
+        'com.automate.task.background.assembly.impl.MavenAssemblyStepTask': {
             name: 'Maven任务',
             tpl: '/resources/assets/assembly/mavenTask.tpl'
         },
-        'com.automate.task.background.impl.ExecTask': {
+        'com.automate.task.background.assembly.impl.ExecAssemblyStepTask': {
             name: '自定义Exec任务',
             tpl: '/resources/assets/assembly/execTask.tpl'
-        }
+        },
+        'com.automate.task.background.assembly.impl.PackageExtractAssemblyStepTask': {
+            name: '文件包提取任务',
+            tpl: '/resources/assets/assembly/packageExtractTask.tpl'
+        },
     }
 
     //存数据
@@ -73,12 +77,16 @@
             var item;
             for (var i = 0; i < jsonArray.length; i++) {
                 item = jsonArray[i];
-                item.key = '' + keyIndex++;
-                tempMap[item.key] = item;
+                if(ASSEMBLY_MAP[item.className]) {
+                    item.key = '' + keyIndex++;
+                    tempMap[item.key] = item;
 
-                $("#step-ul").append('<li ' + (i == 0 ? 'class="active"' : '') + 'data-task-key="' + item.key + '">' + ASSEMBLY_MAP[item.className].name + '<i class="fa fa-times"></i></li>');
-                if (i == 0) {
-                    showContent(item.key);
+                    $("#step-ul").append('<li ' + (i == 0 ? 'class="active"' : '') + 'data-task-key="' + item.key + '">' + ASSEMBLY_MAP[item.className].name + '<i class="fa fa-times"></i></li>');
+                    if (i == 0) {
+                        showContent(item.key);
+                    }
+                } else {
+                    console.log('className不正确', item);
                 }
             }
 
@@ -119,6 +127,13 @@
 
                 $.post('/api/assembly/assemblyLine', data, function(msg){
                     console.log(msg);
+                    if(msg.status == 200){
+                        alert("保存成功");
+                        window.opener && window.opener.location.reload();
+                        window.close();
+                    } else {
+                        alert(msg.msg);
+                    }
                 });
             });
         }

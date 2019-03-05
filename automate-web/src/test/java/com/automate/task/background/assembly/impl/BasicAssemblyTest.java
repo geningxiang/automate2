@@ -1,8 +1,8 @@
-package com.automate.task.background.impl;
+package com.automate.task.background.assembly.impl;
 
 import com.automate.exec.ExecCommand;
 import com.automate.exec.IExecStreamMonitor;
-import com.automate.task.background.BackgroundAssemblyManager;
+import com.automate.task.background.BackgroundTaskManager;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +24,7 @@ import java.io.File;
 public class BasicAssemblyTest {
 
     @Autowired
-    BackgroundAssemblyManager backgroundAssemblyManager;
+    BackgroundTaskManager backgroundTaskManager;
 
     @Test
     public void test() throws IllegalAccessException, InterruptedException {
@@ -45,9 +45,9 @@ public class BasicAssemblyTest {
             }
         });
 
-//        ExecTask execTask = new ExecTask(execCommand);
+//        ExecAssemblyStepTask execTask = new ExecAssemblyStepTask(execCommand);
 //
-//        BasicAssembly basicAssembly = BasicAssembly.create("SpringBootDemo-编译", new ITask[]{execTask});
+//        BasicAssembly basicAssembly = BasicAssembly.create("SpringBootDemo-编译", new IAssemblyStepTask[]{execTask});
 //
 //        backgroundAssemblyManager.execute(basicAssembly);
 //

@@ -103,8 +103,10 @@
                     <div class="btn-group pull-right">
                         <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button" aria-expanded="false"> 新增任务 <i class="fa fa-plus"></i> </button>
                         <ul class="dropdown-menu">
-                            <li><a href="javascript:addTask('com.automate.task.background.impl.MavenTask')">Maven任务</a></li>
-                            <li><a href="javascript:addTask('com.automate.task.background.impl.ExecTask')">自定义Exec任务</a></li>
+                            <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.MavenAssemblyStepTask')">Maven任务</a></li>
+                            <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.ExecAssemblyStepTask')">自定义Exec任务</a></li>
+                            <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.PackageExtractAssemblyStepTask')">文件包提取任务</a></li>
+
                         </ul>
                     </div>
                 </header>
