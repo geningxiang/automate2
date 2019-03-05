@@ -1,5 +1,7 @@
 ## Automate2
-持续集成、项目发布管理
+持续集成、项目发布管理  
+GitHub地址: https://github.com/geningxiang/automate2  
+Gitee地址: https://gitee.com/panda007/automate2
 
 ![Screenshot](http://automate.ink:8080/resources/images/1.png)
 
@@ -14,5 +16,4 @@
 -Dconfig.location=file:{userPath}/dev/config.properties
 ~~~~
 
-还未完成~~~  
-正在开发服务器管理、应用容器管理
+待完成~~~  
