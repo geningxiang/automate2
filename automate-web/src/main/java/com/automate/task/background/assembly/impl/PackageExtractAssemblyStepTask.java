@@ -22,7 +22,11 @@ public class PackageExtractAssemblyStepTask extends AbstractAssemblyStepTask {
     private String path;
 
     public String getPath() {
-        return path;
+        if(this.path.contains(BASE_DIR)){
+            return this.path.replace(BASE_DIR, SystemConfig.getSourceCodeDir(getSourceCodeEntity()));
+        } else {
+            return this.path;
+        }
     }
 
     public void setPath(String path) {
@@ -36,10 +40,8 @@ public class PackageExtractAssemblyStepTask extends AbstractAssemblyStepTask {
 
     @Override
     public boolean doInvoke() throws Exception {
-        if(this.path.contains(BASE_DIR)){
-            this.path = this.path.replace(BASE_DIR, SystemConfig.getSourceCodeDir(getSourceCodeEntity()));
-        }
 
+        String path = getPath();
         File file = new File(path);
         System.out.println(file.getAbsolutePath());
 

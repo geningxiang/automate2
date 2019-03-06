@@ -6,10 +6,7 @@ import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecHelper;
 import com.automate.exec.ExecStreamReader;
 import com.automate.exec.ExecThreadPool;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
@@ -144,9 +141,26 @@ public class SSHConnection {
                 channel.disconnect();
             }
         }
-
     }
 
+    public void uploadLocalFileToRemote(String localFile, String remoteDir, SftpProgressMonitor sftpProgressMonitor) throws Exception {
+        ChannelSftp channel = null;
+        try {
+            channel = (ChannelSftp) this.session.openChannel("sftp");
+            channel.connect();
+            try {
+                //判断是否需要创建文件夹
+                channel.stat(remoteDir);
+            } catch (SftpException e) {
+                channel.mkdir(remoteDir);
+            }
+            channel.put(localFile, remoteDir, sftpProgressMonitor);
+        } finally {
+            if (channel != null) {
+                channel.disconnect();
+            }
+        }
+    }
 
     public String getHost() {
         return host;

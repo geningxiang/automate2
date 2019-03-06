@@ -20,6 +20,17 @@ public class ContainerEntity {
     private String name;
     private Integer type;
     private String remark;
+
+    /**
+     * 基础文件夹
+     */
+    private String baseDir;
+
+    /**
+     * 源码文件夹   比如 tomcat ${baseDir}/webroot/ROOT
+     */
+    private String sourceDir;
+
     private String scriptStart;
     private String scriptStop;
     private String scriptCheck;
@@ -114,6 +125,22 @@ public class ContainerEntity {
 
     public void setAdminId(Integer adminId) {
         this.adminId = adminId;
+    }
+
+    public String getBaseDir() {
+        return baseDir;
+    }
+
+    public void setBaseDir(String baseDir) {
+        this.baseDir = baseDir;
+    }
+
+    public String getSourceDir() {
+        return sourceDir;
+    }
+
+    public void setSourceDir(String sourceDir) {
+        this.sourceDir = sourceDir;
     }
 
     public JSONObject toJson(){
