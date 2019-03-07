@@ -103,18 +103,7 @@ public class ContainerController extends BaseController {
     @RequestMapping(value = "/container/{id}/check", produces = "application/json;charset=UTF-8")
     public ResponseEntity containerCheck(@PathVariable(value = "id") Integer id) throws Exception {
         ContainerEntity containerEntity = getContainerEntitySafe(id);
-        Assert.hasText(containerEntity.getScriptCheck(), "当前未配置容器检查脚本");
-        if(containerEntity.getServerId() == null || containerEntity.getServerId() <= 0){
-            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "当前容器未绑定服务器");
-        }
-
-        ServerEntity serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
-        Assert.notNull(serverEntity, "未找到相应的服务器");
-        SSHSession sshSession = new SSHSession(serverEntity);
-        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptCheck());
-
-        sshSession.doWork(sshConnection -> sshConnection.exec(execCommand));
-
+        ExecCommand execCommand = containerService.containerCheck(containerEntity);
         if(execCommand.getExitValue() == 0){
             return ResponseEntity.of(HttpStatus.OK,"该容器正在运行中");
         } else if(execCommand.getExitValue() == 3){
@@ -133,20 +122,8 @@ public class ContainerController extends BaseController {
     @RequestMapping(value = "/container/{id}/start", produces = "application/json;charset=UTF-8")
     public ResponseEntity containerStart(@PathVariable(value = "id") Integer id) throws Exception {
         ContainerEntity containerEntity = getContainerEntitySafe(id);
-        Assert.hasText(containerEntity.getScriptStart(), "当前未配置容器检查脚本");
-        if(containerEntity.getServerId() == null || containerEntity.getServerId() <= 0){
-            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "当前容器未绑定服务器");
-        }
 
-        ServerEntity serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
-        Assert.notNull(serverEntity, "未找到相应的服务器");
-        SSHSession sshSession = new SSHSession(serverEntity);
-        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStart());
-
-        execCommand.setCmdStreamMonitor(new ExecStreamPrintMonitor());
-
-        sshSession.doWork(sshConnection -> sshConnection.exec(execCommand));
-
+        ExecCommand execCommand = containerService.containerStart(containerEntity);
         if(execCommand.getExitValue() == 0){
             return ResponseEntity.of(HttpStatus.OK,"启动成功");
         } else if(execCommand.getExitValue() == 2){
@@ -165,18 +142,7 @@ public class ContainerController extends BaseController {
     @RequestMapping(value = "/container/{id}/stop", produces = "application/json;charset=UTF-8")
     public ResponseEntity containerStop(@PathVariable(value = "id") Integer id) throws Exception {
         ContainerEntity containerEntity = getContainerEntitySafe(id);
-        Assert.hasText(containerEntity.getScriptStop(), "当前未配置容器检查脚本");
-        if(containerEntity.getServerId() == null || containerEntity.getServerId() <= 0){
-            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "当前容器未绑定服务器");
-        }
-
-        ServerEntity serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
-        Assert.notNull(serverEntity, "未找到相应的服务器");
-        SSHSession sshSession = new SSHSession(serverEntity);
-        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStop());
-
-        sshSession.doWork(sshConnection -> sshConnection.exec(execCommand));
-
+        ExecCommand execCommand = containerService.containerStop(containerEntity);
         if(execCommand.getExitValue() == 0){
             return ResponseEntity.of(HttpStatus.OK,"关闭成功");
         } else {
@@ -191,6 +157,9 @@ public class ContainerController extends BaseController {
         Optional<ContainerEntity> containerEntity = containerService.getModel(id);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应容器");
+        }
+        if(containerEntity.get().getServerId() == null || containerEntity.get().getServerId() <= 0){
+            throw new IllegalArgumentException("当前容器未绑定服务器");
         }
         return containerEntity.get();
     }

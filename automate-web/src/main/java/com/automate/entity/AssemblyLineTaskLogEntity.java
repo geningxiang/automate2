@@ -128,7 +128,7 @@ public class AssemblyLineTaskLogEntity {
     public void setContent(String content) {
         this.content = new StringBuffer(content);
     }
-    public void appendContent(String content) {
+    public void appendLine(String content) {
         if(this.content == null){
             synchronized (this){
                 if(this.content == null){
@@ -136,7 +136,7 @@ public class AssemblyLineTaskLogEntity {
                 }
             }
         }
-        this.content.append(content);
+        this.content.append(content).append(System.lineSeparator());
     }
 
     @Basic

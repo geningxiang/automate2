@@ -2,7 +2,6 @@ package com.automate.task.background.assembly.impl;
 
 import com.automate.common.SystemConfig;
 import com.automate.task.background.assembly.AbstractAssemblyStepTask;
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,8 +66,8 @@ public class PackageExtractAssemblyStepTask extends AbstractAssemblyStepTask {
 
         //TODO 提取文件包
         logger.debug("开始提取文件包: {}", file.getAbsolutePath());
-        appendContent("开始提取文件包:");
-        appendContent(file.getAbsolutePath());
+        appendLine("开始提取文件包:");
+        appendLine(file.getAbsolutePath());
         return true;
 
     }

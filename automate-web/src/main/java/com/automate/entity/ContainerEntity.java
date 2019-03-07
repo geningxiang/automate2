@@ -127,6 +127,8 @@ public class ContainerEntity {
         this.adminId = adminId;
     }
 
+    @Basic
+    @Column(name = "BASE_DIR", nullable = true)
     public String getBaseDir() {
         return baseDir;
     }
@@ -135,6 +137,8 @@ public class ContainerEntity {
         this.baseDir = baseDir;
     }
 
+    @Basic
+    @Column(name = "SOURCE_DIR", nullable = true)
     public String getSourceDir() {
         return sourceDir;
     }

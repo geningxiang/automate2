@@ -78,7 +78,7 @@ public abstract class AbstractAssemblyStepTask implements IAssemblyStepTask {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw, true));
 
-            taskLog.appendContent(sw.toString());
+            taskLog.appendLine(sw.toString());
             taskLog.setStatus(AssemblyLineLogEntity.Status.error);
             return false;
         }finally {
@@ -89,15 +89,15 @@ public abstract class AbstractAssemblyStepTask implements IAssemblyStepTask {
 
     @Override
     public void cancel(String reason ){
-        taskLog.appendContent(reason);
+        taskLog.appendLine(reason);
         taskLog.setStatus(AssemblyLineLogEntity.Status.cancel);
         taskLog.setEndTime(new Timestamp(System.currentTimeMillis()));
         assemblyLineTaskLogService.save(taskLog);
     }
 
-    protected void appendContent(String content) {
+    protected void appendLine(String content) {
         if (this.taskLog != null) {
-            this.taskLog.appendContent(content);
+            this.taskLog.appendLine(content);
         }
     }
 

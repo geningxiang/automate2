@@ -14,7 +14,6 @@ import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -40,7 +39,6 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
     private Integer containerId;
 
 
-
     @Override
     public void valid() throws Exception {
 
@@ -51,37 +49,37 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
         String path = getPath();
 
         Assert.hasText(path, "path is required");
-        if(containerId == null || containerId <= 0){
+        if (containerId == null || containerId <= 0) {
             throw new IllegalArgumentException("containerId is required");
         }
 
         File file = new File(path);
         System.out.println(file.getAbsolutePath());
 
-        if(!file.exists()){
+        if (!file.exists()) {
             throw new IOException("文件不存在:" + file.getAbsolutePath());
         }
 
 
-        if(file.isDirectory()){
+        if (file.isDirectory()) {
             throw new IOException("暂不支持文件夹,等待后续完善");
         }
 
         int index = file.getName().lastIndexOf(".");
-        if(index <= 0){
+        if (index <= 0) {
             throw new IOException("文件没有后缀?" + file.getName());
         }
 
         String suffix = file.getName().substring(index + 1).toLowerCase();
-        if(!"war".equals(suffix)){
+        if (!"war".equals(suffix)) {
             throw new IllegalArgumentException("暂时只支持war后缀,等待后续完善");
         }
 
-        ContainerService containerService = SpringContextUtil.getBean("containerService", ContainerService.class);
+        final ContainerService containerService = SpringContextUtil.getBean("containerService", ContainerService.class);
         ServerService serverService = SpringContextUtil.getBean("serverService", ServerService.class);
 
-        Optional<ContainerEntity> containerEntity = containerService.getModel(containerId);
-        if(!containerEntity.isPresent()){
+        final Optional<ContainerEntity> containerEntity = containerService.getModel(containerId);
+        if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的容器:" + containerId);
         }
 
@@ -89,7 +87,7 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
 
 
         Optional<ServerEntity> serverEntity = serverService.getModel(containerEntity.get().getServerId());
-        if(!serverEntity.isPresent()){
+        if (!serverEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的服务器:" + containerEntity.get().getServerId());
         }
         final String sourceDir = containerEntity.get().getSourceDir();
@@ -97,14 +95,22 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
 
         s.doWork(sshConnection -> {
 
-
-
             String remoteDir = "/tmp/" + System.currentTimeMillis() + "/";
             sshConnection.uploadLocalFileToRemote(file.getAbsolutePath(), remoteDir, new SftpProgressMonitorImpl());
 
             StringBuilder cmd = new StringBuilder(1024);
 
-            //TODO 关闭容器
+            appendLine("######## start to stop the container ########");
+
+            //关闭容器
+            ExecCommand stopCmd = containerService.containerStop(containerEntity.get());
+
+            appendLine(stopCmd.getOut().toString());
+
+            if (stopCmd.getExitValue() != 0) {
+                throw new RuntimeException("关闭容器失败");
+            }
+
             //TODO 备份
 
             //删除旧代码
@@ -116,11 +122,25 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
 
             //删除 压缩包
             cmd.append(" || rm -rf ").append(remoteDir);
-            //TODO 启动容器
 
+            appendLine("######## start to update source ########");
+            appendLine(cmd.toString());
             ExecCommand execCommand = new ExecCommand(cmd.toString(), new ExecStreamPrintMonitor());
             sshConnection.exec(execCommand);
 
+            appendLine(execCommand.getOut().toString());
+
+            if (execCommand.getExitValue() != 0) {
+                throw new RuntimeException("更新容器代码失败");
+            }
+
+            //启动容器
+            ExecCommand startCmd = containerService.containerStart(containerEntity.get());
+            appendLine(startCmd.getOut().toString());
+
+            if (startCmd.getExitValue() != 0) {
+                throw new RuntimeException("关闭容器失败");
+            }
 
         });
 
