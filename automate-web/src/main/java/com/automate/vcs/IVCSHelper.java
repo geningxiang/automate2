@@ -42,7 +42,13 @@ public interface IVCSHelper {
      */
     List<CommitLog> commitLogs(String branchName) throws Exception;
 
-
+    /**
+     * 检出指定分支、指定版本
+     * @param branchName
+     * @param commitId
+     * @return
+     * @throws Exception
+     */
     String checkOut(String branchName, String commitId) throws Exception;
 
     void testConnetction() throws Exception;
