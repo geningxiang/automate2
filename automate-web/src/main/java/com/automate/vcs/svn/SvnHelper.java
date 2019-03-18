@@ -2,14 +2,15 @@ package com.automate.vcs.svn;
 
 import com.automate.vcs.AbstractVCSHelper;
 import com.automate.vcs.IVCSRepository;
-import com.automate.vcs.git.GitContants;
 import com.automate.vcs.vo.CommitLog;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tmatesoft.svn.core.*;
+import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
 import org.tmatesoft.svn.core.io.SVNRepository;
@@ -88,22 +89,32 @@ public class SvnHelper extends AbstractVCSHelper {
 
     @Override
     public String checkOut(String branchName, String commitId) throws Exception {
-        long revision = NumberUtils.toLong(commitId);
-        if(revision <= 0){
-            throw new IllegalArgumentException("commitId must be long");
+        SVNClientManager svnClientManager = null;
+        try {
+            svnClientManager = getSVNClientManager();
+            if (isLocalRepositoryExist()) {
+                long result;
+                SVNUpdateClient updateClient = svnClientManager.getUpdateClient();
+                if (StringUtils.isNotBlank(commitId)) {
+                    long revision = NumberUtils.toLong(commitId);
+                    if (revision <= 0) {
+                        throw new IllegalArgumentException("commitId must be long");
+                    }
+                    result = updateClient.doCheckout(SVNURL.parseURIEncoded(this.remoteUrl), new File(this.localDir), SVNRevision.HEAD, SVNRevision.create(revision), SVNDepth.INFINITY, true);
+                } else {
+                    result = updateClient.doCheckout(SVNURL.parseURIEncoded(this.remoteUrl), new File(this.localDir), SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, true);
+                }
+                logger.info("svn checkout revision:" + result);
+            } else {
+                throw new IllegalArgumentException("请先初始化仓库");
+            }
+        } finally {
+            if (svnClientManager != null) {
+                svnClientManager.dispose();
+            }
         }
-        SVNClientManager svnClientManager = getSVNClientManager();
-        if (isLocalRepositoryExist()) {
-            SVNUpdateClient updateClient = svnClientManager.getUpdateClient();
-            long result = updateClient.doCheckout(SVNURL.parseURIEncoded(this.remoteUrl), new File(this.localDir), SVNRevision.HEAD, SVNRevision.create(revision), SVNDepth.INFINITY, true);
-            logger.info("svn checkout revision:" + result);
-
-        } else {
-            throw new IllegalArgumentException("请先初始化仓库");
-        }
 
 
-        svnClientManager.dispose();
         return "";
     }
 

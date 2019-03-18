@@ -77,6 +77,15 @@ public class SvnHelperTest {
         svnHelper.checkOut("", "17297");
     }
 
+    @Test
+    public void checkoutHead() throws Exception {
+        svnHelper.checkOut("", null);
+    }
+
+    @Test
+    public void update() throws Exception {
+        svnHelper.update();
+    }
 
     @Test
     public void doList() throws SVNException {
