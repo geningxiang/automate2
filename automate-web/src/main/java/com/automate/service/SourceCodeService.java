@@ -10,11 +10,8 @@ import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.git.GitHelper;
 import com.automate.vcs.vo.CommitLog;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +19,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,11 +34,11 @@ import java.util.function.Function;
  * @date: 2019/1/24 23:26
  */
 @Service
-public class SourceCodeService{
+public class SourceCodeService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     *  initialCapacity 设置cache的初始大小，要合理设置该值
+     * initialCapacity 设置cache的初始大小，要合理设置该值
      */
     private static Cache<Integer, SourceCodeEntity> sourceCodeCache = Caffeine.newBuilder()
             .initialCapacity(256)
@@ -77,7 +72,7 @@ public class SourceCodeService{
         //检查一下
         List<String> updateBranchList;
         int total = 0;
-        if(!cvsHelper.isLocalRepositoryExist()){
+        if (!cvsHelper.isLocalRepositoryExist()) {
             updateBranchList = cvsHelper.init();
             total += sync(sourceCodeEntity, cvsHelper, updateBranchList);
         }
@@ -158,7 +153,7 @@ public class SourceCodeService{
      * 添加对象
      **/
     public void save(SourceCodeEntity model) {
-        if(model.getCreateTime() == null){
+        if (model.getCreateTime() == null) {
             model.setCreateTime(new Timestamp(System.currentTimeMillis()));
         }
         sourceCodeRepository.save(model);

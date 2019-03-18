@@ -1,7 +1,12 @@
 package com.automate.task.background;
 
+import org.springframework.lang.NonNull;
+
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,7 +28,7 @@ public class BackgroundLock {
      * 操作 map 时的锁
      * 用 ConcurrentHashMap 的话  一直想不出来 如何在删除元素时 保持原子性
      */
-    private static final Object LOCK = new Object();
+    private static final Lock LOCK = new ReentrantLock();
 
     public static void acquire(AbstractBackgroundTask task) throws InterruptedException {
         if (task.getLocks() != null) {
@@ -31,18 +36,11 @@ public class BackgroundLock {
             for (int i = 0; i < task.getLocks().length; i++) {
 
                 String key = task.getLocks()[i];
-//                synchronized (LOCK) {
                 Semaphore s = new Semaphore(1);
                 Semaphore value = LOCK_MAP.putIfAbsent(key, s);
                 if (value == null) {
                     value = s;
                 }
-//                    s = LOCK_MAP.get(key);
-//                    if (s == null) {
-//                        s = new Semaphore(1);
-//                        LOCK_MAP.put(key, s);
-//                    }
-////                }
 
                 //获得许可
                 value.acquire();
@@ -55,17 +53,56 @@ public class BackgroundLock {
     public static void release(AbstractBackgroundTask task) {
         if (task.getLocks() != null) {
             for (int i = task.getLocks().length - 1; i >= 0; i--) {
-                synchronized (LOCK) {
+                LOCK.lock();
+                try {
                     Semaphore s = LOCK_MAP.get(task.getLocks()[i]);
                     if (s != null) {
                         //释放资源
                         s.release();
-//                        LOCK_MAP.remove(task.getLocks()[i]);
+                        LOCK_MAP.remove(task.getLocks()[i]);
 
                     }
+                } finally {
+                    LOCK.unlock();
                 }
 
             }
+        }
+    }
+
+    /**
+     * 尝试获取指定的锁 并执行传入的Callable
+     * 一般用于同步请求
+     * @param lockKey
+     * @param callable
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public static <T> T tryLock(String lockKey, Callable<T> callable) throws Exception {
+        Semaphore s = new Semaphore(1);
+        Semaphore value = LOCK_MAP.putIfAbsent(lockKey, s);
+        if (value == null) {
+            value = s;
+        }
+
+        if(!value.tryAcquire()){
+            throw new RuntimeException("["+lockKey + "]已被后台任务锁定,请稍后再试");
+        }
+        try{
+            return callable.call();
+        } finally {
+            release(value);
+        }
+    }
+
+    private static void release(@NonNull Semaphore value){
+        try {
+            LOCK.lock();
+            value.release();
+            LOCK_MAP.remove(value);
+        } finally {
+            LOCK.unlock();
         }
     }
 

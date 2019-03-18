@@ -10,6 +10,7 @@ import com.automate.entity.SourceCodeEntity;
 import com.automate.service.HookLogService;
 import com.automate.service.SourceCodeBranchService;
 import com.automate.service.SourceCodeService;
+import com.automate.task.background.BackgroundLock;
 import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.TestVCSRepository;
 import com.automate.vcs.VCSHelper;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -138,13 +140,15 @@ public class SourceCodeController extends BaseController {
         if (!sourceCodeEntity.isPresent()) {
             return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的代码仓库");
         }
-        int updated = 0;
         try {
-            updated = sourceCodeService.sync(sourceCodeEntity.get());
+            int updated = BackgroundLock.tryLock("SOURCE_CODE_" + sourceCodeEntity.get().getId(),
+                    () -> sourceCodeService.sync(sourceCodeEntity.get()));
+            return ResponseEntity.ok(updated);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("同步代码仓库发生错误", e);
+            return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        return ResponseEntity.ok(updated);
+
     }
 
     @RequestMapping(value = "/hookList", produces = "application/json;charset=UTF-8")

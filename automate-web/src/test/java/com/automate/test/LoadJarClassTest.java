@@ -22,10 +22,7 @@ public class LoadJarClassTest {
         //ClassLoader classLoader = new ClassLoader(new String[]{""});//类路径
         Class<?> cls = loader.loadClass("com.automate.build.MyCat");//加载指定类，注意一定要带上类的包名
 
-
-
         System.out.println(cls);
-
 
 //        Object obj = cls.newInstance();//初始化一个实例
 
