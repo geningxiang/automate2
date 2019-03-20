@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,6 +26,19 @@ public class AssemblyLineLogService {
 
     @Autowired
     private AssemblyLineLogRepository assemblyLineLogRepository;
+
+
+    public Page<AssemblyLineLogEntity> findAll(final AssemblyLineLogEntity condition, Pageable pageable) {
+        Specification<AssemblyLineLogEntity> querySpeci = (Specification<AssemblyLineLogEntity>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList();
+            if (condition.getSourceCodeId() != null && condition.getSourceCodeId() > 0) {
+                predicates.add(criteriaBuilder.equal(root.get("sourceCodeId"), condition.getSourceCodeId()));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+
+        return assemblyLineLogRepository.findAll(querySpeci, pageable);
+    }
 
     public Page<AssemblyLineLogEntity> findAll(Pageable pageable) {
         return assemblyLineLogRepository.findAll(pageable);

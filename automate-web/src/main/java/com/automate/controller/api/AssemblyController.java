@@ -14,7 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -116,7 +118,10 @@ public class AssemblyController extends BaseController {
         if (sourceCodeId == null || sourceCodeId <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
         }
-        Page<AssemblyLineLogEntity> pager = assemblyLineLogService.findAll(buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id")));
+        PageRequest pageRequest = buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        AssemblyLineLogEntity condition = new AssemblyLineLogEntity();
+        condition.setSourceCodeId(sourceCodeId);
+        Page<AssemblyLineLogEntity> pager = assemblyLineLogService.findAll(condition, pageRequest);
         return ResponseEntity.ok(pager);
     }
 

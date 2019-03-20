@@ -113,7 +113,6 @@ public class GitHelper extends AbstractVCSHelper {
                         }
                         checkoutCommand.call();
 
-                        git.fetch().call();
                         //reset hard
                         git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + remoteBranchName).call();
 
