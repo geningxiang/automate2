@@ -9,22 +9,16 @@ import com.automate.controller.BaseController;
 import com.automate.entity.ContainerEntity;
 import com.automate.entity.ServerEntity;
 import com.automate.exec.ExecCommand;
-import com.automate.exec.ExecStreamPrintMonitor;
 import com.automate.service.ContainerService;
 import com.automate.service.ContainerTypeService;
 import com.automate.service.ServerService;
-import com.automate.ssh.SSHConnection;
-import com.automate.ssh.SSHSession;
-import com.automate.ssh.SSHWork;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -53,7 +47,7 @@ public class ContainerController extends BaseController {
         for (ContainerEntity containerEntity : list) {
             item = containerEntity.toJson();
             serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
-            if(serverEntity != null){
+            if (serverEntity != null) {
                 item.put("serverName", serverEntity.getName());
                 item.put("serverRemark", serverEntity.getRemark());
             }
@@ -105,9 +99,9 @@ public class ContainerController extends BaseController {
     public ResponseEntity containerCheck(@PathVariable(value = "id") Integer id) throws Exception {
         ContainerEntity containerEntity = getContainerEntitySafe(id);
         ExecCommand execCommand = containerService.containerCheck(containerEntity);
-        if(execCommand.getExitValue() == 0){
-            return ResponseEntity.of(HttpStatus.OK,"该容器正在运行中");
-        } else if(execCommand.getExitValue() == 3){
+        if (execCommand.getExitValue() == 0) {
+            return ResponseEntity.of(HttpStatus.OK, "该容器正在运行中");
+        } else if (execCommand.getExitValue() == 3) {
             return ResponseEntity.of(HttpStatus.NO_CONTENT, "该容器未运行");
         } else {
             return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, "exit=" + execCommand.getExitValue());
@@ -125,11 +119,11 @@ public class ContainerController extends BaseController {
         ContainerEntity containerEntity = getContainerEntitySafe(id);
 
         ExecCommand execCommand = containerService.containerStart(containerEntity);
-        if(execCommand.getExitValue() == 0){
-            return ResponseEntity.of(HttpStatus.OK,"启动成功");
-        } else if(execCommand.getExitValue() == 2){
-            return ResponseEntity.of(HttpStatus.OK,"容器正在运行,请勿重复启动");
-        }  else {
+        if (execCommand.getExitValue() == 0) {
+            return ResponseEntity.of(HttpStatus.OK, "启动成功");
+        } else if (execCommand.getExitValue() == 2) {
+            return ResponseEntity.of(HttpStatus.OK, "容器正在运行,请勿重复启动");
+        } else {
             return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, "exit=" + execCommand.getExitValue());
         }
     }
@@ -144,14 +138,14 @@ public class ContainerController extends BaseController {
     public ResponseEntity containerStop(@PathVariable(value = "id") Integer id) throws Exception {
         ContainerEntity containerEntity = getContainerEntitySafe(id);
         ExecCommand execCommand = containerService.containerStop(containerEntity);
-        if(execCommand.getExitValue() == 0){
-            return ResponseEntity.of(HttpStatus.OK,"关闭成功");
+        if (execCommand.getExitValue() == 0) {
+            return ResponseEntity.of(HttpStatus.OK, "关闭成功");
         } else {
             return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, "exit=" + execCommand.getExitValue());
         }
     }
 
-    private ContainerEntity getContainerEntitySafe(Integer id){
+    private ContainerEntity getContainerEntitySafe(Integer id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("id is required");
         }
@@ -159,7 +153,7 @@ public class ContainerController extends BaseController {
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应容器");
         }
-        if(containerEntity.get().getServerId() == null || containerEntity.get().getServerId() <= 0){
+        if (containerEntity.get().getServerId() == null || containerEntity.get().getServerId() <= 0) {
             throw new IllegalArgumentException("当前容器未绑定服务器");
         }
         return containerEntity.get();

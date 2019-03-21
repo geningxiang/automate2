@@ -83,8 +83,9 @@
                             <div class="form-group">
                                 <label class="col-sm-2 col-sm-2 control-label">版本控制</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" name="vcsType" disabled>
+                                    <select class="form-control" name="vcsType" >
                                         <option value="0">Git</option>
+                                        <option value="1">SVN</option>
                                     </select>
                                 </div>
                             </div>
@@ -129,7 +130,7 @@
             <div class="ant-card-body">
                 <div class="ant-card-meta">
                     <div class="ant-card-meta-avatar">
-                        <img alt="" src="https://raw.githubusercontent.com/github/explore/6c6508f34230f0ac0d49e847a326429eefbfc030/topics/java/java.png">
+                        <img alt="" src="/resources/img/language/java.png">
                     </div>
                     <div class="ant-card-meta-detail">
                         <div class="ant-card-meta-title">{{item.name}}</div>
@@ -223,7 +224,14 @@
                 toastr.success("创建成功");
 
                 //手动关闭 模态框
-                $('#createProjectModal').modal('hide')
+                $('#createProjectModal').modal('hide');
+
+                //$("#sourceCodeForm").reset();
+
+                //重置表单
+                document.getElementById("sourceCodeForm").reset();
+
+
                 query();
             } else {
                 toastr.error(msg.msg, "提示")

@@ -29,7 +29,8 @@ public class SourceCodeEntity implements IVCSRepository {
      * 版本控制类型
      */
     public enum VcsType {
-        GIT
+        GIT,
+        SVN
     }
 
     /**

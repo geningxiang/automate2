@@ -45,7 +45,7 @@ public class GitHelper extends AbstractVCSHelper {
      * @return 分支列表
      */
     @Override
-    public List<String> init() throws Exception {
+    public Set<String> init() throws Exception {
         CloneCommand cloneCommand = Git.cloneRepository();
         cloneCommand.setCredentialsProvider(this.credentialsProvider);
         cloneCommand.setURI(this.remoteUrl).setDirectory(new File(this.localDir));
@@ -57,12 +57,14 @@ public class GitHelper extends AbstractVCSHelper {
         logger.debug("clone {}", this.remoteUrl);
         Git git = cloneCommand.call();
         git.close();
-        List<String> branchList = new ArrayList<>(8);
+        Set<String> branchList = new HashSet(8);
         List<Ref> list = git.branchList().call();
         for (Ref ref : list) {
             branchList.add(ref.getName().substring(GitContants.BRANCH_NAME_PREFIX_LEN));
         }
         //TODO 第一次同步只返回了 master 分支
+
+        branchList.addAll(this.update());
         return branchList;
     }
 
@@ -72,7 +74,7 @@ public class GitHelper extends AbstractVCSHelper {
      * @return 有变化的分支列表
      */
     @Override
-    public List<String> update() throws Exception {
+    public Set<String> update() throws Exception {
         return update(null);
     }
 
@@ -83,7 +85,7 @@ public class GitHelper extends AbstractVCSHelper {
      * @return 有变化的分支列表
      */
     @Override
-    public List<String> update(String branchName) throws Exception {
+    public Set<String> update(String branchName) throws Exception {
         FileRepository db = openFileRepository();
         Git git = null;
         try {
@@ -98,7 +100,7 @@ public class GitHelper extends AbstractVCSHelper {
             //查询远程分支
             Collection<Ref> refs = git.lsRemote().setTags(false).setHeads(false).setCredentialsProvider(this.credentialsProvider).call();
             int update = 0;
-            List<String> updateBranchList = new ArrayList<>(8);
+            Set<String> updateBranchList = new HashSet(8);
             for (Ref ref : refs) {
                 if (ref.getName().startsWith(GitContants.BRANCH_NAME_PREFIX)) {
                     String remoteBranchName = ref.getName().substring(GitContants.BRANCH_NAME_PREFIX_LEN);

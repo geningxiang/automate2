@@ -7,6 +7,7 @@ import com.automate.entity.SourceCodeEntity;
 import com.automate.repository.SourceCodeBranchRepository;
 import com.automate.repository.SourceCodeRepository;
 import com.automate.vcs.IVCSHelper;
+import com.automate.vcs.VCSHelper;
 import com.automate.vcs.git.GitHelper;
 import com.automate.vcs.vo.CommitLog;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -20,10 +21,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -58,7 +56,7 @@ public class SourceCodeService {
     @Deprecated
     public void init(SourceCodeEntity sourceCodeEntity) throws Exception {
         IVCSHelper cvsHelper = new GitHelper(sourceCodeEntity);
-        List<String> branchList = cvsHelper.init();
+        Set<String> branchList = cvsHelper.init();
         sync(sourceCodeEntity, cvsHelper, branchList);
     }
 
@@ -68,21 +66,19 @@ public class SourceCodeService {
      */
     public int sync(@NonNull SourceCodeEntity sourceCodeEntity) throws Exception {
         logger.info("开始同步代码仓库:{}", sourceCodeEntity.toJson());
-        IVCSHelper cvsHelper = new GitHelper(sourceCodeEntity);
+
+        IVCSHelper cvsHelper =  VCSHelper.create(sourceCodeEntity);
         //检查一下
-        List<String> updateBranchList;
+        Set<String> updateBranchList;
         int total = 0;
         if (!cvsHelper.isLocalRepositoryExist()) {
             updateBranchList = cvsHelper.init();
             total += sync(sourceCodeEntity, cvsHelper, updateBranchList);
         }
-        //clone 只作用于master分支  所以再调一遍 update
-        updateBranchList = cvsHelper.update();
-        total += sync(sourceCodeEntity, cvsHelper, updateBranchList);
         return total;
     }
 
-    public int sync(SourceCodeEntity sourceCodeEntity, IVCSHelper cvsHelper, List<String> branchList) throws Exception {
+    public int sync(SourceCodeEntity sourceCodeEntity, IVCSHelper cvsHelper, Collection<String> branchList) throws Exception {
         for (String branchName : branchList) {
             List<CommitLog> commitLogs = cvsHelper.commitLogs(branchName);
             this.updateBranch(sourceCodeEntity.getId(), branchName, commitLogs);

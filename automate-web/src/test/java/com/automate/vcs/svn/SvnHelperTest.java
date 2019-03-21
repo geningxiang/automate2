@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.automate.vcs.IVCSRepository;
 import com.automate.vcs.git.GitHelper;
 import com.automate.vcs.vo.CommitLog;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Test;
 import org.tmatesoft.svn.core.*;
@@ -16,6 +17,7 @@ import org.tmatesoft.svn.core.wc.admin.SVNLookClient;
 import org.tmatesoft.svn.core.wc.admin.SVNSyncInfo;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -28,8 +30,8 @@ import static org.junit.Assert.*;
  * @date: 2019/3/18 17:16
  */
 public class SvnHelperTest {
-    private String remoteUrl = "https://www.kxtan.com/svn/projects/apps/client";
-    private String dir = "E:/work/CaimaoClient";
+    private String remoteUrl = "";
+    private String dir = "";
     private String userName = "";
     private String passWord = "";
     private SvnHelper svnHelper = new SvnHelper(new IVCSRepository() {
@@ -90,13 +92,17 @@ public class SvnHelperTest {
     @Test
     public void doList() throws SVNException {
         SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(remoteUrl));
-        ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(null, userName, passWord.toCharArray());
-        repository.setAuthenticationManager(authManager);
+        ISVNAuthenticationManager authManager = null;
+        if(StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(passWord)) {
+            authManager = SVNWCUtil.createDefaultAuthenticationManager(null, userName, passWord.toCharArray());
+            repository.setAuthenticationManager(authManager);
+        }
         DefaultSVNOptions options = SVNWCUtil.createDefaultOptions(true);
         SVNClientManager svnClientManager = SVNClientManager.newInstance(options, authManager);
 
         SVNLogClient svnLogClient = svnClientManager.getLogClient();
 
+        //查看文件列表 不需要 权限
         //查询远程仓库 文件列表
         svnLogClient.doList(SVNURL.parseURIEncoded(remoteUrl), SVNRevision.HEAD, SVNRevision.HEAD, true, SVNDepth.INFINITY, -1, svnDirEntry -> {
             if (svnDirEntry.getKind() == SVNNodeKind.DIR) {
@@ -104,6 +110,30 @@ public class SvnHelperTest {
             }
         });
         repository.closeSession();
+    }
+
+    @Test
+    public void doLog() throws SVNException {
+
+        SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(remoteUrl));
+        ISVNAuthenticationManager authManager = null;
+        if(StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(passWord)) {
+            authManager = SVNWCUtil.createDefaultAuthenticationManager(null, userName, passWord.toCharArray());
+            repository.setAuthenticationManager(authManager);
+        }
+
+        DefaultSVNOptions options = SVNWCUtil.createDefaultOptions(true);
+        SVNClientManager svnClientManager = SVNClientManager.newInstance(options, authManager);
+
+        SVNLogClient svnLogClient = svnClientManager.getLogClient();
+
+        svnLogClient.doLog(SVNURL.parseURIEncoded(remoteUrl), new String[]{}, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, false, false, 1, null,
+                svnLogEntry -> System.out.println(svnLogEntry));
+
+        repository.closeSession();
+
+
+
     }
 
 

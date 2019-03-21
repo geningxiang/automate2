@@ -3,6 +3,7 @@ package com.automate.vcs;
 import com.automate.vcs.vo.CommitLog;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,14 +18,14 @@ public interface IVCSHelper {
      * 初始化项目  clone
      * @throws Exception
      */
-    List<String> init() throws Exception;
+    Set<String> init() throws Exception;
 
     /**
      * 更新整个项目
      * @throws Exception
      * @return 有变化的分支列表
      */
-    List<String> update() throws Exception;
+    Set<String> update() throws Exception;
 
     /**
      * 更新项目的一个分支
@@ -32,7 +33,7 @@ public interface IVCSHelper {
      * @throws Exception
      * @return 有变化的分支列表
      */
-    List<String> update(String branchName) throws Exception;
+    Set<String> update(String branchName) throws Exception;
 
     /**
      * 查看提交记录(本地的)

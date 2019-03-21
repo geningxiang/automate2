@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -60,7 +61,7 @@ public abstract class AbstractGitHook {
 
         IVCSHelper cvsHelper = new GitHelper(sourceCodeEntity);
 
-        List<String> updatedBranchList = cvsHelper.update(branchName);
+        Set<String> updatedBranchList = cvsHelper.update(branchName);
 
         for (String updatedBranchName : updatedBranchList) {
             List<CommitLog> commitLogs = cvsHelper.commitLogs(branchName);

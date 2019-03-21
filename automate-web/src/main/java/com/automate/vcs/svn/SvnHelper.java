@@ -3,7 +3,6 @@ package com.automate.vcs.svn;
 import com.automate.vcs.AbstractVCSHelper;
 import com.automate.vcs.IVCSRepository;
 import com.automate.vcs.vo.CommitLog;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -19,7 +18,9 @@ import org.tmatesoft.svn.core.wc.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,14 +39,12 @@ public class SvnHelper extends AbstractVCSHelper {
     }
 
     @Override
-    public List<String> init() throws Exception {
+    public Set<String> init() throws Exception {
         return this.update();
     }
 
     @Override
-    public List<String> update() throws Exception {
-
-
+    public Set<String> update() throws Exception {
         SVNClientManager svnClientManager = getSVNClientManager();
         long revision;
         boolean isCreate = false;
@@ -61,11 +60,14 @@ public class SvnHelper extends AbstractVCSHelper {
         logger.info("svn " + (isCreate ? "clone" : "update") + " revision:" + revision);
 
         svnClientManager.dispose();
-        return Lists.newArrayList("");
+
+        Set<String> set = new HashSet(1);
+        set.add("");
+        return set;
     }
 
     @Override
-    public List<String> update(String branchName) throws Exception {
+    public Set<String> update(String branchName) throws Exception {
         return update();
     }
 
@@ -120,11 +122,19 @@ public class SvnHelper extends AbstractVCSHelper {
 
     @Override
     public void testConnetction() throws Exception {
-        SVNClientManager svnClientManager = getSVNClientManager();
-        SVNLogClient svnLogClient = svnClientManager.getLogClient();
-        svnLogClient.doList(SVNURL.parseURIEncoded(remoteUrl), SVNRevision.HEAD, SVNRevision.HEAD, true, SVNDepth.IMMEDIATES, -1, svnDirEntry -> {
-        });
-        svnClientManager.dispose();
+        SVNClientManager svnClientManager = null;
+        try {
+            svnClientManager = getSVNClientManager();
+            SVNLogClient svnLogClient = svnClientManager.getLogClient();
+            svnLogClient.doLog(SVNURL.parseURIEncoded(remoteUrl), new String[]{}, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, false, false, 1, null,
+                    svnLogEntry -> {
+                    });
+        } finally {
+            if (svnClientManager != null) {
+                svnClientManager.dispose();
+            }
+        }
+
     }
 
     @Override
