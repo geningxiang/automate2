@@ -1,9 +1,13 @@
 package com.automate.controller.other;
 
+import com.automate.common.Charsets;
 import com.automate.common.SystemConfig;
 import com.automate.common.annotation.AllowNoLogin;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,8 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,21 +52,47 @@ public class MavenController {
     @AllowNoLogin
     @RequestMapping("/**")
     public String proxy(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.debug(request.getServletPath());
+
+        logger.debug("【{}】{}", request.getMethod(), request.getServletPath());
 
         String path = request.getServletPath().substring(6);
+
+        //PUT 是 deploy 上传jar
+        if ("PUT".equals(request.getMethod())) {
+            //http 基本认证
+            String auth = request.getHeader("Authorization");
+            String s = null;
+            if (StringUtils.isNotBlank(auth)) {
+                if(auth.startsWith("Basic ")){
+                    auth = auth.substring(6);
+                }
+                s = new String(Base64.decodeBase64(auth), Charsets.UTF_8);
+                //decode后是   用户名:密码  的格式
+            }
+            if(!"caimao:87677911".equals(s)){
+                response.sendError(401, "Unauthorized");
+                return null;
+            }
+            File file = new File(SystemConfig.getMavenRepositoryDir() + path);
+            IOUtils.copy(request.getInputStream(), new FileOutputStream(file));
+            return "SUCCESS";
+        }
+
         File file = new File(SystemConfig.getMavenRepositoryDir() + path);
         if (file.exists()) {
-            if(file.isDirectory()){
+            if (file.isDirectory()) {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return null;
             }
             //返回类型为 二进制
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM.getType());
 
-            if(path.toLowerCase().endsWith(".jar") || path.toLowerCase().endsWith(".war")) {
+            if (path.toLowerCase().endsWith(".jar")) {
                 // 设置文件名
                 response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(file.getName(), "UTF-8"));
+            } else if (path.toLowerCase().endsWith(".war")) {
+                response.sendError(403, "war is not allow");
+                return null;
             } else {
                 response.setContentType(MediaType.TEXT_PLAIN.getType());
             }
