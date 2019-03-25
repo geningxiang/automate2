@@ -74,6 +74,13 @@ public class MavenController {
                 return null;
             }
             File file = new File(SystemConfig.getMavenRepositoryDir() + path);
+
+            //判断是否存在上级文件夹
+            File dir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(File.separator) + 1));
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+
             IOUtils.copy(request.getInputStream(), new FileOutputStream(file));
             return "SUCCESS";
         }
