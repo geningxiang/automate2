@@ -16,6 +16,12 @@
             </ul>
         </li>
         <li class="sub-menu">
+            <a href="javascript:;"> <i class="fa fa-dropbox"></i> <span>Maven</span> </a>
+            <ul class="sub">
+                <li><a href="/admin/mvn/index" target="mainContent">私有库</a></li>
+            </ul>
+        </li>
+        <li class="sub-menu">
             <a href="javascript:;"> <i class="fa fa-youtube-play"></i> <span>构建</span> </a>
             <ul class="sub">
                 <li><a href="/admin/assembly/list" target="mainContent">流水线</a></li>

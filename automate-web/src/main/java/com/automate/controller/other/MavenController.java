@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,39 +44,49 @@ public class MavenController {
 
     private static final String DOT_MD5 = ".md5";
 
-
     /**
-     * @return
+     * deploy到私有仓库
+     * @return 200 SUCCESS
      */
     @ResponseBody
     @AllowNoLogin
-    @RequestMapping("/**")
-    public String proxy(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        logger.debug("【{}】{}", request.getMethod(), request.getServletPath());
-
+    @RequestMapping(value = "/**", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
+    public String put(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.debug("[deploy to private maven repository]{}", request.getServletPath());
         String path = request.getServletPath().substring(6);
-
-        //PUT 是 deploy 上传jar
-        if ("PUT".equals(request.getMethod())) {
-            //http 基本认证
-            String auth = request.getHeader("Authorization");
-            String s = null;
-            if (StringUtils.isNotBlank(auth)) {
-                if(auth.startsWith("Basic ")){
-                    auth = auth.substring(6);
-                }
-                s = new String(Base64.decodeBase64(auth), Charsets.UTF_8);
-                //decode后是   用户名:密码  的格式
+        //http 基本认证
+        String auth = request.getHeader("Authorization");
+        String s = null;
+        if (StringUtils.isNotBlank(auth)) {
+            if (auth.startsWith("Basic ")) {
+                auth = auth.substring(6);
             }
-            if(!"caimao:87677911".equals(s)){
-                response.sendError(401, "Unauthorized");
-                return null;
-            }
-            File file = new File(SystemConfig.getMavenRepositoryDir() + path);
-            IOUtils.copy(request.getInputStream(), new FileOutputStream(file));
-            return "SUCCESS";
+            s = new String(Base64.decodeBase64(auth), Charsets.UTF_8);
+            //decode后是   用户名:密码  的格式
         }
+        if (!"caimao:caimao".equals(s)) {
+            response.sendError(401, "Unauthorized");
+            return null;
+        }
+        File file = new File(SystemConfig.getMavenRepositoryDir() + path);
+        IOUtils.copy(request.getInputStream(), new FileOutputStream(file));
+        return sendText(response, "SUCCESS");
+    }
+
+
+    /**
+     * 从私有仓库下载jar包
+     * @param request
+     * @param response
+     * @return 200 文件流
+     * @throws IOException
+     */
+    @ResponseBody
+    @AllowNoLogin
+    @RequestMapping(value = "/**", method = RequestMethod.GET)
+    public String get(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.debug("[download from private maven repository]{}", request.getServletPath());
+        String path = request.getServletPath().substring(6);
 
         File file = new File(SystemConfig.getMavenRepositoryDir() + path);
         if (file.exists()) {
@@ -111,10 +121,10 @@ public class MavenController {
                 return sendText(response, DigestUtils.md5Hex(new FileInputStream(file)));
             }
         }
-
-        response.sendError(404);
+        response.sendError(HttpStatus.NOT_FOUND.value());
         return null;
     }
+
 
     private String sendText(HttpServletResponse response, @NonNull String text) throws IOException {
         response.setContentType(MediaType.TEXT_PLAIN.getType());

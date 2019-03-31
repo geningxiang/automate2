@@ -169,7 +169,7 @@ public class SystemConfig {
          * 不推荐直接使用默认配置文件    不利于环境分离
          * PROPERTY_CONFIG_LOCATION 优先级更高
          */
-        private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.PROPERTIES";
+        private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.properties";
 
         /**
          * 默认的 基础文件夹名称
