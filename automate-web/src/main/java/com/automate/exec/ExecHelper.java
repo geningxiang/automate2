@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +48,9 @@ public class ExecHelper {
 
             cmds[2] = execCommand.getCommand();
 
+            //本地CMD执行时 需要判断系统
+            execCommand.setCharset(Charset.defaultCharset());
+
             logger.debug(StringUtils.join(cmds, " "));
 
             Map<String, String> envpMap = execCommand.getEnvpMap();
@@ -77,7 +81,7 @@ public class ExecHelper {
             if (exitValue != 0) {
                 //TODO 有阻塞风险
 
-                List<String> lines = IOUtils.readLines(process.getErrorStream(), SystemUtil.isWindows() ? Charsets.UTF_GBK : Charsets.UTF_8);
+                List<String> lines = IOUtils.readLines(process.getErrorStream(), execCommand.getCharset());
                 for (String line : lines) {
                     execCommand.errorRead(line);
                 }

@@ -16,9 +16,10 @@
             </ul>
         </li>
         <li class="sub-menu">
-            <a href="javascript:;"> <i class="fa fa-dropbox"></i> <span>Maven</span> </a>
+            <a href="javascript:;"> <i class="fa fa-dropbox"></i> <span>MAVEN</span> </a>
             <ul class="sub">
                 <li><a href="/admin/mvn/index" target="mainContent">私有库</a></li>
+                <li><a href="javascript:alert('开发中');" target="mainContent">deploy记录</a></li>
             </ul>
         </li>
         <li class="sub-menu">

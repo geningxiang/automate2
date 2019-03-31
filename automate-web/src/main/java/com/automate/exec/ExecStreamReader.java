@@ -33,7 +33,7 @@ public class ExecStreamReader implements Runnable {
     @Override
     public void run() {
         try {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, this.execCommand.getCharset());
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {

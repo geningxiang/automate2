@@ -7,10 +7,11 @@
 <head>
     <jsp:include page="../common/head.jsp"/>
     <style>
-        #versionListModelContent p{
+        #versionListModelContent p {
             margin: 0;
         }
-        .lastVersion p{
+
+        .lastVersion p {
             color: red;
         }
     </style>
@@ -61,8 +62,10 @@
         <tbody>
         {{each data item i}}
         <tr>
-            <td><a href="javascript: showVersionList('{{item.groupId}}', '{{item.artifactId}}', '{{item.lastModified}}');">{{item.groupId}} »
-                {{item.artifactId}}</a></td>
+            <td>
+                <a href="javascript: showVersionList('{{item.groupId}}', '{{item.artifactId}}', '{{item.lastModified}}');">{{item.groupId}}
+                    »
+                    {{item.artifactId}}</a></td>
             <td>{{item.lastModifiedStr}}</td>
         </tr>
 
@@ -78,11 +81,11 @@
     <div class="modal-body">
         <table class="table table-advance table-hover">
             <thead>
-                <tr>
-                    <th>版本</th>
-                    <th>最后修改时间</th>
-                    <th>操作</th>
-                </tr>
+            <tr>
+                <th>版本</th>
+                <th>最后修改时间</th>
+                <th>操作</th>
+            </tr>
             </thead>
             <tbody>
             {{each versionList item i}}
@@ -90,9 +93,11 @@
                 <td><p>{{item.version}}</p></td>
                 <td><p>{{item.lastModifiedStr}}</p></td>
                 <td>
-                    <a class="btn btn-primary btn-sm" href="/maven/{{groupId.replace('.','/')}}/{{artifactId}}/{{item.version}}/{{artifactId}}-{{item.version}}.jar" target="_blank"><i class="fa  fa-download"></i> 下载</a>
+                    <a class="btn btn-primary btn-sm"
+                       href="/maven/{{groupId.replace(/[.]/g,'/')}}/{{artifactId}}/{{item.version}}/{{artifactId}}-{{item.version}}.jar"
+                       target="_blank"><i class="fa  fa-download"></i> 下载</a>
                     &nbsp;&nbsp;
-                    <a class="btn btn-danger btn-sm"><i class="fa  fa-minus-square"></i> 删除</a>
+                    <a class="btn btn-danger btn-sm"><i class="fa fa-minus-square"></i> 删除</a>
                 </td>
             </tr>
             {{/each}}
@@ -125,6 +130,20 @@
         }
     };
 
+    var numCompare = function (num1, num2) {
+        var n1 = parseInt(num1);
+        var n2 = parseInt(num2);
+        if (!isNaN(n1) && !isNaN(n2)) {
+            return n1 - n2;
+        } else if (num1 == num2) {
+            return 0;
+        } else if (num1 > num2) {
+            return 1;
+        } else {
+            return -1;
+        }
+    };
+
     var versionCompare = function (a, b) {
         var aa = a.version.split(".");
         var bb = b.version.split(".");
@@ -132,17 +151,15 @@
             for (var i = 0; i < aa.length; i++) {
                 if (bb[i] == aa[i]) {
                     continue;
-                } else if (bb[i] > aa[i]) {
-                    return 1;
                 } else {
-                    return -1;
+                    return numCompare(bb[i], aa[i]);
                 }
             }
             return 0;
         } else {
             return bb.length - aa.length;
         }
-    }
+    };
 
     function query() {
         Core.get('/api/mvn/repository', {}, function (msg) {
@@ -191,7 +208,7 @@
 
     var showVersionList = function (groupId, artifactId, lastModified) {
         var versionList = groupArtifactVersionMap[groupId + '/' + artifactId];
-        console.log('versionList', versionList);
+        // console.log('versionList', versionList);
         if (versionList) {
             versionList = versionList.sort(versionCompare);
 

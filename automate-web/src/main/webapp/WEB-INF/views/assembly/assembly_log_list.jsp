@@ -103,6 +103,10 @@
         if (id && id > 0)
             window.open("/admin/assembly/detail?id=" + id);
     }
+
+    function assemblyLogDetail(assemblyLineLogId){
+        window.open('/admin/assembly/assemblyLogDetail?id=' + assemblyLineLogId||'');
+    }
 </script>
 </body>
 </html>
