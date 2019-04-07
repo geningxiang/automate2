@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,7 +22,7 @@ import java.util.TreeMap;
 public class MvnController {
 
     @RequestMapping(value = "/repository", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<TreeMap<String, Map<String, Map<String, Long>>>> repository() {
+    public ResponseEntity<TreeMap<String, Map<String, Map<String, Long>>>> repository() throws IOException {
         return ResponseEntity.ok(MavenUtil.repositoryTree());
 
     }

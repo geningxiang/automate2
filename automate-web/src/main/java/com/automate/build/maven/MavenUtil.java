@@ -5,6 +5,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 /**
@@ -16,14 +19,32 @@ import java.util.*;
  */
 public class MavenUtil {
 
-    public static TreeMap<String, Map<String, Map<String, Long>>> repositoryTree() {
+    public static TreeMap<String, Map<String, Map<String, Long>>> repositoryTree() throws IOException {
         TreeMap<String, Map<String, Map<String, Long>>> map = new TreeMap();
         String mavenRepository = SystemConfig.getMavenRepositoryDir();
         File dir = new File(mavenRepository);
-        String dirPath = dir.getAbsolutePath();
-        int startIndex = dirPath.length() + 1;
+        int startIndex = dir.getAbsolutePath().length() + 1;
+
+
         //jar、pom
+
+        /*
         Collection<File> list = FileUtils.listFiles(dir, new String[]{"jar"}, true);
+        使用 Files.walkFileTree 拍遍历 速度更快
+         */
+
+        Path dirPath = dir.toPath();
+        List<File> list = new LinkedList();
+        Files.walkFileTree(dirPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
+                if (file.endsWith(".jar")) {
+                    list.add(file.toFile());
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
         for (File file : list) {
             appendMavenProjectToMap(startIndex, file, map);
         }
@@ -43,7 +64,7 @@ public class MavenUtil {
         if (ss.length > 3) {
             String groupId = StringUtils.join(Arrays.copyOfRange(ss, 0, ss.length - 3), ".");
 
-            if(groupId.startsWith("org.apache.maven")){
+            if (groupId.startsWith("org.apache.maven")) {
                 // 忽略 org.apache.maven 下的所有
                 return;
             }

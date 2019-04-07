@@ -2,6 +2,7 @@ package com.automate.build.maven;
 
 import com.alibaba.fastjson.JSON;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,7 +15,7 @@ import java.util.TreeMap;
  */
 public class MavenUtilTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         TreeMap<String, Map<String, Map<String, Long>>> tree = MavenUtil.repositoryTree();
 
