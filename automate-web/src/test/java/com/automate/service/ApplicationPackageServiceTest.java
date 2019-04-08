@@ -1,5 +1,6 @@
 package com.automate.service;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,17 @@ public class ApplicationPackageServiceTest {
     public void create() throws IOException {
 
         applicationPackageService.create(5, "2.0.0", "master", "",
-                new File("D:\\idea-workspace\\Automate2\\automate-web\\target/Automate2.war"), 0);
+                new File("D:\\idea-workspace\\Automate2\\automate-web\\target\\Automate2.war"), 0);
 
+        applicationPackageService.create(5, "2.0.1", "master", "",
+                new File("D:\\idea-workspace\\Automate2\\automate-web\\target\\Automate2"), 0);
     }
 
+
+    @Test
+    public void getCurrentTimeMillis() {
+        for (int i = 0; i < 1000; i++) {
+            System.out.println(applicationPackageService.getCurrentTimeMillis());
+        }
+    }
 }

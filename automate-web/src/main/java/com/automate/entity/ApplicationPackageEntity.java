@@ -19,10 +19,15 @@ public class ApplicationPackageEntity {
     private String branch;
     private String commitId;
     private Timestamp createTime;
-    private String fileTree;
+
     private String version;
+    private String packagePath;
+    private String packageType;
+    private String fileTree;
+
     private String remark;
     private Integer adminId;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -115,4 +120,23 @@ public class ApplicationPackageEntity {
         this.adminId = adminId;
     }
 
+    @Basic
+    @Column(name = "PACKAGE_PATH", nullable = true)
+    public String getPackagePath() {
+        return packagePath;
+    }
+
+    public void setPackagePath(String packagePath) {
+        this.packagePath = packagePath;
+    }
+
+    @Basic
+    @Column(name = "PACKAGE_TYPE", nullable = true)
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
 }
