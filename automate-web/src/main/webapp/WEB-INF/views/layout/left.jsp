@@ -41,7 +41,7 @@
             <ul class="sub">
                 <li><a href="/admin/background/dashboard" target="mainContent">任务中心</a></li>
 
-                <li><a href="/admin/sourcecode/branchList" target="mainContent">任务日志</a></li>
+                <li><a href="javascript:alert('开发中');" target="mainContent">任务日志</a></li>
             </ul>
         </li>
 

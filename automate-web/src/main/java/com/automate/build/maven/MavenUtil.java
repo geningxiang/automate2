@@ -25,7 +25,6 @@ public class MavenUtil {
         File dir = new File(mavenRepository);
         int startIndex = dir.getAbsolutePath().length() + 1;
 
-
         //jar、pom
 
         /*
@@ -38,7 +37,7 @@ public class MavenUtil {
         Files.walkFileTree(dirPath, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
-                if (file.endsWith(".jar")) {
+                if (file.toString().endsWith(".jar")) {
                     list.add(file.toFile());
                 }
                 return FileVisitResult.CONTINUE;
