@@ -30,13 +30,15 @@ public abstract class AbstractAssemblyStepTask implements IAssemblyStepTask {
 
     private String name;
 
+    protected AssemblyLineLogEntity assemblyLineLogEntity;
+
     /**
      * cache  同一个流水线共享
      */
     private Map<String, Object> localCacheMap = null;
 
     @Override
-    public void init(Map<String, Object> localCacheMap, Integer sourceCodeId, String branch, String commitId, Integer serverId, Integer applicationId, Integer assemblyLineLogId) {
+    public void init(Map<String, Object> localCacheMap, Integer sourceCodeId, String branch, String commitId, Integer serverId, Integer applicationId, AssemblyLineLogEntity assemblyLineLogEntity) {
         this.localCacheMap = localCacheMap;
         assemblyLineTaskLogService = SpringContextUtil.getBean("assemblyLineTaskLogService", AssemblyLineTaskLogService.class);
         taskLog = new AssemblyLineTaskLogEntity();
@@ -45,9 +47,11 @@ public abstract class AbstractAssemblyStepTask implements IAssemblyStepTask {
         taskLog.setCommitId(commitId);
         taskLog.setServerId(serverId);
         taskLog.setApplicationId(applicationId);
-        taskLog.setAssemblyLineLogId(assemblyLineLogId);
+        taskLog.setAssemblyLineLogId(assemblyLineLogEntity.getId());
         taskLog.setStatus(AssemblyLineLogEntity.Status.init);
 //        assemblyLineTaskLogService.save(taskLog);
+
+        this.assemblyLineLogEntity = assemblyLineLogEntity;
     }
 
     /**
@@ -81,14 +85,14 @@ public abstract class AbstractAssemblyStepTask implements IAssemblyStepTask {
             taskLog.appendLine(sw.toString());
             taskLog.setStatus(AssemblyLineLogEntity.Status.error);
             return false;
-        }finally {
+        } finally {
             taskLog.setEndTime(new Timestamp(System.currentTimeMillis()));
             assemblyLineTaskLogService.save(taskLog);
         }
     }
 
     @Override
-    public void cancel(String reason ){
+    public void cancel(String reason) {
         taskLog.appendLine(reason);
         taskLog.setStatus(AssemblyLineLogEntity.Status.cancel);
         taskLog.setEndTime(new Timestamp(System.currentTimeMillis()));
