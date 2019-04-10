@@ -32,9 +32,10 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
     @Override
     public boolean count(long count) {
         currentSize += count;
-        if (size > 0) {
-            if (currentSize / size - rate > 0.05) {
-                rate = currentSize / size;
+        if (this.size > 0) {
+            double currentRate = (double) currentSize / this.size;
+            if (currentRate - rate > 0.01) {
+                rate = currentRate;
                 logger.debug("上传进度：{}/{} {}%", currentSize, size, new BigDecimal(rate).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
             }
         } else {

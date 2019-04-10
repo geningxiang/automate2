@@ -33,7 +33,8 @@
             <a href="javascript:;"> <i class="fa fa-bullhorn"></i> <span>发布</span> </a>
             <ul class="sub">
                 <li><a href="/admin/package/list" target="mainContent">更新包</a></li>
-                <li><a href="javascript:alert('开发中');" target="mainContent">发布记录</a></li>
+                <li><a href="javascript:alert('开发中');" target="mainContent">发布申请</a></li>
+                <li><a href="javascript:alert('开发中');" target="mainContent">更新记录</a></li>
             </ul>
         </li>
         <li class="sub-menu">

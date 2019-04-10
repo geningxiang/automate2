@@ -25,13 +25,13 @@ public class ApplicationUpdateAssemblyStepTaskTest {
 
         ApplicationUpdateAssemblyStepTask task = new ApplicationUpdateAssemblyStepTask();
 
-//        task.setPath("D:\\idea-workspace\\Automate2\\automate-web\\target/Automate2.war");
-//
-//        task.setContainerId(1);
-//
-//        task.init(new HashMap<>(), 1, "master", "", 1, null, 0);
-//
-//        task.invoke();
+        task.setPath("D:\\idea-workspace\\Automate2\\automate-web\\target/Automate2.war");
+
+        task.setContainerId(1);
+
+        task.init(new HashMap<>(), 1, "master", "", 1, null,  null);
+
+        task.invoke();
 
     }
 }

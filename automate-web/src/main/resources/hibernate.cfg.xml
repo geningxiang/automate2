@@ -16,6 +16,7 @@
       <mapping class="com.automate.entity.ContainerEntity"/>
       <mapping class="com.automate.entity.ContainerTypeEntity"/>
       <mapping class="com.automate.entity.ApplicationPackageEntity"/>
+      <mapping class="com.automate.entity.ApplicationUpdateApplyEntity"/>
 
   </session-factory>
 </hibernate-configuration>
