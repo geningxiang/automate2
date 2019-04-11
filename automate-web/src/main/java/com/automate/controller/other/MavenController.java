@@ -50,7 +50,7 @@ public class MavenController {
      */
     @ResponseBody
     @AllowNoLogin
-    @RequestMapping(value = "/**", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/**", method = RequestMethod.PUT)
     public String put(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.debug("[deploy to private maven repository]{}", request.getServletPath());
         String path = request.getServletPath().substring(6);
@@ -64,12 +64,19 @@ public class MavenController {
             s = new String(Base64.decodeBase64(auth), Charsets.UTF_8);
             //decode后是   用户名:密码  的格式
         }
-        if (!"caimao:caimao".equals(s)) {
+        if (!"caimao:87677911".equals(s)) {
             response.sendError(401, "Unauthorized");
             return null;
         }
+
         File file = new File(SystemConfig.getMavenRepositoryDir() + path);
+        //判断是否存在上级文件夹
+        File dir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(File.separator) + 1));
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
         IOUtils.copy(request.getInputStream(), new FileOutputStream(file));
+        logger.debug("copy file {}", file.getAbsolutePath());
         return sendText(response, "SUCCESS");
     }
 
