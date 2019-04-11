@@ -2,9 +2,13 @@ package com.automate.ssh;
 
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecStreamPrintMonitor;
+import com.automate.exec.IExecStreamMonitor;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,19 +46,46 @@ public class SSHSessionTest {
 
     @Test
     public void md5sum() throws Exception {
-        SSHSession s = new SSHSession("47.100.63.232", 22, "root", "");
+        SSHSession s = new SSHSession("47.100.63.232", 22, "root", "Genx@linux");
 
+        List<String[]> list = new ArrayList(1024);
         s.doWork(sshConnection -> {
 
             String targetDir = "/www/automate-temp2/webapps/ROOT/";
+            if(!targetDir.endsWith("/")){
+                targetDir += "/";
+            }
+            int prefixLen = targetDir.length();
 
             // 递归生成各文件的的MD5值
-            ExecCommand execCommand = new ExecCommand("find "+targetDir+" -type f -print0 | xargs -0 md5sum", new ExecStreamPrintMonitor());
+            ExecCommand execCommand = new ExecCommand("find "+targetDir+" -type f -print0 | xargs -0 md5sum", new IExecStreamMonitor() {
+                @Override
+                public void onStart(String command) {
+
+                }
+
+                @Override
+                public void onMsg(String line) {
+                    String[] ss = line.split("  ");
+                    if(ss.length == 2){
+                        list.add(new String[]{ss[1].substring(prefixLen), ss[0]});
+                    }
+
+                }
+
+                @Override
+                public void onEnd(int exitValue) {
+
+                }
+            });
 
             sshConnection.exec(execCommand);
 
         }, true);
 
+        for (String[] ss : list) {
+            System.out.println(StringUtils.join(ss, " "));
+        }
     }
 
     @Test
