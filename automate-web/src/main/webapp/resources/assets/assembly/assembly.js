@@ -12,6 +12,10 @@
             name: '文件包提取任务',
             tpl: '/resources/assets/assembly/packageExtractTask.tpl'
         },
+        'com.automate.task.background.assembly.impl.ApplicationUpdateAssemblyStepTask': {
+            name: '应用更新任务',
+            tpl: '/resources/assets/assembly/applicationUpdateTask.tpl'
+        }
     }
 
     //存数据
@@ -24,21 +28,21 @@
     };
 
 
-    var checkForm = function(){
+    var checkForm = function () {
         return $("#taskContent").valid();
     }
     /**
      * 添加任务
      * @param clsName
      */
-    window.addTask = function(clsName){
+    window.addTask = function (clsName) {
         console.log('添加任务', clsName);
 
-        if(!ASSEMBLY_MAP[clsName]){
+        if (!ASSEMBLY_MAP[clsName]) {
             alert('任务类型错误:' + clsName);
             return;
         }
-        if(checkForm()){
+        if (checkForm()) {
             var item = {};
             item.className = clsName;
             item.key = '' + keyIndex++;
@@ -67,17 +71,17 @@
     window.AssemblyUtil = {
         init: function (jsonStr) {
             var jsonArray = [];
-            try{
+            try {
                 jsonArray = JSON.parse(jsonStr.replace(/[\r]/g, "\\r").replace(/[\n]/g, "\\n"));
                 console.log(jsonArray);
-            }catch (e) {
+            } catch (e) {
                 console.warn(e);
             }
 
             var item;
             for (var i = 0; i < jsonArray.length; i++) {
                 item = jsonArray[i];
-                if(ASSEMBLY_MAP[item.className]) {
+                if (ASSEMBLY_MAP[item.className]) {
                     item.key = '' + keyIndex++;
                     tempMap[item.key] = item;
 
@@ -102,7 +106,7 @@
                 }
             });
 
-            $("#taskContent").change(function() {
+            $("#taskContent").change(function () {
                 if ($("#taskContent").valid()) {
                     saveTask();
                 }
@@ -119,15 +123,15 @@
                 }
 
                 var list = [];
-                for(var key in tempMap){
+                for (var key in tempMap) {
                     list.push(tempMap[key]);
                 }
                 data.config = JSON.stringify(list);
                 console.log(data);
 
-                $.post('/api/assembly/assemblyLine', data, function(msg){
+                $.post('/api/assembly/assemblyLine', data, function (msg) {
                     console.log(msg);
-                    if(msg.status == 200){
+                    if (msg.status == 200) {
                         alert("保存成功");
                         window.opener && window.opener.location.reload();
                         window.close();

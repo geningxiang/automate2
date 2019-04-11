@@ -1,9 +1,11 @@
 package com.automate.exec;
 
+import com.automate.common.Charsets;
 import com.automate.common.utils.EnvironmentPathUtil;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +49,8 @@ public class ExecCommand {
      */
     private int timeout = 10;
     private TimeUnit unit = TimeUnit.MINUTES;
+
+    private Charset charset = Charsets.UTF_8;
 
     public ExecCommand(String command) throws IllegalAccessException {
         this(ImmutableList.of(command), null, null, null);
@@ -145,5 +149,13 @@ public class ExecCommand {
 
     public void setCmdStreamMonitor(IExecStreamMonitor cmdStreamMonitor) {
         this.cmdStreamMonitor = cmdStreamMonitor;
+    }
+
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public void setCharset(Charset charset) {
+        this.charset = charset;
     }
 }

@@ -106,7 +106,7 @@
                             <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.MavenAssemblyStepTask')">Maven任务</a></li>
                             <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.ExecAssemblyStepTask')">自定义Exec任务</a></li>
                             <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.PackageExtractAssemblyStepTask')">文件包提取任务</a></li>
-
+                            <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.ApplicationUpdateAssemblyStepTask')">应用更新任务</a></li>
                         </ul>
                     </div>
                 </header>

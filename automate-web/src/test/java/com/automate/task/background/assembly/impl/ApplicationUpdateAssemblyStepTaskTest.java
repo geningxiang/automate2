@@ -29,7 +29,7 @@ public class ApplicationUpdateAssemblyStepTaskTest {
 
         task.setContainerId(1);
 
-        task.init(new HashMap<>(), 1, "master", "", 1, null, 0);
+        task.init(new HashMap<>(), 1, "master", "", 1, null,  null);
 
         task.invoke();
 

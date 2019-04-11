@@ -1,5 +1,6 @@
 package com.automate.task.background.assembly.impl;
 
+import com.automate.common.SystemConfig;
 import com.automate.common.utils.SpringContextUtil;
 import com.automate.entity.ContainerEntity;
 import com.automate.entity.ServerEntity;
@@ -19,7 +20,7 @@ import java.util.Optional;
 /**
  * Created with IntelliJ IDEA.
  * Description:
- *
+ * 应用更新任务
  * @author: genx
  * @date: 2019/3/6 23:20
  */
@@ -148,7 +149,11 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
     }
 
     public String getPath() {
-        return path;
+        if(this.path.contains(BASE_DIR)){
+            return this.path.replace(BASE_DIR, SystemConfig.getSourceCodeDir(getSourceCodeEntity()));
+        } else {
+            return this.path;
+        }
     }
 
     public void setPath(String path) {

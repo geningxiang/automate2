@@ -1,11 +1,14 @@
 package com.automate.task.background.assembly.impl;
 
+import com.automate.common.Charsets;
 import com.automate.common.SystemConfig;
+import com.automate.common.utils.SystemUtil;
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecHelper;
 import com.automate.task.background.assembly.AbstractAssemblyStepTask;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,6 +31,8 @@ public abstract class AbstractExecAssemblyStepTask extends AbstractAssemblyStepT
         if (execCommand != null) {
 
             execCommand.setDir(new File(SystemConfig.getSourceCodeDir(getSourceCodeEntity())));
+
+
 
             ExecHelper.exec(execCommand);
 

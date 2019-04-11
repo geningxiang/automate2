@@ -3,10 +3,8 @@ package com.automate.task.background.assembly;
 import com.automate.common.utils.SpringContextUtil;
 import com.automate.entity.AssemblyLineEntity;
 import com.automate.entity.AssemblyLineLogEntity;
-import com.automate.entity.AssemblyLineTaskLogEntity;
 import com.automate.entity.SourceCodeEntity;
 import com.automate.service.AssemblyLineLogService;
-import com.automate.service.AssemblyLineTaskLogService;
 import com.automate.service.SourceCodeService;
 import com.automate.task.background.AbstractBackgroundTask;
 import com.automate.vcs.git.GitHelper;
@@ -15,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -70,11 +66,10 @@ public class BackgroundAssemblyTask extends AbstractBackgroundTask {
                     locks.add(lock);
                 }
             }
-            task.init(localCacheMap, assemblyLineEntity.getSourceCodeId(), branchName, commitId, 0, 0, assemblyLineLogEntity.getId());
+            task.init(localCacheMap, assemblyLineEntity.getSourceCodeId(), branchName, commitId, 0, 0, assemblyLineLogEntity);
         }
         return new BackgroundAssemblyTask(assemblyLineEntity, branchName, commitId, assemblyLineLogEntity, tasks, locks);
     }
-
 
 
     @Override
@@ -97,15 +92,15 @@ public class BackgroundAssemblyTask extends AbstractBackgroundTask {
 
                 //
                 Optional<SourceCodeEntity> sourceCodeEntity = sourceCodeService.getModel(this.assemblyLineEntity.getSourceCodeId());
-                if(sourceCodeEntity.isPresent()){
+                if (sourceCodeEntity.isPresent()) {
                     //先将代码仓库切换到指定版本
                     GitHelper gitHelper = new GitHelper(sourceCodeEntity.get());
                     assemblyLineLogEntity.setCommitId(gitHelper.checkOut(this.branchName, this.commitId));
 
                     for (IAssemblyStepTask task : tasks) {
-                        if(hasError){
+                        if (hasError) {
                             task.cancel("前置步骤发生错误");
-                        } else if(!task.invoke()){
+                        } else if (!task.invoke()) {
                             hasError = true;
                         }
                     }
@@ -117,7 +112,7 @@ public class BackgroundAssemblyTask extends AbstractBackgroundTask {
             } finally {
                 //TODO 终止处理
                 assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
-                if(hasError){
+                if (hasError) {
                     assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.error);
                 } else {
                     assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.success);

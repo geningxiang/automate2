@@ -1,6 +1,9 @@
 package com.automate.task.background.assembly.impl;
 
 import com.automate.common.SystemConfig;
+import com.automate.common.utils.SpringContextUtil;
+import com.automate.entity.ApplicationPackageEntity;
+import com.automate.service.ApplicationPackageService;
 import com.automate.task.background.assembly.AbstractAssemblyStepTask;
 
 import java.io.File;
@@ -21,7 +24,7 @@ public class PackageExtractAssemblyStepTask extends AbstractAssemblyStepTask {
     private String path;
 
     public String getPath() {
-        if(this.path.contains(BASE_DIR)){
+        if (this.path.contains(BASE_DIR)) {
             return this.path.replace(BASE_DIR, SystemConfig.getSourceCodeDir(getSourceCodeEntity()));
         } else {
             return this.path;
@@ -39,38 +42,23 @@ public class PackageExtractAssemblyStepTask extends AbstractAssemblyStepTask {
 
     @Override
     public boolean doInvoke() throws Exception {
+        File file = new File(getPath());
 
-        String path = getPath();
-        File file = new File(path);
-        System.out.println(file.getAbsolutePath());
-
-        if(!file.exists()){
+        if (!file.exists()) {
             throw new IOException("文件不存在:" + file.getAbsolutePath());
         }
 
-
-        if(file.isDirectory()){
-            throw new IOException("暂不支持文件夹,等待后续完善");
-        }
-
-        int index = file.getName().lastIndexOf(".");
-        if(index <= 0){
-            throw new IOException("文件没有后缀?" + file.getName());
-        }
-
-        String suffix = file.getName().substring(index + 1).toLowerCase();
-
-//        if(!"war".equals(suffix)){
-//            throw new IOException("暂时只支持war后缀,等待后续完善");
-//        }
+        ApplicationPackageService applicationPackageService = SpringContextUtil.getBean("applicationPackageService", ApplicationPackageService.class);
 
         //TODO 提取文件包
         logger.debug("开始提取文件包: {}", file.getAbsolutePath());
-        appendLine("开始提取文件包:");
-        appendLine(file.getAbsolutePath());
+        appendLine("开始提取文件包:" + file.getAbsolutePath());
+
+        ApplicationPackageEntity applicationPackageEntity = applicationPackageService.create(assemblyLineLogEntity.getSourceCodeId(), "", assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId(), file, 0);
+        appendLine("copy file to " + applicationPackageEntity.getPackagePath());
+
         return true;
 
     }
-
 
 }

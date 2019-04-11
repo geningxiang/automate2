@@ -69,6 +69,20 @@ public class SystemConfig {
                 .append(sourceCodeEntity.getId()).append(File.separator).toString();
     }
 
+    /**
+     * 获取应用包的文件夹路径
+     * @param sourceCodeId
+     * @return
+     */
+    public static String getPackageDir(int sourceCodeId) {
+        Assert.hasText(AUTOMATE_DATA_DIR, "AUTOMATE_DATA_DIR is null");
+        return new StringBuilder(AUTOMATE_DATA_DIR).append(File.separator)
+                .append(SystemContants.PACKAGE_DIR_NAME).append(File.separator)
+                .append(sourceCodeId).append(File.separator).toString();
+    }
+
+
+
 
     /**
      * 获取 maven 本地仓库地址
@@ -169,7 +183,7 @@ public class SystemConfig {
          * 不推荐直接使用默认配置文件    不利于环境分离
          * PROPERTY_CONFIG_LOCATION 优先级更高
          */
-        private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.PROPERTIES";
+        private static final String DEFAULT_CONFIG_LOCATION = "classpath:config.properties";
 
         /**
          * 默认的 基础文件夹名称
@@ -182,6 +196,8 @@ public class SystemConfig {
          * 默认的 源代码文件夹名称
          */
         private static final String SOURCE_CODE_DIR_NAME = "sourcecode";
+
+        private static final String PACKAGE_DIR_NAME = "package";
 
         private static final String KEY_DATA_DIR = "automate.data.dir";
         private static final String KEY_MAVEN_REPOSITORY = "maven.repository";
