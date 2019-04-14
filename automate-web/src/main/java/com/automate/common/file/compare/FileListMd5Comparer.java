@@ -11,6 +11,29 @@ import java.util.*;
  */
 public class FileListMd5Comparer {
 
+    public static Collection<FileMd5ComparerResult> compareByMap(ArrayList<String[]>... fileLists) {
+        if (fileLists == null || fileLists.length == 0) {
+            return new ArrayList(0);
+        }
+        HashMap<String, FileMd5ComparerResult> map = new HashMap(2048);
+        int count = fileLists.length;
+        ArrayList<String[]> fileList;
+        FileMd5ComparerResult fileMd5ComparerResult;
+        for (int i = 0; i < fileLists.length; i++) {
+            fileList = fileLists[i];
+            for (String[] ss : fileList) {
+                fileMd5ComparerResult = map.get(ss[0]);
+                if(fileMd5ComparerResult == null){
+                    fileMd5ComparerResult = new FileMd5ComparerResult(count);
+                    fileMd5ComparerResult.setPath(ss[0]);
+                    map.put(ss[0], fileMd5ComparerResult);
+                }
+                fileMd5ComparerResult.setMd5(i, ss[1]);
+            }
+        }
+        return map.values();
+
+    }
     public static LinkedList<FileMd5ComparerResult> compare(ArrayList<String[]>... fileLists) {
         LinkedList<FileMd5ComparerResult> results = new LinkedList();
 

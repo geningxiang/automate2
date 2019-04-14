@@ -58,7 +58,7 @@ public class SSHSessionTest {
             int prefixLen = targetDir.length();
 
             // 递归生成各文件的的MD5值
-            ExecCommand execCommand = new ExecCommand("find "+targetDir+" -type f -print0 | xargs -0 md5sum", new IExecStreamMonitor() {
+            ExecCommand execCommand = new ExecCommand("cd " + targetDir + " && "+"find ./ -type f -print0 | xargs -0 md5sum", new IExecStreamMonitor() {
                 @Override
                 public void onStart(String command) {
 
@@ -66,10 +66,11 @@ public class SSHSessionTest {
 
                 @Override
                 public void onMsg(String line) {
-                    String[] ss = line.split("  ");
-                    if(ss.length == 2){
-                        list.add(new String[]{ss[1].substring(prefixLen), ss[0]});
-                    }
+                    System.out.println(line);
+//                    String[] ss = line.split("  ");
+//                    if(ss.length == 2){
+//                        list.add(new String[]{ss[1].substring(prefixLen), ss[0]});
+//                    }
 
                 }
 

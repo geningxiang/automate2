@@ -6,8 +6,7 @@ import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
- *
+ * Description: 应用更新包
  * @author: genx
  * @date: 2019/4/5 11:03
  */
@@ -23,6 +22,10 @@ public class ApplicationPackageEntity {
     private String version;
     private String packagePath;
     private String packageType;
+
+    /**
+     * 文件列表
+     */
     private String fileTree;
 
     private String remark;

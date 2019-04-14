@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -42,7 +44,7 @@ public class FileListMd5Util {
                 throw new IOException("暂不支持该文件类型");
             }
         }
-        //Collections.sort(list, Comparator.comparing(o -> o.path));
+        Collections.sort(list, Comparator.comparing(o -> o.path));
         return list;
     }
 
