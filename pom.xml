@@ -6,11 +6,11 @@
 
   <groupId>com.automate</groupId>
   <artifactId>automate</artifactId>
-  <version>2.0</version>
+  <version>2.0.0</version>
   <packaging>pom</packaging>
 
   <modules>
-    <module>automate-web</module>
+    <module>automate-server</module>
   </modules>
 
   <name>Automate2</name>
