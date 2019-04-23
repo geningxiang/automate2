@@ -6,9 +6,9 @@
   <session-factory>
     <property name="connection.url">jdbc:mysql://localhost:3306/automate2</property>
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-      <mapping class="com.automate.entity.AdminUserEntity"/>
+      <mapping class="com.automate.entity.UserEntity"/>
       <mapping class="com.automate.entity.SourceCodeEntity"/>
-      <mapping class="com.automate.entity.SourceCodeBranchEntity"/>
+      <mapping class="com.automate.entity.ProjectBranchEntity"/>
       <mapping class="com.automate.entity.Ca2BuildLogEntity"/>
       <mapping class="com.automate.entity.AssemblyLineEntity"/>
       <mapping class="com.automate.entity.AssemblyLineLogEntity"/>

@@ -13,13 +13,13 @@ import java.sql.Timestamp;
  * @date: 2019/1/29 23:17
  */
 @Entity
-@Table(name = "CA2_ADMIN_USER")
-public class AdminUserEntity {
+@Table(name = "CA2_USER")
+public class UserEntity {
 
     /**
      * 管理员状态
      */
-    public enum Status{
+    public enum Status {
         /**
          * 注销的
          */
@@ -47,12 +47,12 @@ public class AdminUserEntity {
     /**
      * 级别
      */
-    private Byte level;
+    private int level;
 
     /**
      * 状态
      */
-    private Byte status;
+    private int status;
 
     /**
      * 最后修改时间
@@ -70,7 +70,7 @@ public class AdminUserEntity {
     private String email;
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public Integer getId() {
         return id;
@@ -112,32 +112,33 @@ public class AdminUserEntity {
 
     @Basic
     @Column(name = "LEVEL", nullable = true)
-    public Byte getLevel() {
+    public int getLevel() {
         return level;
     }
 
     /**
      * 设置等级 现在只有2级
+     *
+     * @param level
      * @see AdminUserContants#ADMIN_USER_LEVEL_ROOT
      * @see AdminUserContants#ADMIN_USER_LEVEL_NORMAL
-     * @param level
      */
-    public void setLevel(Byte level) {
+    public void setLevel(int level) {
         this.level = level;
     }
 
     @Basic
     @Column(name = "STATUS", nullable = true)
-    public Byte getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
     public void setStatus(Status status) {
-        this.status = (byte)status.ordinal();
+        this.status = status.ordinal();
     }
 
 

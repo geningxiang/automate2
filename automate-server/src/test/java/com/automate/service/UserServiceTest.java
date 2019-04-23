@@ -1,7 +1,7 @@
 package com.automate.service;
 
 import com.automate.contants.AdminUserContants;
-import com.automate.entity.AdminUserEntity;
+import com.automate.entity.UserEntity;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,10 +18,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:/spring/*.xml"})
-public class AdminUserServiceTest {
+public class UserServiceTest {
 
     @Autowired
-    private AdminUserService adminUserService;
+    private UserService userService;
 
     @Test
     public void findAll() {
@@ -33,13 +33,12 @@ public class AdminUserServiceTest {
 
     @Test
     public void save() {
-
-        AdminUserEntity adminUserEntity = new AdminUserEntity();
-        adminUserEntity.setUserName("admin");
-        adminUserEntity.setPassWord(DigestUtils.md5Hex("admin"));
-        adminUserEntity.setRealName("超级管理员");
-        adminUserEntity.setLevel(AdminUserContants.ADMIN_USER_LEVEL_ROOT);
-        adminUserEntity.setStatus(AdminUserEntity.Status.ACTIVATE);
-        adminUserService.save(adminUserEntity);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserName("admin");
+        userEntity.setPassWord(DigestUtils.md5Hex("admin"));
+        userEntity.setRealName("超级管理员");
+        userEntity.setLevel(AdminUserContants.ADMIN_USER_LEVEL_ROOT);
+        userEntity.setStatus(UserEntity.Status.ACTIVATE);
+        userService.save(userEntity);
     }
 }

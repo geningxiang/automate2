@@ -223,14 +223,14 @@
     }
 
     function querySourceCodeDetail(){
-        Core.get('/api/sourcecode/sourceCode/' + id, null, function(msg){
+        Core.get('/api/project/' + id, null, function(msg){
            console.log('查询项目详情', msg);
            $("#sourceCodeDetail").html(template('sourceCodeDetailTemplate', msg.data));
         });
     }
 
     function queryBranchList(){
-        Core.get('/api/sourcecode/branchList', {id: id}, function(msg){
+        Core.get('/api/projectBranches', {id: id}, function(msg){
             console.log('分支列表', msg);
             $("#branchList").html(template('branchListTemplate', msg));
         });

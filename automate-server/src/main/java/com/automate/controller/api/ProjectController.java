@@ -6,10 +6,10 @@ import com.automate.common.ResponseEntity;
 import com.automate.controller.BaseController;
 import com.automate.entity.HookLogEntity;
 import com.automate.entity.ProjectEntity;
-import com.automate.entity.SourceCodeBranchEntity;
+import com.automate.entity.ProjectBranchEntity;
 import com.automate.service.HookLogService;
 import com.automate.service.ProjectService;
-import com.automate.service.SourceCodeBranchService;
+import com.automate.service.ProjectBranchService;
 import com.automate.task.background.BackgroundLock;
 import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.TestVCSRepository;
@@ -43,7 +43,7 @@ public class ProjectController extends BaseController {
     private ProjectService projectService;
 
     @Autowired
-    private SourceCodeBranchService sourceCodeBranchService;
+    private ProjectBranchService projectBranchService;
 
     @Autowired
     private HookLogService hookLogService;
@@ -64,7 +64,7 @@ public class ProjectController extends BaseController {
         return ResponseEntity.ok(array);
     }
 
-    @RequestMapping(value = "/project/vcs/test", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/vcsTest", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity testConnection(TestVCSRepository model) {
         try {
             IVCSHelper helper = VCSHelper.create(model);
@@ -105,14 +105,14 @@ public class ProjectController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/branchList", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/projectBranches", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<List> branchList(Integer id) {
-        List<SourceCodeBranchEntity> list = sourceCodeBranchService.getList(id);
+        List<ProjectBranchEntity> list = projectBranchService.getList(id);
         JSONArray array = new JSONArray(list.size());
         JSONObject json;
-        for (SourceCodeBranchEntity item : list) {
+        for (ProjectBranchEntity item : list) {
             json = new JSONObject();
-            json.put("sourceCodeId", item.getSourceCodeId());
+            json.put("sourceCodeId", item.getProjectId());
             json.put("branchName", item.getBranchName());
             json.put("lastCommitId", item.getLastCommitId());
             json.put("lastCommitTime", FastDateFormat.getInstance("yyyy-MM-dd HH:mm").format(item.getLastCommitTime()));
@@ -128,7 +128,7 @@ public class ProjectController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/sync", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/projectSync",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity sync(Integer id) {
         if (id == null || id <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");

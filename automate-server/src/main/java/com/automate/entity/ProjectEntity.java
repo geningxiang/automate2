@@ -37,16 +37,57 @@ public class ProjectEntity implements IVCSRepository {
     }
 
     private Integer id;
-    private Byte type;
+    /**
+     * 类型
+     *
+     * @see ProjectType
+     */
+    private int type;
+    /**
+     * 名称
+     */
     private String name;
+
+    /**
+     * 备注
+     */
     private String remark;
+    /**
+     * 版本控制类型
+     *
+     * @see VcsType
+     */
     private int vcsType;
+    /**
+     * 版本控制地址
+     */
     private String vcsUrl;
+    /**
+     * 版本控制用户名
+     */
     private String vcsUserName;
+    /**
+     * 版本控制密码
+     * TODO 应该做加密处理
+     */
     private String vcsPassWord;
+    /**
+     * 编译类型
+     * @see CompileType
+     */
     private int compileType;
+
     private Timestamp createTime;
-    private Integer userId;
+    /**
+     * 归属人
+     */
+    private int userId;
+
+    /**
+     * 状态
+     *
+     * @see Status
+     */
     private int status;
 
     @Override
@@ -63,11 +104,11 @@ public class ProjectEntity implements IVCSRepository {
 
     @Basic
     @Column(name = "TYPE", nullable = true)
-    public Byte getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(Byte type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -167,11 +208,11 @@ public class ProjectEntity implements IVCSRepository {
 
     @Basic
     @Column(name = "USER_ID", nullable = true)
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

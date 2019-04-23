@@ -4,15 +4,14 @@ import com.automate.common.ResponseEntity;
 import com.automate.common.SessionUser;
 import com.automate.common.annotation.AllowNoLogin;
 import com.automate.contants.CommonContants;
-import com.automate.entity.AdminUserEntity;
-import com.automate.service.AdminUserService;
+import com.automate.entity.UserEntity;
+import com.automate.service.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -30,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 public class MainController {
 
     @Autowired
-    private AdminUserService adminUserService;
+    private UserService userService;
 
     @AllowNoLogin
     @RequestMapping(value={"/", "/login"})
@@ -53,15 +52,15 @@ public class MainController {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
         }
 
-        AdminUserEntity adminUserEntity = adminUserService.findFirstByUserName(userName);
-        if(adminUserEntity == null) {
+        UserEntity userEntity = userService.findFirstByUserName(userName);
+        if(userEntity == null) {
             return ResponseEntity.of(HttpStatus.NOT_FOUND, "请输入正确的用户名");
         }
 
-        if(!DigestUtils.md5Hex(passWord).equals(adminUserEntity.getPassWord())) {
+        if(!DigestUtils.md5Hex(passWord).equals(userEntity.getPassWord())) {
             return ResponseEntity.of(HttpStatus.FORBIDDEN, "请输入正确的密码");
         }
-        SessionUser sessionUser = new SessionUser(adminUserEntity);
+        SessionUser sessionUser = new SessionUser(userEntity);
         request.getSession().setAttribute(CommonContants.SESSION_USER_KEY, sessionUser);
         return ResponseEntity.ok(null);
     }

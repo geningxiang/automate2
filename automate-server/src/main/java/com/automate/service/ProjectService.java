@@ -3,9 +3,9 @@ package com.automate.service;
 import com.alibaba.fastjson.JSON;
 import com.automate.common.utils.SpringContextUtil;
 import com.automate.entity.ProjectEntity;
-import com.automate.entity.SourceCodeBranchEntity;
+import com.automate.entity.ProjectBranchEntity;
 import com.automate.repository.ProjectRepository;
-import com.automate.repository.SourceCodeBranchRepository;
+import com.automate.repository.ProjectBranchRepository;
 import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.VCSHelper;
 import com.automate.vcs.git.GitHelper;
@@ -47,7 +47,7 @@ public class ProjectService {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private SourceCodeBranchRepository sourceCodeBranchRepository;
+    private ProjectBranchRepository projectBranchRepository;
 
     /**
      * 初始化本地代码库
@@ -89,26 +89,26 @@ public class ProjectService {
         if (sourceCodeId <= 0 || StringUtils.isEmpty(branchName) || commitLogs.size() == 0) {
             return;
         }
-        SourceCodeBranchEntity sourceCodeBranchEntity = sourceCodeBranchRepository.findFirstBySourceCodeIdAndBranchName(sourceCodeId, branchName);
+        ProjectBranchEntity projectBranchEntity = projectBranchRepository.findFirstByProjectIdAndBranchName(sourceCodeId, branchName);
 
-        if (sourceCodeBranchEntity == null) {
-            sourceCodeBranchEntity = new SourceCodeBranchEntity();
-            sourceCodeBranchEntity.setSourceCodeId(sourceCodeId);
-            sourceCodeBranchEntity.setBranchName(branchName);
-            sourceCodeBranchEntity.setAutoType(SourceCodeBranchEntity.AutoType.NONE);
+        if (projectBranchEntity == null) {
+            projectBranchEntity = new ProjectBranchEntity();
+            projectBranchEntity.setProjectId(sourceCodeId);
+            projectBranchEntity.setBranchName(branchName);
+            projectBranchEntity.setAutoType(ProjectBranchEntity.AutoType.NONE);
         }
         CommitLog lastCommit = commitLogs.get(0);
 
-        if (lastCommit.getId().equals(sourceCodeBranchEntity.getLastCommitId())) {
+        if (lastCommit.getId().equals(projectBranchEntity.getLastCommitId())) {
             //无变化
             return;
         }
-        sourceCodeBranchEntity.setLastCommitId(lastCommit.getId());
-        sourceCodeBranchEntity.setLastCommitTime(new Timestamp(lastCommit.getCommitTime()));
-        sourceCodeBranchEntity.setLastCommitUser(lastCommit.getCommitter().getName());
-        sourceCodeBranchEntity.setCommitLog(JSON.toJSONString(commitLogs));
-        sourceCodeBranchEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        sourceCodeBranchRepository.save(sourceCodeBranchEntity);
+        projectBranchEntity.setLastCommitId(lastCommit.getId());
+        projectBranchEntity.setLastCommitTime(new Timestamp(lastCommit.getCommitTime()));
+        projectBranchEntity.setLastCommitUser(lastCommit.getCommitter().getName());
+        projectBranchEntity.setCommitLog(JSON.toJSONString(commitLogs));
+        projectBranchEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        projectBranchRepository.save(projectBranchEntity);
     }
 
     public ProjectEntity getFirstByVcsUrl(String vcsUrl) {

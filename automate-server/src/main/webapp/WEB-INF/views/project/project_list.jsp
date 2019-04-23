@@ -207,7 +207,7 @@
     });
 
     function query(){
-        Core.post('/api/sourcecode/list',null, function(data){
+        Core.get('/api/projects',null, function(data){
             console.log('查询本地仓库列表', data);
             $("#sourceCodeListBody").html(template("sourceCodeListTemplate", data));
         });
@@ -218,7 +218,7 @@
         var validResult = $("#sourceCodeForm").valid();
         console.log('validateResult', validResult);
         var data = $("#sourceCodeForm").serializeData();
-        Core.post('/api/sourcecode/sourceCode', data, function(msg){
+        Core.post('/api/project', data, function(msg){
             console.log(msg);
             if(msg.status == 200){
                 toastr.success("创建成功");
@@ -247,7 +247,7 @@
         if(data.vcsUrl){
             console.log('serializeData', data)
             //TODO 远程仓库连接测试
-            Core.post('/api/sourcecode/testConnection', data, function(msg){
+            Core.post('/api/vcsTest', data, function(msg){
                console.log(msg);
                if(msg.status == 200){
                    toastr.success(data.vcsUrl + " connection success");
@@ -263,12 +263,12 @@
 
     function sourceCodeDetail(id) {
         if (id && id > 0)
-            window.open("/admin/sourcecode/detail?id=" + id);
+            window.open("/admin/project/detail?id=" + id);
 
     }
 
     function sourceCodeSync(id) {
-        Core.post("/api/sourcecode/sync", {id: id}, function (data) {
+        Core.post("/api/projectSync", {id: id}, function (data) {
             console.log(data);
             if (data.status == 200) {
                 if (data.data > 0) {

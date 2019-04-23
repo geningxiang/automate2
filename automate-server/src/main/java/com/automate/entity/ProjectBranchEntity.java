@@ -2,18 +2,16 @@ package com.automate.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
- *
+ * Description: 项目分支
  * @author: genx
  * @date: 2019/1/31 19:45
  */
 @Entity
-@Table(name = "CA2_SOURCE_CODE_BRANCH")
-public class SourceCodeBranchEntity {
+@Table(name = "CA2_PROJECT_BRANCH")
+public class ProjectBranchEntity {
 
     /**
      * 每次代码变动后的操作
@@ -34,7 +32,7 @@ public class SourceCodeBranchEntity {
     }
 
     private Integer id;
-    private Integer sourceCodeId;
+    private Integer projectId;
     private String branchName;
     private String lastCommitId;
     private Timestamp lastCommitTime;
@@ -55,13 +53,13 @@ public class SourceCodeBranchEntity {
     }
 
     @Basic
-    @Column(name = "SOURCE_CODE_ID", nullable = true)
-    public Integer getSourceCodeId() {
-        return sourceCodeId;
+    @Column(name = "PROJECT_ID", nullable = true)
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setSourceCodeId(Integer sourceCodeId) {
-        this.sourceCodeId = sourceCodeId;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     @Basic

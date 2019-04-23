@@ -1,6 +1,6 @@
 package com.automate.repository;
 
-import com.automate.entity.AdminUserEntity;
+import com.automate.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @date: 2019/1/30 0:57
  */
 @Repository
-public interface AdminUserRepository extends PagingAndSortingRepository<AdminUserEntity, Integer>, JpaSpecificationExecutor<AdminUserEntity> {
+public interface UserRepository extends PagingAndSortingRepository<UserEntity, Integer>, JpaSpecificationExecutor<UserEntity> {
 
     /**
      * 根据用户名 查询用户
@@ -21,5 +21,5 @@ public interface AdminUserRepository extends PagingAndSortingRepository<AdminUse
      * @param userName
      * @return
      */
-    AdminUserEntity findFirstByUserName(String userName);
+    UserEntity findFirstByUserName(String userName);
 }
