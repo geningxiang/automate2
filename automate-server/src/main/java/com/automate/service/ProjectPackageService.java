@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.automate.common.SystemConfig;
 import com.automate.common.utils.FileListMd5Util;
 import com.automate.common.utils.ZipUtil;
-import com.automate.entity.ApplicationPackageEntity;
-import com.automate.repository.ApplicationPackageRepository;
+import com.automate.entity.ProjectPackageEntity;
+import com.automate.repository.ProjectPackageRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,47 +26,47 @@ import java.util.List;
  * @date: 2019/4/5 11:09
  */
 @Service
-public class ApplicationPackageService {
+public class ProjectPackageService {
 
     @Autowired
-    private ApplicationPackageRepository applicationPackageRepository;
+    private ProjectPackageRepository projectPackageRepository;
 
-    public Page<ApplicationPackageEntity> findAll(Pageable pageable) {
-        return applicationPackageRepository.findAll(pageable);
+    public Page<ProjectPackageEntity> findAll(Pageable pageable) {
+        return projectPackageRepository.findAll(pageable);
     }
 
-    public ApplicationPackageEntity create(int sourceCodeId, String version, String branch, String commitId, File file, int adminId) throws IOException {
-        ApplicationPackageEntity applicationPackageEntity = new ApplicationPackageEntity();
-        applicationPackageEntity.setSourceCodeId(sourceCodeId);
-        applicationPackageEntity.setBranch(branch);
-        applicationPackageEntity.setCommitId(commitId);
-        applicationPackageEntity.setVersion(version);
-        applicationPackageEntity.setAdminId(adminId);
+    public ProjectPackageEntity create(int projectId, String version, String branch, String commitId, File file, int userId) throws IOException {
+        ProjectPackageEntity projectPackageEntity = new ProjectPackageEntity();
+        projectPackageEntity.setProjectId(projectId);
+        projectPackageEntity.setBranch(branch);
+        projectPackageEntity.setCommitId(commitId);
+        projectPackageEntity.setVersion(version);
+        projectPackageEntity.setUserId(userId);
 
         //读取文件列表
         List<FileListMd5Util.PathMd5Info> list = FileListMd5Util.list(file);
-        applicationPackageEntity.setFileTree(JSONArray.toJSONString(list));
+        projectPackageEntity.setFileList(JSONArray.toJSONString(list));
 
 
         if (file.isDirectory()) {
             //文件夹 打包成zip
             String fileType = "zip";
-            File destFile = new File(buildFilePath(sourceCodeId, fileType));
+            File destFile = new File(buildFilePath(projectId, fileType));
             ZipUtil.compress(file, destFile);
-            applicationPackageEntity.setPackagePath(destFile.getAbsolutePath());
-            applicationPackageEntity.setPackageType(fileType);
+            projectPackageEntity.setFilePath(destFile.getAbsolutePath());
+            projectPackageEntity.setSuffix(fileType);
         } else {
             //非文件夹  复制文件
             String fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-            File destFile = new File(buildFilePath(sourceCodeId, fileType));
+            File destFile = new File(buildFilePath(projectId, fileType));
             FileUtils.copyFile(file, destFile);
-            applicationPackageEntity.setPackagePath(destFile.getAbsolutePath());
-            applicationPackageEntity.setPackageType(fileType);
+            projectPackageEntity.setFilePath(destFile.getAbsolutePath());
+            projectPackageEntity.setSuffix(fileType);
         }
 
-        applicationPackageEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        applicationPackageRepository.save(applicationPackageEntity);
-        return applicationPackageEntity;
+        projectPackageEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        projectPackageRepository.save(projectPackageEntity);
+        return projectPackageEntity;
     }
 
     private String buildFilePath(int sourceCodeId, String fileType) {
@@ -79,7 +79,6 @@ public class ApplicationPackageService {
 
         StringBuilder s = new StringBuilder(128);
         s.append(dirPath);
-        //TODO 小范围使用不会有啥问题
         s.append(FastDateFormat.getInstance("yyyyMMddHHmmssSSS").format(getCurrentTimeMillis()));
         s.append(".").append(fileType);
         return s.toString();

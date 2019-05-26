@@ -1,12 +1,12 @@
 package com.automate.service;
 
 import com.alibaba.fastjson.JSONArray;
-import com.automate.entity.ApplicationPackageEntity;
 import com.automate.entity.ApplicationUpdateApplyEntity;
 import com.automate.entity.ContainerEntity;
-import com.automate.repository.ApplicationPackageRepository;
+import com.automate.entity.ProjectPackageEntity;
 import com.automate.repository.ApplicationUpdateApplyRepository;
 import com.automate.repository.ContainerRepository;
+import com.automate.repository.ProjectPackageRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,7 +31,7 @@ public class ApplicationUpdateApplyService {
     private ApplicationUpdateApplyRepository applicationUpdateApplyRepository;
 
     @Autowired
-    private ApplicationPackageRepository applicationPackageRepository;
+    private ProjectPackageRepository projectPackageRepository;
 
     @Autowired
     private ContainerRepository containerRepository;
@@ -45,7 +45,7 @@ public class ApplicationUpdateApplyService {
      */
     public void apply(int packageId, int[] containerIds) throws Exception {
 
-        Optional<ApplicationPackageEntity> applicationPackageEntity = applicationPackageRepository.findById(packageId);
+        Optional<ProjectPackageEntity> applicationPackageEntity = projectPackageRepository.findById(packageId);
         if (!applicationPackageEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的更新包");
         }
@@ -55,7 +55,7 @@ public class ApplicationUpdateApplyService {
 
     }
 
-    public void apply(ApplicationPackageEntity applicationPackageEntity, int containerId) throws Exception {
+    public void apply(ProjectPackageEntity applicationPackageEntity, int containerId) throws Exception {
         Optional<ContainerEntity> containerEntity = containerRepository.findById(containerId);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的容器");
@@ -65,7 +65,7 @@ public class ApplicationUpdateApplyService {
 
         ApplicationUpdateApplyEntity model = new ApplicationUpdateApplyEntity();
 
-        model.setSourceCodeId(applicationPackageEntity.getSourceCodeId());
+        model.setSourceCodeId(applicationPackageEntity.getProjectId());
         model.setPackageId(applicationPackageEntity.getId());
         model.setContainerId(containerId);
 

@@ -2,8 +2,8 @@ package com.automate.controller.api;
 
 import com.automate.common.ResponseEntity;
 import com.automate.controller.BaseController;
-import com.automate.entity.ApplicationPackageEntity;
-import com.automate.service.ApplicationPackageService;
+import com.automate.entity.ProjectPackageEntity;
+import com.automate.service.ProjectPackageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,13 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class PackageController extends BaseController {
 
     @Autowired
-    private ApplicationPackageService applicationPackageService;
+    private ProjectPackageService projectPackageService;
 
     @RequestMapping(value = "/list")
     public ResponseEntity list(Integer pageNo, Integer pageSize) {
         PageRequest pageRequest = buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-
-        Page<ApplicationPackageEntity> pager = applicationPackageService.findAll(pageRequest);
+        Page<ProjectPackageEntity> pager = projectPackageService.findAll(pageRequest);
         return ResponseEntity.ok(pager);
     }
 }

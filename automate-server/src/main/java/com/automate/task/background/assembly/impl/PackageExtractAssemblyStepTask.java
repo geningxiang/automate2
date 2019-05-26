@@ -2,8 +2,8 @@ package com.automate.task.background.assembly.impl;
 
 import com.automate.common.SystemConfig;
 import com.automate.common.utils.SpringContextUtil;
-import com.automate.entity.ApplicationPackageEntity;
-import com.automate.service.ApplicationPackageService;
+import com.automate.entity.ProjectPackageEntity;
+import com.automate.service.ProjectPackageService;
 import com.automate.task.background.assembly.AbstractAssemblyStepTask;
 
 import java.io.File;
@@ -48,15 +48,14 @@ public class PackageExtractAssemblyStepTask extends AbstractAssemblyStepTask {
             throw new IOException("文件不存在:" + file.getAbsolutePath());
         }
 
-        ApplicationPackageService applicationPackageService = SpringContextUtil.getBean("applicationPackageService", ApplicationPackageService.class);
+        ProjectPackageService projectPackageService = SpringContextUtil.getBean("projectPackageService", ProjectPackageService.class);
 
         //TODO 提取文件包
         logger.debug("开始提取文件包: {}", file.getAbsolutePath());
         appendLine("开始提取文件包:" + file.getAbsolutePath());
 
-        ApplicationPackageEntity applicationPackageEntity = applicationPackageService.create(assemblyLineLogEntity.getSourceCodeId(), "", assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId(), file, 0);
-        appendLine("copy file to " + applicationPackageEntity.getPackagePath());
-
+        ProjectPackageEntity applicationPackageEntity = projectPackageService.create(assemblyLineLogEntity.getSourceCodeId(), "", assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId(), file, 0);
+        appendLine("copy file to " + applicationPackageEntity.getFilePath());
         return true;
 
     }
