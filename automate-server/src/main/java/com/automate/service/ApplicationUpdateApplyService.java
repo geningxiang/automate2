@@ -65,20 +65,20 @@ public class ApplicationUpdateApplyService {
 
         ApplicationUpdateApplyEntity model = new ApplicationUpdateApplyEntity();
 
-        model.setSourceCodeId(applicationPackageEntity.getProjectId());
-        model.setPackageId(applicationPackageEntity.getId());
+        model.setProjectId(applicationPackageEntity.getProjectId());
+        model.setProjectPackageId(applicationPackageEntity.getId());
         model.setContainerId(containerId);
 
-        String fileTree = JSONArray.toJSONString(fileMd5List);
-        model.setContainerFileTree(fileTree);
+        String fileList = JSONArray.toJSONString(fileMd5List);
+        model.setContainerFileMd5List(fileList);
 
-        model.setContainerFilesSha1(DigestUtils.sha1Hex(fileTree));
+        model.setContainerFileSha1(DigestUtils.sha1Hex(fileList));
 
         //TODO
-        model.setCreateAdminId(0);
+        model.setCreateUserId(0);
         model.setCreateTime(new Timestamp(System.currentTimeMillis()));
         model.setStatus(ApplicationUpdateApplyEntity.Status.APPLY);
-        model.setAuditAdminId(0);
+        model.setAuditUserId(0);
         applicationUpdateApplyRepository.save(model);
     }
 

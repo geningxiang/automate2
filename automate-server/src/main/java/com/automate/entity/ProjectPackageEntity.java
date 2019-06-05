@@ -14,15 +14,18 @@ import java.util.Objects;
 @Table(name = "CA2_PROJECT_PACKAGE")
 public class ProjectPackageEntity {
 
+    /**
+     * 更新类型
+     */
     public enum Type{
         /**
-         * 构建生成
+         * 全量更新
          */
-        BUILD,
+        WHOLE,
         /**
-         * 手动上传
+         * 增量更新
          */
-        UPLOAD
+        PART
     }
 
     private int id;
@@ -34,10 +37,10 @@ public class ProjectPackageEntity {
     private Integer projectId;
 
     /**
-     * 类型
+     * 类型 全量更新 还是 增量更新
      * @See Type
      */
-    private Byte type;
+    private int type;
 
     /**
      * 分支
@@ -88,6 +91,8 @@ public class ProjectPackageEntity {
      */
     private Integer userId;
 
+
+
     @Id
     @Column(name = "ID", nullable = false)
     public int getId() {
@@ -110,12 +115,16 @@ public class ProjectPackageEntity {
 
     @Basic
     @Column(name = "TYPE", nullable = true)
-    public Byte getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(Byte type) {
+    public void setType(int type) {
         this.type = type;
+    }
+
+    public void setType(Type type) {
+        this.type = type.ordinal();
     }
 
     @Basic

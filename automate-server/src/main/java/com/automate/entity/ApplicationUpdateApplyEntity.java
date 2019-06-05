@@ -68,7 +68,7 @@ public class ApplicationUpdateApplyEntity {
      * 装填
      * @see Status
      */
-    private Byte status;
+    private int status;
 
     /**
      * 审核人
@@ -165,12 +165,16 @@ public class ApplicationUpdateApplyEntity {
 
     @Basic
     @Column(name = "STATUS", nullable = true)
-    public Byte getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(int status) {
         this.status = status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status.ordinal();
     }
 
     @Basic

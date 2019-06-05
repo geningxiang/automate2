@@ -165,7 +165,9 @@
         </dependency>
 
 
-        <!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
+        <!-- https://mvnrepository.com/artifact/com.jcraft/jsch
+            ssh 连接
+        -->
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
@@ -228,6 +230,7 @@
             <artifactId>javax.annotation-api</artifactId>
             <version>1.3.2</version>
         </dependency>
+
 
 
     </dependencies>

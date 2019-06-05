@@ -48,9 +48,6 @@ public class ExecHelper {
 
             cmds[2] = execCommand.getCommand();
 
-            //本地CMD执行时 需要判断系统
-            execCommand.setCharset(Charset.defaultCharset());
-
             logger.debug(StringUtils.join(cmds, " "));
 
             Map<String, String> envpMap = execCommand.getEnvpMap();

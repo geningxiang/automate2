@@ -19,4 +19,10 @@ public class AdminPackageController {
     public String list(ModelMap modelMap) {
         return "package/package_list";
     }
+
+    @RequestMapping("/detail")
+    public String detail(Integer id, ModelMap modelMap) {
+        modelMap.put("id", id);
+        return "package/package_detail";
+    }
 }

@@ -7,11 +7,15 @@ import com.automate.common.utils.ZipUtil;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.repository.ProjectPackageRepository;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +32,8 @@ import java.util.List;
 @Service
 public class ProjectPackageService {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private ProjectPackageRepository projectPackageRepository;
 
@@ -35,18 +41,48 @@ public class ProjectPackageService {
         return projectPackageRepository.findAll(pageable);
     }
 
-    public ProjectPackageEntity create(int projectId, String version, String branch, String commitId, File file, int userId) throws IOException {
-        ProjectPackageEntity projectPackageEntity = new ProjectPackageEntity();
-        projectPackageEntity.setProjectId(projectId);
-        projectPackageEntity.setBranch(branch);
-        projectPackageEntity.setCommitId(commitId);
-        projectPackageEntity.setVersion(version);
-        projectPackageEntity.setUserId(userId);
+    public ProjectPackageEntity create(ProjectPackageEntity model, CommonsMultipartFile fileData) throws IOException {
+        System.out.println("fileData.getContentType()=" + fileData.getContentType());
+        System.out.println(fileData.getName());
+        System.out.println(fileData.getOriginalFilename());
+        String fileType = fileData.getOriginalFilename().substring(fileData.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase();
+        System.out.println(fileType);
+        if ("war".equals(fileType) || "zip".equals(fileType)) {
+            //读取文件列表
+            File destFile = new File(buildFilePath(model.getProjectId(), fileType));
+            fileData.transferTo(destFile);
+            List<FileListMd5Util.PathMd5Info> list = FileListMd5Util.list(destFile);
+            model.setFileList(JSONArray.toJSONString(list));
+            model.setFilePath(destFile.getAbsolutePath());
+            model.setSuffix(fileType);
+            projectPackageRepository.save(model);
+            logger.info("保存更新包,projectId={}, filePath={}", model.getProjectId(), model.getFilePath());
+            return model;
+        } else {
+            throw new IllegalArgumentException("不支持的文件后缀,当前仅支持war、zip");
+        }
+    }
+
+    /**
+     * 保存更新包
+     * @param projectId
+     * @param version
+     * @param branch
+     * @param commitId
+     * @param remark
+     * @param file
+     * @param type
+     * @param userId
+     * @return
+     * @throws IOException
+     */
+    @Deprecated
+    public ProjectPackageEntity create(int projectId, String version, String branch, String commitId, String remark, File file, ProjectPackageEntity.Type type, int userId) throws IOException {
+        ProjectPackageEntity projectPackageEntity = buildProjectPackageEntity(projectId, version, branch, commitId, remark, type, userId);
 
         //读取文件列表
         List<FileListMd5Util.PathMd5Info> list = FileListMd5Util.list(file);
         projectPackageEntity.setFileList(JSONArray.toJSONString(list));
-
 
         if (file.isDirectory()) {
             //文件夹 打包成zip
@@ -66,6 +102,20 @@ public class ProjectPackageService {
 
         projectPackageEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         projectPackageRepository.save(projectPackageEntity);
+        logger.info("保存更新包,projectId={}, filePath={}", projectId, projectPackageEntity.getFilePath());
+        return projectPackageEntity;
+    }
+
+    private ProjectPackageEntity buildProjectPackageEntity(int projectId, String version, String branch, String commitId, String remark, ProjectPackageEntity.Type type, int userId) {
+        ProjectPackageEntity projectPackageEntity = new ProjectPackageEntity();
+        projectPackageEntity.setType(type);
+        projectPackageEntity.setProjectId(projectId);
+        projectPackageEntity.setBranch(StringUtils.trimToEmpty(branch));
+        projectPackageEntity.setCommitId(StringUtils.trimToEmpty(commitId));
+        projectPackageEntity.setVersion(StringUtils.trimToEmpty(version));
+        projectPackageEntity.setRemark(StringUtils.trimToEmpty(remark));
+        projectPackageEntity.setUserId(userId);
+        projectPackageEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         return projectPackageEntity;
     }
 

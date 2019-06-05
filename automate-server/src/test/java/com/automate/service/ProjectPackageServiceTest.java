@@ -1,5 +1,6 @@
 package com.automate.service;
 
+import com.automate.entity.ProjectPackageEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +25,15 @@ public class ProjectPackageServiceTest {
 
     @Test
     public void findAll() {
-
-
+        
     }
 
     @Test
     public void create() throws IOException {
 
-        projectPackageService.create(1, "2.0.0", "master", "", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2.war"), 0);
+        projectPackageService.create(1, "2.0.0", "master", "", "", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2.war"), ProjectPackageEntity.Type.WHOLE, 0);
 
-        projectPackageService.create(1, "2.0.1", "master", "", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2"), 0);
+        projectPackageService.create(1, "2.0.1", "master", "", "", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2"), ProjectPackageEntity.Type.WHOLE, 0);
 
     }
 }

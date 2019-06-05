@@ -1,7 +1,9 @@
 package com.automate.exec;
 
 import com.automate.common.Charsets;
+import com.automate.common.SystemConfig;
 import com.automate.common.utils.EnvironmentPathUtil;
+import com.automate.common.utils.SystemUtil;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -50,7 +52,7 @@ public class ExecCommand {
     private int timeout = 10;
     private TimeUnit unit = TimeUnit.MINUTES;
 
-    private Charset charset = Charsets.UTF_8;
+    private Charset charset;
 
     public ExecCommand(String command) throws IllegalAccessException {
         this(ImmutableList.of(command), null, null, null);
@@ -69,6 +71,12 @@ public class ExecCommand {
         this.envpMap = envpMap;
         this.dir = dir;
         this.cmdStreamMonitor = cmdStreamMonitor;
+
+        if(SystemUtil.isWindows()){
+            charset = Charsets.UTF_GBK;
+        } else {
+            charset = Charsets.UTF_8;
+        }
     }
 
     public void setTimeOut(TimeUnit unit, int timeout) {

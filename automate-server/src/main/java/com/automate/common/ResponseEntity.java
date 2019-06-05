@@ -23,7 +23,11 @@ public class ResponseEntity<T> {
     }
 
     public static <T> ResponseEntity<T> ok(T data) {
-        return new ResponseEntity(HttpStatus.OK,"", data);
+        return ok("", data);
+    }
+
+    public static <T> ResponseEntity<T> ok(String msg, T data) {
+        return new ResponseEntity(HttpStatus.OK,msg, data);
     }
 
     public static ResponseEntity ok() {

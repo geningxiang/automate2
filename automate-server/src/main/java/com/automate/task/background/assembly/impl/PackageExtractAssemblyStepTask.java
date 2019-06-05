@@ -54,7 +54,7 @@ public class PackageExtractAssemblyStepTask extends AbstractAssemblyStepTask {
         logger.debug("开始提取文件包: {}", file.getAbsolutePath());
         appendLine("开始提取文件包:" + file.getAbsolutePath());
 
-        ProjectPackageEntity applicationPackageEntity = projectPackageService.create(assemblyLineLogEntity.getSourceCodeId(), "", assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId(), file, 0);
+        ProjectPackageEntity applicationPackageEntity = projectPackageService.create(assemblyLineLogEntity.getSourceCodeId(), "", assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId(), "后台构建生成", file, ProjectPackageEntity.Type.WHOLE, 0);
         appendLine("copy file to " + applicationPackageEntity.getFilePath());
         return true;
 
