@@ -1,12 +1,18 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <jsp:useBean id="timestamp" class="java.util.Date"/>
 <html>
 <head>
     <jsp:include page="../common/head.jsp"/>
+    <style>
+        .time {
+            white-space: nowrap;
+
+        }
+    </style>
 </head>
 <body>
 
@@ -23,7 +29,7 @@
                     <tr>
                         <th>提交者</th>
                         <th>提交时间</th>
-                        <th>SHA1</th>
+                        <th>版本号</th>
                         <th>备注</th>
                     </tr>
                     </thead>
@@ -36,12 +42,12 @@
                     <c:forEach var="_item" items="${commitLogs}" varStatus="status">
                         <tr>
                             <td>${_item.committer.name}</td>
-                            <td>
+                            <td class="time">
                                 <jsp:setProperty name="timestamp" property="time" value="${_item.commitTime}"/>
                                 <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${timestamp}"/>
                             </td>
                             <td>${_item.id}</td>
-                            <td>${_item.msg}</td>
+                            <td><pre>${_item.msg}</pre></td>
                         </tr>
                     </c:forEach>
                     </tbody>

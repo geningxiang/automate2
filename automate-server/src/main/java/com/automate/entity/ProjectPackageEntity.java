@@ -19,6 +19,10 @@ public class ProjectPackageEntity {
      */
     public enum Type{
         /**
+         * 未知  只是占个位
+         */
+        UNKNOWN,
+        /**
          * 全量更新
          */
         WHOLE,
@@ -124,7 +128,9 @@ public class ProjectPackageEntity {
     }
 
     public void setType(Type type) {
-        this.type = type.ordinal();
+        if(type != null) {
+            this.type = type.ordinal();
+        }
     }
 
     @Basic
@@ -216,5 +222,7 @@ public class ProjectPackageEntity {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+
+
 
 }

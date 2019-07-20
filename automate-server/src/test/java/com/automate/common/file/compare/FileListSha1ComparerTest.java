@@ -1,14 +1,12 @@
 package com.automate.common.file.compare;
 
-import com.alibaba.fastjson.JSON;
-import com.automate.common.utils.FileListMd5Util;
+import com.automate.common.utils.FileListSha1Util;
+import com.automate.vo.PathSha1Info;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import static org.junit.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,15 +15,14 @@ import static org.junit.Assert.*;
  * @author: genx
  * @date: 2019/4/11 23:12
  */
-public class FileListMd5ComparerTest {
+public class FileListSha1ComparerTest {
 
 
     public static void main(String[] args) throws IOException {
 
-        LinkedList<FileListMd5Util.PathMd5Info> list1 = FileListMd5Util.list(new File("E:\\tools\\apache-tomcat-8.5.35"));
+        LinkedList<PathSha1Info> list1 = FileListSha1Util.list(new File("E:\\tools\\apache-tomcat-8.5.35"));
 
-        LinkedList<FileListMd5Util.PathMd5Info> list2 = FileListMd5Util.list(new File("E:\\tools\\apache-tomcat-9.0.13"));
-
+        LinkedList<PathSha1Info> list2 = FileListSha1Util.list(new File("E:\\tools\\apache-tomcat-9.0.13"));
 
 
         ArrayList<String[]> lst1 = parse(list1);
@@ -34,7 +31,7 @@ public class FileListMd5ComparerTest {
 
         long a = System.currentTimeMillis();
         for (int i = 0; i < 1000000; i++) {
-            FileListMd5Comparer.compare(lst1, lst2);
+            FileListComparer.compare(lst1, lst2);
 
         }
         long b = System.currentTimeMillis();
@@ -44,7 +41,7 @@ public class FileListMd5ComparerTest {
 
         a = System.currentTimeMillis();
         for (int i = 0; i < 1000000; i++) {
-            FileListMd5Comparer.compareByMap(lst1, lst2);
+            FileListComparer.compareByMap(lst1, lst2);
 
         }
         b = System.currentTimeMillis();
@@ -56,11 +53,10 @@ public class FileListMd5ComparerTest {
 //        }
     }
 
-    private static ArrayList<String[]> parse(LinkedList<FileListMd5Util.PathMd5Info> list) {
+    private static ArrayList<String[]> parse(LinkedList<PathSha1Info> list) {
         ArrayList<String[]> result = new ArrayList<>(2048);
-        for (FileListMd5Util.PathMd5Info pathMd5Info : list) {
-
-            result.add(new String[]{pathMd5Info.getPath(), pathMd5Info.getMd5()});
+        for (PathSha1Info pathMd5Info : list) {
+            result.add(new String[]{pathMd5Info.getPath(), pathMd5Info.getSha1()});
         }
         return result;
     }

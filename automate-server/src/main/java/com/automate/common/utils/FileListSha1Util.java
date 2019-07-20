@@ -1,6 +1,8 @@
 package com.automate.common.utils;
-import com.automate.vo.PathMd5Info;
+
+import com.automate.vo.PathSha1Info;
 import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,19 +21,20 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
- * 推荐使用 Sha1
- * @author: genx
- * @date: 2019/4/5 20:35
+ * Description: 
+ * @author genx
+ * @date 2019/6/7 19:28
  */
-@Deprecated
-public class FileListMd5Util {
+public class FileListSha1Util {
 
-    public static LinkedList<PathMd5Info> list(File file) throws IOException {
+
+
+
+    public static LinkedList<PathSha1Info> list(File file) throws IOException {
         if (!file.exists()) {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
-        LinkedList<PathMd5Info> list;
+        LinkedList<PathSha1Info> list;
         if (file.isDirectory()) {
             list = listForDir(file);
         } else {
@@ -42,18 +45,18 @@ public class FileListMd5Util {
                 throw new IOException("暂不支持该文件类型");
             }
         }
-        Collections.sort(list, Comparator.comparing(PathMd5Info::getPath));
+        Collections.sort(list, Comparator.comparing(PathSha1Info::getPath));
         return list;
     }
 
-    private static LinkedList<PathMd5Info> listForDir(File dir) throws IOException {
+    private static LinkedList<PathSha1Info> listForDir(File dir) throws IOException {
         int dirPathLen = dir.getAbsolutePath().length();
-        LinkedList<PathMd5Info> list = new LinkedList();
+        LinkedList<PathSha1Info> list = new LinkedList();
         Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                 File file = path.toFile();
-                list.add(new PathMd5Info(path.toString().substring(dirPathLen + 1), DigestUtils.md5Hex(new FileInputStream(file)), file.length()));
+                list.add(new PathSha1Info(path.toString().substring(dirPathLen + 1), DigestUtils.sha1Hex(new FileInputStream(file)), file.length()));
                 return FileVisitResult.CONTINUE;
             }
         });
@@ -68,8 +71,8 @@ public class FileListMd5Util {
      * @return
      * @throws IOException
      */
-    private static LinkedList<PathMd5Info> listForZip(File file) throws IOException {
-        LinkedList<PathMd5Info> list = new LinkedList();
+    private static LinkedList<PathSha1Info> listForZip(File file) throws IOException {
+        LinkedList<PathSha1Info> list = new LinkedList();
         ZipFile zipFile = null;
         ZipInputStream zipInputStream = null;
         try {
@@ -78,8 +81,7 @@ public class FileListMd5Util {
             ZipEntry zipEntry;
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 if (!zipEntry.isDirectory()) {
-
-                    list.add(new PathMd5Info(zipEntry.getName(), DigestUtils.md5Hex(zipFile.getInputStream(zipEntry)), zipEntry.getSize()));
+                    list.add(new PathSha1Info(zipEntry.getName(), DigestUtils.sha1Hex(zipFile.getInputStream(zipEntry)), zipEntry.getSize()));
                 }
             }
         } finally {

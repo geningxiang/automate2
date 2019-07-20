@@ -86,7 +86,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 col-sm-2 control-label">项目名称</label>
+                            <label class="col-sm-2 col-sm-2 control-label">版本号</label>
                             <div class="col-sm-10">
                                 <input class="form-control" name="commitId" placeholder="默认最新版本"/>
                             </div>

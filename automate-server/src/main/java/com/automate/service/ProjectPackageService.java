@@ -2,10 +2,11 @@ package com.automate.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.automate.common.SystemConfig;
-import com.automate.common.utils.FileListMd5Util;
+import com.automate.common.utils.FileListSha1Util;
 import com.automate.common.utils.ZipUtil;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.repository.ProjectPackageRepository;
+import com.automate.vo.PathSha1Info;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -51,7 +52,7 @@ public class ProjectPackageService {
             //读取文件列表
             File destFile = new File(buildFilePath(model.getProjectId(), fileType));
             fileData.transferTo(destFile);
-            List<FileListMd5Util.PathMd5Info> list = FileListMd5Util.list(destFile);
+            List<PathSha1Info> list = FileListSha1Util.list(destFile);
             model.setFileList(JSONArray.toJSONString(list));
             model.setFilePath(destFile.getAbsolutePath());
             model.setSuffix(fileType);
@@ -81,7 +82,7 @@ public class ProjectPackageService {
         ProjectPackageEntity projectPackageEntity = buildProjectPackageEntity(projectId, version, branch, commitId, remark, type, userId);
 
         //读取文件列表
-        List<FileListMd5Util.PathMd5Info> list = FileListMd5Util.list(file);
+        List<PathSha1Info> list = FileListSha1Util.list(file);
         projectPackageEntity.setFileList(JSONArray.toJSONString(list));
 
         if (file.isDirectory()) {

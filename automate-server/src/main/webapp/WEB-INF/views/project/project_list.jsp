@@ -98,13 +98,13 @@
                             <div class="form-group">
                                 <label class="col-sm-2 col-sm-2 control-label">用户名</label>
                                 <div class="col-sm-10">
-                                    <input class="form-control" name="userName">
+                                    <input class="form-control" name="vcsUserName">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 col-sm-2 control-label">密码</label>
                                 <div class="col-sm-10">
-                                    <input class="form-control" name="passWord">
+                                    <input class="form-control" name="vcsPassWord">
                                 </div>
                             </div>
                         </form>

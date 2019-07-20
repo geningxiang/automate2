@@ -1,5 +1,7 @@
 package com.automate.common.file.compare;
 
+import com.automate.vo.FileComparerResult;
+
 import java.util.*;
 
 /**
@@ -9,33 +11,34 @@ import java.util.*;
  * @author: genx
  * @date: 2019/4/11 22:38
  */
-public class FileListMd5Comparer {
+public class FileListComparer {
 
-    public static Collection<FileMd5ComparerResult> compareByMap(ArrayList<String[]>... fileLists) {
+    public static Collection<FileComparerResult> compareByMap(ArrayList<String[]>... fileLists) {
         if (fileLists == null || fileLists.length == 0) {
             return new ArrayList(0);
         }
-        HashMap<String, FileMd5ComparerResult> map = new HashMap(2048);
+        HashMap<String, FileComparerResult> map = new HashMap(2048);
         int count = fileLists.length;
         ArrayList<String[]> fileList;
-        FileMd5ComparerResult fileMd5ComparerResult;
+        FileComparerResult fileMd5ComparerResult;
         for (int i = 0; i < fileLists.length; i++) {
             fileList = fileLists[i];
             for (String[] ss : fileList) {
                 fileMd5ComparerResult = map.get(ss[0]);
-                if(fileMd5ComparerResult == null){
-                    fileMd5ComparerResult = new FileMd5ComparerResult(count);
+                if (fileMd5ComparerResult == null) {
+                    fileMd5ComparerResult = new FileComparerResult(count);
                     fileMd5ComparerResult.setPath(ss[0]);
                     map.put(ss[0], fileMd5ComparerResult);
                 }
-                fileMd5ComparerResult.setMd5(i, ss[1]);
+                fileMd5ComparerResult.setCode(i, ss[1]);
             }
         }
         return map.values();
 
     }
-    public static LinkedList<FileMd5ComparerResult> compare(ArrayList<String[]>... fileLists) {
-        LinkedList<FileMd5ComparerResult> results = new LinkedList();
+
+    public static LinkedList<FileComparerResult> compare(ArrayList<String[]>... fileLists) {
+        LinkedList<FileComparerResult> results = new LinkedList();
 
         if (fileLists == null || fileLists.length == 0) {
             return results;
@@ -74,16 +77,16 @@ public class FileListMd5Comparer {
                 break;
             }
 
-            FileMd5ComparerResult fileMd5ComparerResult = new FileMd5ComparerResult(count);
+            FileComparerResult fileMd5ComparerResult = new FileComparerResult(count);
             for (Integer i : minIndexList) {
                 ss = fileLists[i].get(indexs[i]);
                 fileMd5ComparerResult.setPath(ss[0]);
-                fileMd5ComparerResult.setMd5(i, ss[1]);
+                fileMd5ComparerResult.setCode(i, ss[1]);
                 indexs[i]++;
             }
             if (minIndexList.size() == count) {
                 //判断是否全部一致
-                fileMd5ComparerResult.setUniformity(isUniformity(fileMd5ComparerResult.getMd5s()));
+                fileMd5ComparerResult.setUniformity(isUniformity(fileMd5ComparerResult.getCodes()));
             }
             results.add(fileMd5ComparerResult);
 
@@ -103,50 +106,5 @@ public class FileListMd5Comparer {
         return true;
     }
 
-
-    static class FileMd5ComparerResult {
-        /**
-         * 路径
-         */
-        private String path;
-
-        /**
-         * md5数组
-         */
-        private String[] md5s;
-
-        /**
-         * 是否全部一致
-         */
-        private boolean uniformity = false;
-
-        public FileMd5ComparerResult(int count) {
-            this.md5s = new String[count];
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public String[] getMd5s() {
-            return md5s;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public void setMd5(int index, String md5) {
-            this.md5s[index] = md5;
-        }
-
-        public boolean isUniformity() {
-            return uniformity;
-        }
-
-        public void setUniformity(boolean uniformity) {
-            this.uniformity = uniformity;
-        }
-    }
 
 }

@@ -60,9 +60,8 @@ public class SvnHelper extends AbstractVCSHelper {
         logger.info("svn " + (isCreate ? "clone" : "update") + " revision:" + revision);
 
         svnClientManager.dispose();
-
         Set<String> set = new HashSet(1);
-        set.add("");
+        set.add("trunk");
         return set;
     }
 

@@ -15,7 +15,10 @@
         <div class="col-lg-12">
             <section class="panel">
                 <header class="panel-heading">
-                    更新包列表
+                    更新包列表&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button class="btn btn-success btn" onclick="">
+                        <i class="fa fa-plus"></i> 手动上传
+                    </button>
                 </header>
                 <div class="panel-body" id="package-list-content">
                 </div>
@@ -44,6 +47,7 @@
         <tr>
             <th>ID</th>
             <th>项目</th>
+            <th>类型</th>
             <th>分支</th>
             <th>commitId</th>
             <th>备注</th>
@@ -54,15 +58,26 @@
         {{each content item i}}
         <tr>
             <td>{{item.id}}</td>
-            <td>【{{item.sourceCodeId}}】</td>
+            <td>【{{item.projectId}}】</td>
+            <td>
+                {{ if item.type == 1 }}
+                全量更新
+                {{ else if item.type == 2 }}
+                增量更新
+                {{ /if}}
+            </td>
             <td>{{item.branch}}</td>
             <td>{{item.commitId}}</td>
             <td>{{item.remark}}</td>
             <td>{{dateFormat(item.createTime, 'yyyy-MM-dd HH:mm:ss')}}</td>
-            <td>{{item.packageType}}</td>
+            <td>{{item.suffix}}</td>
             <td>
-                <button class="btn btn-success btn-xs" onclick="showFileList('{{item.id}}')"><i
-                        class="fa fa-files-o"></i> 文件列表
+                <button class="btn btn-success btn-xs" onclick="showFileList('{{item.id}}')">
+                    <i class="fa fa-files-o"></i> 文件列表
+                </button>
+
+                <button class="btn btn-success btn-xs" onclick="">
+                    <i class="fa fa-hand-o-right"></i> 申请更新
                 </button>
             </td>
         </tr>
@@ -81,7 +96,7 @@
             <thead>
             <tr>
                 <th>路径</th>
-                <th>MD5</th>
+                <th>SHA1</th>
                 <th>大小</th>
             </tr>
             </thead>
@@ -89,7 +104,7 @@
             {{each fileArray item i}}
             <tr>
                 <td><p>{{item.path}}</p></td>
-                <td><p>{{item.md5}}</p></td>
+                <td><p>{{item.sha1}}</p></td>
                 <td><p>{{item.size}}</p></td>
             </tr>
             {{/each}}
@@ -106,7 +121,7 @@
     var pageSize = 10;
 
     function queryList() {
-        Core.get('/api/package/list', {pageNo: pageNo, pageSize: pageSize}, function (msg) {
+        Core.get('/api/projectPackages', {pageNo: pageNo, pageSize: pageSize}, function (msg) {
             console.log('更新包列表', msg);
             cacheMap = {};
 
@@ -140,9 +155,9 @@
 
     function showFileList(id) {
         var item = cacheMap[id];
-        console.log('143', item);
+        console.log('showFileList', item);
         if (item) {
-            var fileArray = JSON.parse(item.fileTree);
+            var fileArray = JSON.parse(item.fileList );
             $("#fileListModelContent").html(template('fileListModelContentTemplate', {
                 packagePath: item.packagePath,
                 fileArray: fileArray

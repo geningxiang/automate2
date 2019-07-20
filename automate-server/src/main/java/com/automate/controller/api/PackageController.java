@@ -38,7 +38,7 @@ public class PackageController extends BaseController {
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/list")
+    @RequestMapping(value = "/projectPackages", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity list(Integer pageNo, Integer pageSize) {
         PageRequest pageRequest = buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Page<ProjectPackageEntity> pager = projectPackageService.findAll(pageRequest);
