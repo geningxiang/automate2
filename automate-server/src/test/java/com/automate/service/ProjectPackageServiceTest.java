@@ -1,5 +1,6 @@
 package com.automate.service;
 
+import com.alibaba.fastjson.JSON;
 import com.automate.entity.ProjectPackageEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +32,18 @@ public class ProjectPackageServiceTest {
     @Test
     public void create() throws IOException {
 
-        projectPackageService.create(1, "2.0.0", "master", "", "", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2.war"), ProjectPackageEntity.Type.WHOLE, 0);
+        projectPackageService.create(1, "2.0.0", "master", "", "测试的", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2.war"), ProjectPackageEntity.Type.WHOLE, 0);
 
-        projectPackageService.create(1, "2.0.1", "master", "", "", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2"), ProjectPackageEntity.Type.WHOLE, 0);
+        projectPackageService.create(1, "2.0.1", "master", "", "测试的", new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2"), ProjectPackageEntity.Type.WHOLE, 0);
+
+    }
+
+    @Test
+    public void getFirstBySha1OrderByIdDesc(){
+
+        ProjectPackageEntity model = projectPackageService.getFirstBySha1OrderByIdDesc("823a84ec14149e34ff28af79a47a519e080d409e");
+
+        System.out.println(JSON.toJSONString(model ));
 
     }
 }

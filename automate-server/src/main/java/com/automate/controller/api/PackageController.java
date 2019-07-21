@@ -1,10 +1,14 @@
 package com.automate.controller.api;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.automate.common.ResponseEntity;
+import com.automate.common.SessionUser;
+import com.automate.common.SessionUserManager;
 import com.automate.controller.BaseController;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.service.ProjectPackageService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -45,18 +50,26 @@ public class PackageController extends BaseController {
         return ResponseEntity.ok(pager);
     }
 
-    @RequestMapping(value = "/projectPackage" , method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ResponseEntity save(ProjectPackageEntity model, String remark, @RequestParam("fileData") CommonsMultipartFile fileData) {
+    @RequestMapping(value = "/packageUpload", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public ResponseEntity packageUpload(ProjectPackageEntity model, @RequestParam("fileData") CommonsMultipartFile fileData, HttpServletRequest request) {
+        SessionUser sessionUser = SessionUserManager.getSessionUser(request);
+        if(sessionUser == null){
+            return ResponseEntity.of(HttpStatus.UNAUTHORIZED, "请登录");
+        }
+        //查询是否有重复
+        String sha1 = DigestUtils.sha1Hex(fileData.getBytes());
+        ProjectPackageEntity projectPackageEntity = projectPackageService.getFirstBySha1OrderByIdDesc(sha1);
+        if(projectPackageEntity != null){
+            return ResponseEntity.of(HttpStatus.CONFLICT, "SHA1已存在", projectPackageEntity);
+        }
         try {
-            System.out.println(JSON.toJSONString(model));
-            System.out.println(remark);
+            model.setUserId(sessionUser.getAdminUser().getId());
             projectPackageService.create(model, fileData);
-            return ResponseEntity.ok("保存成功", null);
+            return ResponseEntity.ok("上传成功", null);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
-
     }
+
 }

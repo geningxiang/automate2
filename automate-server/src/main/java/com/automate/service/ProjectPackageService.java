@@ -7,6 +7,7 @@ import com.automate.common.utils.ZipUtil;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.repository.ProjectPackageRepository;
 import com.automate.vo.PathSha1Info;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -42,12 +44,12 @@ public class ProjectPackageService {
         return projectPackageRepository.findAll(pageable);
     }
 
+    public ProjectPackageEntity getFirstBySha1OrderByIdDesc(String sha1){
+        return projectPackageRepository.getFirstBySha1OrderByIdDesc(sha1);
+    }
+
     public ProjectPackageEntity create(ProjectPackageEntity model, CommonsMultipartFile fileData) throws IOException {
-        System.out.println("fileData.getContentType()=" + fileData.getContentType());
-        System.out.println(fileData.getName());
-        System.out.println(fileData.getOriginalFilename());
         String fileType = fileData.getOriginalFilename().substring(fileData.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase();
-        System.out.println(fileType);
         if ("war".equals(fileType) || "zip".equals(fileType)) {
             //读取文件列表
             File destFile = new File(buildFilePath(model.getProjectId(), fileType));
@@ -55,6 +57,7 @@ public class ProjectPackageService {
             List<PathSha1Info> list = FileListSha1Util.list(destFile);
             model.setFileList(JSONArray.toJSONString(list));
             model.setFilePath(destFile.getAbsolutePath());
+            model.setSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
             model.setSuffix(fileType);
             projectPackageRepository.save(model);
             logger.info("保存更新包,projectId={}, filePath={}", model.getProjectId(), model.getFilePath());
@@ -85,21 +88,24 @@ public class ProjectPackageService {
         List<PathSha1Info> list = FileListSha1Util.list(file);
         projectPackageEntity.setFileList(JSONArray.toJSONString(list));
 
+        String fileType;
+        File destFile;
         if (file.isDirectory()) {
             //文件夹 打包成zip
-            String fileType = "zip";
-            File destFile = new File(buildFilePath(projectId, fileType));
+            fileType = "zip";
+            destFile = new File(buildFilePath(projectId, fileType));
             ZipUtil.compress(file, destFile);
-            projectPackageEntity.setFilePath(destFile.getAbsolutePath());
-            projectPackageEntity.setSuffix(fileType);
+
         } else {
             //非文件夹  复制文件
-            String fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-            File destFile = new File(buildFilePath(projectId, fileType));
+            fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
+            destFile = new File(buildFilePath(projectId, fileType));
             FileUtils.copyFile(file, destFile);
-            projectPackageEntity.setFilePath(destFile.getAbsolutePath());
-            projectPackageEntity.setSuffix(fileType);
+
         }
+        projectPackageEntity.setFilePath(destFile.getAbsolutePath());
+        projectPackageEntity.setSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
+        projectPackageEntity.setSuffix(fileType);
 
         projectPackageEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         projectPackageRepository.save(projectPackageEntity);

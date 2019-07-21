@@ -66,6 +66,8 @@ public class ProjectPackageEntity {
      */
     private String filePath;
 
+    private String sha1;
+
     /**
      * 文件后缀
      */
@@ -171,6 +173,16 @@ public class ProjectPackageEntity {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    @Basic
+    @Column(name = "SHA1", nullable = true, length = 255)
+    public String getSha1() {
+        return sha1;
+    }
+
+    public void setSha1(String sha1) {
+        this.sha1 = sha1;
     }
 
     @Basic

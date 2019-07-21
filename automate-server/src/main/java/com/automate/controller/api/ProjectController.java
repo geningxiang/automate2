@@ -7,7 +7,9 @@ import com.automate.controller.BaseController;
 import com.automate.entity.HookLogEntity;
 import com.automate.entity.ProjectEntity;
 import com.automate.entity.ProjectBranchEntity;
+import com.automate.entity.ProjectPackageEntity;
 import com.automate.service.HookLogService;
+import com.automate.service.ProjectPackageService;
 import com.automate.service.ProjectService;
 import com.automate.service.ProjectBranchService;
 import com.automate.task.background.BackgroundLock;
@@ -127,7 +129,7 @@ public class ProjectController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/projectSync",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/projectSync", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity sync(Integer id) {
         if (id == null || id <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
@@ -148,7 +150,7 @@ public class ProjectController extends BaseController {
     }
 
     @RequestMapping(value = "/hookList", produces = "application/json;charset=UTF-8")
-    public ResponseEntity hookList(Integer pageNo, Integer pageSize) {
+    public ResponseEntity<Page<HookLogEntity>> hookList(Integer pageNo, Integer pageSize) {
         Page<HookLogEntity> pager = hookLogService.findAll(buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id")));
         return ResponseEntity.ok(pager);
     }

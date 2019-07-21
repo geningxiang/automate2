@@ -16,7 +16,7 @@
             <section class="panel">
                 <header class="panel-heading">
                     更新包列表&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button class="btn btn-success btn" onclick="">
+                    <button class="btn btn-success btn" onclick="showUpload()">
                         <i class="fa fa-plus"></i> 手动上传
                     </button>
                 </header>
@@ -39,6 +39,59 @@
         </div>
     </div>
     <!-- vertical center large Modal end -->
+
+    <!-- vertical center large Modal  start -->
+    <div class="modal fade modal-dialog-center" id="uploadModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content-wrap">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">手动上传</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="packageUploadForm" class="form-horizontal tasi-form" method="post">
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">项目</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" name="projectId" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">类型</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="type">
+                                        <option value="1">全量更新</option>
+                                        <option value="2">增量更新</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">备注</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="remark"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">文件</label>
+                                <div class="col-sm-10">
+                                    <input type="file" name="fileData" accept=".zip,.war,">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="progress"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success" type="button" onclick="startUpload()">开始上传</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- vertical center large Modal end -->
 </section>
 
 
@@ -53,6 +106,8 @@
             <th>备注</th>
             <th>创建时间</th>
             <th>文件类型</th>
+            <th>SHA1</th>
+            <th>上传人</th>
             <th>操作</th>
         </tr>
         {{each content item i}}
@@ -71,6 +126,8 @@
             <td>{{item.remark}}</td>
             <td>{{dateFormat(item.createTime, 'yyyy-MM-dd HH:mm:ss')}}</td>
             <td>{{item.suffix}}</td>
+            <td>{{item.sha1}}</td>
+            <td>{{ item.userId || '后台构建' }}</td>
             <td>
                 <button class="btn btn-success btn-xs" onclick="showFileList('{{item.id}}')">
                     <i class="fa fa-files-o"></i> 文件列表
@@ -114,6 +171,7 @@
 </script>
 
 <jsp:include page="../common/common_js.jsp"></jsp:include>
+<script src="/resources/js/html5uploader.js"></script>
 <script>
 
     var cacheMap = {};
@@ -157,7 +215,7 @@
         var item = cacheMap[id];
         console.log('showFileList', item);
         if (item) {
-            var fileArray = JSON.parse(item.fileList );
+            var fileArray = JSON.parse(item.fileList);
             $("#fileListModelContent").html(template('fileListModelContentTemplate', {
                 packagePath: item.packagePath,
                 fileArray: fileArray
@@ -165,7 +223,75 @@
 
             $('#fileListModal').modal('show');
         }
+    }
 
+    function showUpload() {
+        $('#uploadModal').modal('show');
+    }
+
+    var loading = false;
+
+    function startUpload() {
+        var validResult = $("#packageUploadForm").valid();
+        console.log('validateResult', validResult);
+        if(!validResult){return;}
+        var formData = new FormData();
+        var formArray = $('#packageUploadForm *[name]')
+        for (var i = 0; i < formArray.length; i++) {
+            var item = formArray[i];
+            if (item.type == 'file') {
+                if (item.files.length > 0) {
+                    if (item.files[0].size > 209715200) {
+                        alert("上传文件不能大于200M");
+                        return;
+                    }
+                    //只允许1个文件
+                    formData.append(item.name, item.files[0]);
+                } else {
+                    alert("请选择要上传的更新文件");
+                    return;
+                }
+            } else {
+                // if (item.name == 'remark' && item.value.length < 10) {
+                //     alert("请填写描述，且不得小于10个字");
+                //     return;
+                // }
+                formData.append(item.name, item.value);
+            }
+        }
+        if (loading) {
+            alert("请勿重复提交");
+            return;
+        }
+        loading = true;
+
+        $.html5uploader({
+            url: '/api/packageUpload',
+            data: formData,
+            onUploadStart: function () {
+
+            },
+            onUploadProgress: function (loaded, total, loadedStr, totalStr) {
+                console.log(loaded, total);
+                $("#upload-progress-info").html(loadedStr + ' / ' + totalStr);
+                $("#upload-progress-bar").width(100 * loaded / total + "%");
+            },
+            onUploadSuccess: function (data) {
+                data = JSON.parse(data);
+                console.log(data);
+                alert(data.msg);
+                if (data.status == 200) {
+                    queryList();
+                    $('#uploadModal').modal('hide');
+                }
+            },
+            onUploadComplete: function () {
+                loading = false;
+            },
+            onUploadError: function (data) {
+                alert(data);
+            }
+        });
     }
 </script>
 </body>

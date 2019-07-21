@@ -2,6 +2,7 @@ package com.automate.controller;
 
 import com.automate.common.ResponseEntity;
 import com.automate.common.SessionUser;
+import com.automate.common.SessionUserManager;
 import com.automate.common.annotation.AllowNoLogin;
 import com.automate.contants.CommonContants;
 import com.automate.entity.UserEntity;
@@ -60,8 +61,7 @@ public class MainController {
         if(!DigestUtils.md5Hex(passWord).equals(userEntity.getPassWord())) {
             return ResponseEntity.of(HttpStatus.FORBIDDEN, "请输入正确的密码");
         }
-        SessionUser sessionUser = new SessionUser(userEntity);
-        request.getSession().setAttribute(CommonContants.SESSION_USER_KEY, sessionUser);
+        SessionUserManager.setSessionUser(request, userEntity);
         return ResponseEntity.ok(null);
     }
 
@@ -73,7 +73,7 @@ public class MainController {
     @AllowNoLogin
     @RequestMapping("loginOut")
     public String loginOut(HttpServletRequest request) {
-        request.getSession().removeAttribute(CommonContants.SESSION_USER_KEY);
+        SessionUserManager.removeSessionUser(request);
         return "login";
     }
 
@@ -85,7 +85,7 @@ public class MainController {
      */
     @RequestMapping("/index")
     public String index(HttpServletRequest request, ModelMap modelMap) {
-        SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonContants.SESSION_USER_KEY);
+        SessionUser sessionUser = SessionUserManager.getSessionUser(request);
         if(sessionUser == null){
             return "login";
         }

@@ -64,6 +64,7 @@ public class AdminProjectController extends BaseController {
         return "project/project_branch_detail";
     }
 
+
     @RequestMapping("/hookList")
     public String hookList(Integer pageNo, Integer pageSize, ModelMap modelMap) {
         return "project/hook_list";
