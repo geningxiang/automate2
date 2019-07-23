@@ -80,7 +80,10 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="progress"></div>
+                                <div class="progress">
+                                    <div class="progress-bar" id="upload-progress-bar"></div>
+                                </div>
+                                <p id="upload-progress-info" style="padding: 10px; text-align: right;"></p>
                             </div>
                         </form>
                     </div>

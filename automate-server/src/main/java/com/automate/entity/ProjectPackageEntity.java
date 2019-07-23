@@ -1,8 +1,16 @@
 package com.automate.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.automate.vo.PathSha1Info;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -77,6 +85,8 @@ public class ProjectPackageEntity {
      * 文件列表
      */
     private String fileList;
+
+    private String fileListSha1;
 
     /**
      * 版本号
@@ -201,8 +211,28 @@ public class ProjectPackageEntity {
         return fileList;
     }
 
+    @Deprecated
     public void setFileList(String fileList) {
         this.fileList = fileList;
+    }
+
+    public void setFileList(List<PathSha1Info> list){
+        this.fileList = JSON.toJSONString(list);
+        Map<String, String> map = new TreeMap();
+        for (PathSha1Info pathSha1Info : list) {
+            map.put(pathSha1Info.getPath(), pathSha1Info.getSha1());
+        }
+        this.fileListSha1 = DigestUtils.sha1Hex(JSON.toJSONString(map));
+    }
+
+    @Basic
+    @Column(name = "FILE_LIST_SHA1", nullable = true, length = 255)
+    public String getFileListSha1() {
+        return fileListSha1;
+    }
+
+    public void setFileListSha1(String fileListSha1) {
+        this.fileListSha1 = fileListSha1;
     }
 
     @Basic

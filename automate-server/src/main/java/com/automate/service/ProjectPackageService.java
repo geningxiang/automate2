@@ -55,7 +55,7 @@ public class ProjectPackageService {
             File destFile = new File(buildFilePath(model.getProjectId(), fileType));
             fileData.transferTo(destFile);
             List<PathSha1Info> list = FileListSha1Util.list(destFile);
-            model.setFileList(JSONArray.toJSONString(list));
+            model.setFileList(list);
             model.setFilePath(destFile.getAbsolutePath());
             model.setSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
             model.setSuffix(fileType);
@@ -86,7 +86,7 @@ public class ProjectPackageService {
 
         //读取文件列表
         List<PathSha1Info> list = FileListSha1Util.list(file);
-        projectPackageEntity.setFileList(JSONArray.toJSONString(list));
+        projectPackageEntity.setFileList(list);
 
         String fileType;
         File destFile;
