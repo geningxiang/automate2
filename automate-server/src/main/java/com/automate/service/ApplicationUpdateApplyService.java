@@ -2,10 +2,10 @@ package com.automate.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.automate.entity.ApplicationUpdateApplyEntity;
-import com.automate.entity.ContainerEntity;
+import com.automate.entity.ApplicationEntity;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.repository.ApplicationUpdateApplyRepository;
-import com.automate.repository.ContainerRepository;
+import com.automate.repository.ApplicationRepository;
 import com.automate.repository.ProjectPackageRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ApplicationUpdateApplyService {
     private ProjectPackageRepository projectPackageRepository;
 
     @Autowired
-    private ContainerRepository containerRepository;
+    private ApplicationRepository applicationRepository;
 
     public Page<ApplicationUpdateApplyEntity> findAll(Pageable pageable) {
         return applicationUpdateApplyRepository.findAll(pageable);
@@ -56,12 +56,12 @@ public class ApplicationUpdateApplyService {
     }
 
     public void apply(ProjectPackageEntity applicationPackageEntity, int containerId) throws Exception {
-        Optional<ContainerEntity> containerEntity = containerRepository.findById(containerId);
+        Optional<ApplicationEntity> containerEntity = applicationRepository.findById(containerId);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的容器");
         }
 
-        List<String[]> fileMd5List = ContainerService.fileMd5List(containerEntity.get());
+        List<String[]> fileMd5List = ApplicationService.fileMd5List(containerEntity.get());
 
         ApplicationUpdateApplyEntity model = new ApplicationUpdateApplyEntity();
 

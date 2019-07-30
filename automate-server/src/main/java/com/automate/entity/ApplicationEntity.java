@@ -13,10 +13,11 @@ import java.util.Objects;
  * @date: 2019/2/24 23:38
  */
 @Entity
-@Table(name = "CA2_CONTAINER")
-public class ContainerEntity {
+@Table(name = "CA2_APPLICATION")
+public class ApplicationEntity {
     private Integer id;
     private Integer serverId;
+    private Integer projectId;
     private String name;
     private Integer type;
     private String remark;
@@ -55,6 +56,16 @@ public class ContainerEntity {
 
     public void setServerId(Integer serverId) {
         this.serverId = serverId;
+    }
+
+    @Basic
+    @Column(name = "PROJECT_ID", nullable = true)
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     @Basic
@@ -151,6 +162,7 @@ public class ContainerEntity {
         JSONObject json = new JSONObject();
         json.put("id", this.id);
         json.put("serverId", this.serverId);
+        json.put("projectId", this.projectId);
         json.put("name", this.name);
         json.put("type", this.type);
         json.put("remark", this.remark);

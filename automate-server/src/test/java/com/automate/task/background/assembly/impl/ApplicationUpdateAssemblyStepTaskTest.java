@@ -25,7 +25,7 @@ public class ApplicationUpdateAssemblyStepTaskTest {
 
         ApplicationUpdateAssemblyStepTask task = new ApplicationUpdateAssemblyStepTask();
 
-        task.setPath("D:\\idea-workspace\\Automate2\\automate-web\\target/Automate2.war");
+        task.setPath("D:\\idea-workspace\\automate2\\automate-server\\target/Automate2.war");
 
         task.setContainerId(1);
 

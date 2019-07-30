@@ -6,10 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.automate.common.ResponseEntity;
 import com.automate.common.utils.BeanUtils;
 import com.automate.controller.BaseController;
-import com.automate.entity.ContainerEntity;
+import com.automate.entity.ApplicationEntity;
 import com.automate.entity.ServerEntity;
 import com.automate.exec.ExecCommand;
-import com.automate.service.ContainerService;
+import com.automate.service.ApplicationService;
 import com.automate.service.ContainerTypeService;
 import com.automate.service.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,18 +33,18 @@ import java.util.Optional;
 public class ContainerController extends BaseController {
 
     @Autowired
-    private ContainerService containerService;
+    private ApplicationService applicationService;
 
     @Autowired
     private ContainerTypeService containerTypeService;
 
     @RequestMapping(value = "/containers", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<JSONArray> containers() {
-        Iterable<ContainerEntity> list = containerService.findAll();
+        Iterable<ApplicationEntity> list = applicationService.findAll();
         JSONArray array = new JSONArray();
         JSONObject item;
         ServerEntity serverEntity;
-        for (ContainerEntity containerEntity : list) {
+        for (ApplicationEntity containerEntity : list) {
             item = containerEntity.toJson();
             serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
             if (serverEntity != null) {
@@ -57,29 +57,29 @@ public class ContainerController extends BaseController {
     }
 
     @RequestMapping(value = "/container", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ResponseEntity createContainer(ContainerEntity model) {
+    public ResponseEntity createContainer(ApplicationEntity model) {
         logger.debug(JSON.toJSONString(model));
-        containerService.save(model);
+        applicationService.save(model);
         return ResponseEntity.ok();
     }
 
     @RequestMapping(value = "/container", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
-    public ResponseEntity updateContainer(ContainerEntity model) {
+    public ResponseEntity updateContainer(ApplicationEntity model) {
         if (model.getId() == null) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "id is required");
         }
         logger.debug(JSON.toJSONString(model));
-        containerService.save(model);
+        applicationService.save(model);
         return ResponseEntity.ok();
     }
 
 
     @RequestMapping(value = "/container/{id}", method = RequestMethod.PATCH, produces = "application/json;charset=UTF-8")
-    public ResponseEntity patchContainer(@PathVariable(value = "id") Integer id, ContainerEntity model) {
-        ContainerEntity containerEntity = getContainerEntitySafe(id);
+    public ResponseEntity patchContainer(@PathVariable(value = "id") Integer id, ApplicationEntity model) {
+        ApplicationEntity containerEntity = getContainerEntitySafe(id);
 
         BeanUtils.copyPropertiesIgnoreNull(model, containerEntity, "id");
-        containerService.save(containerEntity);
+        applicationService.save(containerEntity);
         return ResponseEntity.ok();
     }
 
@@ -97,8 +97,8 @@ public class ContainerController extends BaseController {
      */
     @RequestMapping(value = "/container/{id}/check", produces = "application/json;charset=UTF-8")
     public ResponseEntity containerCheck(@PathVariable(value = "id") Integer id) throws Exception {
-        ContainerEntity containerEntity = getContainerEntitySafe(id);
-        ExecCommand execCommand = containerService.containerCheck(containerEntity);
+        ApplicationEntity containerEntity = getContainerEntitySafe(id);
+        ExecCommand execCommand = ApplicationService.containerCheck(containerEntity);
         if (execCommand.getExitValue() == 0) {
             return ResponseEntity.of(HttpStatus.OK, "该容器正在运行中");
         } else if (execCommand.getExitValue() == 3) {
@@ -116,9 +116,9 @@ public class ContainerController extends BaseController {
      */
     @RequestMapping(value = "/container/{id}/start", produces = "application/json;charset=UTF-8")
     public ResponseEntity containerStart(@PathVariable(value = "id") Integer id) throws Exception {
-        ContainerEntity containerEntity = getContainerEntitySafe(id);
+        ApplicationEntity containerEntity = getContainerEntitySafe(id);
 
-        ExecCommand execCommand = containerService.containerStart(containerEntity);
+        ExecCommand execCommand = ApplicationService.containerStart(containerEntity);
         if (execCommand.getExitValue() == 0) {
             return ResponseEntity.of(HttpStatus.OK, "启动成功");
         } else if (execCommand.getExitValue() == 2) {
@@ -136,8 +136,8 @@ public class ContainerController extends BaseController {
      */
     @RequestMapping(value = "/container/{id}/stop", produces = "application/json;charset=UTF-8")
     public ResponseEntity containerStop(@PathVariable(value = "id") Integer id) throws Exception {
-        ContainerEntity containerEntity = getContainerEntitySafe(id);
-        ExecCommand execCommand = containerService.containerStop(containerEntity);
+        ApplicationEntity containerEntity = getContainerEntitySafe(id);
+        ExecCommand execCommand = ApplicationService.containerStop(containerEntity);
         if (execCommand.getExitValue() == 0) {
             return ResponseEntity.of(HttpStatus.OK, "关闭成功");
         } else {
@@ -145,11 +145,11 @@ public class ContainerController extends BaseController {
         }
     }
 
-    private ContainerEntity getContainerEntitySafe(Integer id) {
+    private ApplicationEntity getContainerEntitySafe(Integer id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("id is required");
         }
-        Optional<ContainerEntity> containerEntity = containerService.getModel(id);
+        Optional<ApplicationEntity> containerEntity = applicationService.getModel(id);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应容器");
         }

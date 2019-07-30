@@ -1,10 +1,11 @@
 package com.automate.service;
 
-import com.automate.entity.ContainerEntity;
+import com.automate.entity.ApplicationEntity;
+import com.automate.entity.ProjectPackageEntity;
 import com.automate.entity.ServerEntity;
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecStreamPrintMonitor;
-import com.automate.repository.ContainerRepository;
+import com.automate.repository.ApplicationRepository;
 import com.automate.ssh.SSHSession;
 import com.automate.ssh.SSHUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,32 +26,38 @@ import java.util.Optional;
  * @date: 2019/2/27 20:32
  */
 @Service
-public class ContainerService {
+public class ApplicationService {
 
     @Autowired
-    private ContainerRepository containerRepository;
+    private ApplicationRepository applicationRepository;
 
 
-    public Page<ContainerEntity> findAll(Pageable pageable) {
-        return containerRepository.findAll(pageable);
+    public void doUpdate(ProjectPackageEntity projectPackageEntity, ApplicationEntity applicationEntity){
+
+
+
     }
 
-    public Iterable<ContainerEntity> findAll() {
-        return containerRepository.findAll(Sort.by("id"));
+    public Page<ApplicationEntity> findAll(Pageable pageable) {
+        return applicationRepository.findAll(pageable);
+    }
+
+    public Iterable<ApplicationEntity> findAll() {
+        return applicationRepository.findAll(Sort.by("id"));
     }
 
     /**
      * 查询对象
      **/
-    public Optional<ContainerEntity> getModel(int id) {
-        return containerRepository.findById(id);
+    public Optional<ApplicationEntity> getModel(int id) {
+        return applicationRepository.findById(id);
     }
 
     /**
      * 添加对象
      **/
-    public void save(ContainerEntity model) {
-        containerRepository.save(model);
+    public void save(ApplicationEntity model) {
+        applicationRepository.save(model);
     }
 
 
@@ -58,26 +65,26 @@ public class ContainerService {
      * 删除对象
      **/
     public void deleteById(int id) {
-        containerRepository.deleteById(id);
+        applicationRepository.deleteById(id);
     }
 
 
-    public static ExecCommand containerStart(ContainerEntity containerEntity) throws Exception {
+    public static ExecCommand containerStart(ApplicationEntity containerEntity) throws Exception {
         Assert.hasText(containerEntity.getScriptStart(), "当前未配置容器启动脚本");
         return containerOperation(containerEntity.getServerId(), containerEntity.getScriptStart());
     }
 
-    public static ExecCommand containerStop(ContainerEntity containerEntity) throws Exception {
+    public static ExecCommand containerStop(ApplicationEntity containerEntity) throws Exception {
         Assert.hasText(containerEntity.getScriptStop(), "当前未配置容器停止脚本");
         return containerOperation(containerEntity.getServerId(), containerEntity.getScriptStop());
     }
 
-    public static ExecCommand containerCheck(ContainerEntity containerEntity) throws Exception {
+    public static ExecCommand containerCheck(ApplicationEntity containerEntity) throws Exception {
         Assert.hasText(containerEntity.getScriptCheck(), "当前未配置容器检查脚本");
         return containerOperation(containerEntity.getServerId(), containerEntity.getScriptCheck());
     }
 
-    public static List<String[]> fileMd5List(ContainerEntity containerEntity) throws Exception {
+    public static List<String[]> fileMd5List(ApplicationEntity containerEntity) throws Exception {
         Assert.hasText(containerEntity.getSourceDir(), "当前未配置容器内容文件夹");
         ServerEntity serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
         Assert.notNull(serverEntity, "未找到相应的服务器");

@@ -2,11 +2,11 @@ package com.automate.task.background.assembly.impl;
 
 import com.automate.common.SystemConfig;
 import com.automate.common.utils.SpringContextUtil;
-import com.automate.entity.ContainerEntity;
+import com.automate.entity.ApplicationEntity;
 import com.automate.entity.ServerEntity;
 import com.automate.exec.ExecCommand;
 import com.automate.exec.ExecStreamPrintMonitor;
-import com.automate.service.ContainerService;
+import com.automate.service.ApplicationService;
 import com.automate.service.ServerService;
 import com.automate.ssh.SSHSession;
 import com.automate.ssh.SftpProgressMonitorImpl;
@@ -77,10 +77,10 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
             throw new IllegalArgumentException("暂时只支持war后缀,等待后续完善");
         }
 
-        final ContainerService containerService = SpringContextUtil.getBean("containerService", ContainerService.class);
+        ApplicationService containerService = SpringContextUtil.getBean("applicationService", ApplicationService.class);
         ServerService serverService = SpringContextUtil.getBean("serverService", ServerService.class);
 
-        final Optional<ContainerEntity> containerEntity = containerService.getModel(containerId);
+        Optional<ApplicationEntity> containerEntity = containerService.getModel(containerId);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的容器:" + containerId);
         }
@@ -105,7 +105,7 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
             appendLine("######## start to stop the container ########");
 
             //关闭容器
-            ExecCommand stopCmd = ContainerService.containerStop(containerEntity.get());
+            ExecCommand stopCmd = containerService.containerStop(containerEntity.get());
 
             appendLine(stopCmd.getOut().toString());
 
@@ -137,7 +137,7 @@ public class ApplicationUpdateAssemblyStepTask extends AbstractAssemblyStepTask 
             }
 
             //启动容器
-            ExecCommand startCmd = ContainerService.containerStart(containerEntity.get());
+            ExecCommand startCmd = containerService.containerStart(containerEntity.get());
             appendLine(startCmd.getOut().toString());
 
             if (startCmd.getExitValue() != 0) {

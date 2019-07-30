@@ -38,17 +38,22 @@ public abstract class AbstractAssemblyStepTask implements IAssemblyStepTask {
     private Map<String, Object> localCacheMap = null;
 
     @Override
-    public void init(Map<String, Object> localCacheMap, Integer sourceCodeId, String branch, String commitId, Integer serverId, Integer applicationId, AssemblyLineLogEntity assemblyLineLogEntity) {
+    public void init(Map<String, Object> localCacheMap, Integer projectId, String branch, String commitId, Integer serverId, Integer applicationId, AssemblyLineLogEntity assemblyLineLogEntity) {
         this.localCacheMap = localCacheMap;
         assemblyLineTaskLogService = SpringContextUtil.getBean("assemblyLineTaskLogService", AssemblyLineTaskLogService.class);
         taskLog = new AssemblyLineTaskLogEntity();
-        taskLog.setSourceCodeId(sourceCodeId);
+        taskLog.setSourceCodeId(projectId);
         taskLog.setBranch(branch);
         taskLog.setCommitId(commitId);
         taskLog.setServerId(serverId);
         taskLog.setApplicationId(applicationId);
-        taskLog.setAssemblyLineLogId(assemblyLineLogEntity.getId());
+
         taskLog.setStatus(AssemblyLineLogEntity.Status.init);
+
+        if(assemblyLineLogEntity != null) {
+            taskLog.setAssemblyLineLogId(assemblyLineLogEntity.getId());
+        }
+
 //        assemblyLineTaskLogService.save(taskLog);
 
         this.assemblyLineLogEntity = assemblyLineLogEntity;
