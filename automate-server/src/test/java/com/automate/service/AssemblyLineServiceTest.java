@@ -1,15 +1,8 @@
 package com.automate.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.automate.entity.AssemblyLineEntity;
-import com.automate.exec.ExecStreamPrintMonitor;
 import com.automate.task.background.BackgroundTaskManager;
-import com.automate.task.background.assembly.IAssemblyStepTask;
 import com.automate.task.background.assembly.BackgroundAssemblyTask;
-import com.automate.task.background.assembly.impl.MavenAssemblyStepTask;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +46,7 @@ public class AssemblyLineServiceTest {
     public void save() {
         AssemblyLineEntity model = new AssemblyLineEntity();
 
-        model.setSourceCodeId(1);
+        model.setProjectId(1);
         model.setBranches("*");
         model.setName("自动编译");
         model.setRemark("");
@@ -75,7 +68,6 @@ public class AssemblyLineServiceTest {
         backgroundTaskManager.execute(BackgroundAssemblyTask.create(assemblyLineEntity.get(), "master", null));
 
 
-
         Thread.sleep(20000);
 
     }
@@ -83,42 +75,42 @@ public class AssemblyLineServiceTest {
     public static void main(String[] args) throws Exception {
 
 
-        JSONArray config = new JSONArray();
-
-        MavenAssemblyStepTask mavenTask = new MavenAssemblyStepTask();
-        mavenTask.setCustom("install");
-        JSONObject json = (JSONObject) JSONObject.toJSON(mavenTask);
-        json.put("className", mavenTask.getClass().getName());
-        config.add(json);
-        System.out.println(config.toJSONString());
-
-
-        MavenAssemblyStepTask mavenTask2 = new MavenAssemblyStepTask();
-        //mavenTask2.setCustom("compile");
-        JSONObject json2 = (JSONObject) JSONObject.toJSON(mavenTask2);
-        json2.put("className", mavenTask2.getClass().getName());
-        config.add(json2);
-
-        ExecStreamPrintMonitor execStreamPrintMonitor = new ExecStreamPrintMonitor();
-
-        for (int i = 0; i < config.size(); i++) {
-            JSONObject item = config.getJSONObject(i);
-
-            String className = item.getString("className");
-            if (StringUtils.isNotEmpty(className)) {
-                System.out.println(className);
-                Class cls = Class.forName(className);
-
-                if (IAssemblyStepTask.class.isAssignableFrom(cls)) {
-
-                    IAssemblyStepTask task = (IAssemblyStepTask) JSONObject.parseObject(item.toJSONString(), cls);
-
-                    ((MavenAssemblyStepTask) task).setExecStreamMonitor(execStreamPrintMonitor);
-                    System.out.println(JSON.toJSONString(task));
-
-//                    task.invoke();
-                }
-            }
-        }
+//        JSONArray config = new JSONArray();
+//
+//        MavenAssemblyStepTask mavenTask = new MavenAssemblyStepTask();
+//        mavenTask.setCustom("install");
+//        JSONObject json = (JSONObject) JSONObject.toJSON(mavenTask);
+//        json.put("className", mavenTask.getClass().getName());
+//        config.add(json);
+//        System.out.println(config.toJSONString());
+//
+//
+//        MavenAssemblyStepTask mavenTask2 = new MavenAssemblyStepTask();
+//        //mavenTask2.setCustom("compile");
+//        JSONObject json2 = (JSONObject) JSONObject.toJSON(mavenTask2);
+//        json2.put("className", mavenTask2.getClass().getName());
+//        config.add(json2);
+//
+//        ExecStreamPrintMonitor execStreamPrintMonitor = new ExecStreamPrintMonitor();
+//
+//        for (int i = 0; i < config.size(); i++) {
+//            JSONObject item = config.getJSONObject(i);
+//
+//            String className = item.getString("className");
+//            if (StringUtils.isNotEmpty(className)) {
+//                System.out.println(className);
+//                Class cls = Class.forName(className);
+//
+//                if (IAssemblyStepTask.class.isAssignableFrom(cls)) {
+//
+//                    IAssemblyStepTask task = (IAssemblyStepTask) JSONObject.parseObject(item.toJSONString(), cls);
+//
+//                    ((MavenAssemblyStepTask) task).setExecStreamMonitor(execStreamPrintMonitor);
+//                    System.out.println(JSON.toJSONString(task));
+//
+////                    task.invoke();
+//                }
+//            }
+//        }
     }
 }

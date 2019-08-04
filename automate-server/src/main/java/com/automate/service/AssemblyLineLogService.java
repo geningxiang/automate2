@@ -31,8 +31,8 @@ public class AssemblyLineLogService {
     public Page<AssemblyLineLogEntity> findAll(final AssemblyLineLogEntity condition, Pageable pageable) {
         Specification<AssemblyLineLogEntity> querySpeci = (Specification<AssemblyLineLogEntity>) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList();
-            if (condition.getSourceCodeId() != null && condition.getSourceCodeId() > 0) {
-                predicates.add(criteriaBuilder.equal(root.get("sourceCodeId"), condition.getSourceCodeId()));
+            if (condition.getProjectId() != null && condition.getProjectId() > 0) {
+                predicates.add(criteriaBuilder.equal(root.get("projectId"), condition.getProjectId()));
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };

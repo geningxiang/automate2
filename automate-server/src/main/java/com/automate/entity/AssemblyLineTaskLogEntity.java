@@ -14,17 +14,37 @@ import java.util.Objects;
 @Entity
 @Table(name = "CA2_ASSEMBLY_LINE_TASK_LOG")
 public class AssemblyLineTaskLogEntity {
+
     private Integer id;
-    private Integer sourceCodeId;
-    private String branch;
-    private String commitId;
-    private Integer serverId;
-    private Integer applicationId;
+
+    /**
+     * 项目ID
+     */
+    private Integer projectId;
+
+    /**
+     * 流水线ID
+     * @see AssemblyLineLogEntity#getId()
+     */
     private Integer assemblyLineLogId;
-    private Short type;
-    private Short kind;
+
+    /**
+     * 生命周期的下标
+     */
+    private int lifeCycle;
+
+    /**
+     * 具体任务的下标
+     */
+    private int taskIndex;
+
     private StringBuffer content;
+
+    /**
+     * @see AssemblyLineLogEntity.Status
+     */
     private Integer status;
+
     private Timestamp startTime;
     private Timestamp endTime;
 
@@ -40,53 +60,13 @@ public class AssemblyLineTaskLogEntity {
     }
 
     @Basic
-    @Column(name = "SOURCE_CODE_ID", nullable = true)
-    public Integer getSourceCodeId() {
-        return sourceCodeId;
+    @Column(name = "PROJECT_ID", nullable = true)
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setSourceCodeId(Integer sourceCodeId) {
-        this.sourceCodeId = sourceCodeId;
-    }
-
-    @Basic
-    @Column(name = "BRANCH", nullable = true, length = 64)
-    public String getBranch() {
-        return branch;
-    }
-
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
-
-    @Basic
-    @Column(name = "COMMIT_ID", nullable = true, length = 64)
-    public String getCommitId() {
-        return commitId;
-    }
-
-    public void setCommitId(String commitId) {
-        this.commitId = commitId;
-    }
-
-    @Basic
-    @Column(name = "SERVER_ID", nullable = true)
-    public Integer getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Integer serverId) {
-        this.serverId = serverId;
-    }
-
-    @Basic
-    @Column(name = "APPLICATION_ID", nullable = true)
-    public Integer getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(Integer applicationId) {
-        this.applicationId = applicationId;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     @Basic
@@ -100,23 +80,23 @@ public class AssemblyLineTaskLogEntity {
     }
 
     @Basic
-    @Column(name = "TYPE", nullable = true)
-    public Short getType() {
-        return type;
+    @Column(name = "LIFE_CYCLE", nullable = true)
+    public int getLifeCycle() {
+        return lifeCycle;
     }
 
-    public void setType(Short type) {
-        this.type = type;
+    public void setLifeCycle(int lifeCycle) {
+        this.lifeCycle = lifeCycle;
     }
 
     @Basic
-    @Column(name = "KIND", nullable = true)
-    public Short getKind() {
-        return kind;
+    @Column(name = "TASK_INDEX", nullable = true)
+    public int getTaskIndex() {
+        return taskIndex;
     }
 
-    public void setKind(Short kind) {
-        this.kind = kind;
+    public void setTaskIndex(int taskIndex) {
+        this.taskIndex = taskIndex;
     }
 
     @Basic

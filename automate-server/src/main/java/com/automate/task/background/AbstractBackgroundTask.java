@@ -1,7 +1,8 @@
 package com.automate.task.background;
 
-import java.util.Arrays;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -18,33 +19,24 @@ public abstract class AbstractBackgroundTask implements Runnable {
     /**
      * 后台任务的 唯一ID
      */
-    private final long uniqueId;
+    protected final long uniqueId;
 
     /**
      * 后台任务的 锁列表   简单的根据 String 来锁
      */
-    private final String[] locks;
-    private int lockIndex;
+    protected final BackgroundLock.Builder lockBuilder;
 
-    public AbstractBackgroundTask(Set<String> locks){
+    protected final Map<String, String> environmentPathMap = new HashMap(64);
+
+    /**
+     *
+     * @param lockBuilder
+     */
+    public AbstractBackgroundTask(BackgroundLock.Builder lockBuilder) {
         this.uniqueId = INDEX.incrementAndGet();
-        if(locks != null && locks.size() > 0) {
-            String[] temp = new String[locks.size()];
-            int i = 0;
-            for (String lock : locks) {
-                temp[i++] = lock;
-            }
-            if(i > 1) {
-                //!! 非常重要  必须要做一次排序    否则会出现 不同任务 互锁的情况
-                Arrays.sort(temp);
-            }
-            this.locks = temp;
-        } else {
-            this.locks = null;
-        }
+        this.lockBuilder = lockBuilder;
 
     }
-
 
 
     private boolean cancel = false;
@@ -104,9 +96,6 @@ public abstract class AbstractBackgroundTask implements Runnable {
         this.endTime = endTime;
     }
 
-    public String[] getLocks() {
-        return locks;
-    }
 
     public BackgroundStatus getStatus() {
         return status;
@@ -116,15 +105,11 @@ public abstract class AbstractBackgroundTask implements Runnable {
      * 是否已取消
      * @return
      */
-    public boolean isCancel(){
+    public boolean isCancel() {
         return this.cancel;
     }
 
-    public int getLockIndex() {
-        return lockIndex;
-    }
-
-    public void setLockIndex(int lockIndex) {
-        this.lockIndex = lockIndex;
+    public BackgroundLock.Builder getLockBuilder() {
+        return lockBuilder;
     }
 }

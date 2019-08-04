@@ -37,7 +37,7 @@ public class ExecStreamReader implements Runnable {
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                System.out.println("@" + line);
+                logger.debug(line);
                 if (this.isError) {
                     execCommand.errorRead(line);
                 } else {

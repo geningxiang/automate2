@@ -33,8 +33,8 @@ public class BackgroundAssemblyTask extends AbstractBackgroundTask {
     private final AssemblyLineLogEntity assemblyLineLogEntity;
 
 
-    private BackgroundAssemblyTask(AssemblyLineEntity assemblyLineEntity, @NonNull String branchName, @Nullable String commitId, AssemblyLineLogEntity assemblyLineLogEntity, List<IAssemblyStepTask> tasks, Set<String> locks) {
-        super(locks);
+    private BackgroundAssemblyTask(AssemblyLineEntity assemblyLineEntity, @NonNull String branchName, @Nullable String commitId, AssemblyLineLogEntity assemblyLineLogEntity, List<IAssemblyStepTask> tasks, TreeSet<String> locks) {
+        super(null);
         this.assemblyLineEntity = assemblyLineEntity;
         this.branchName = branchName;
         this.commitId = commitId;
@@ -43,15 +43,16 @@ public class BackgroundAssemblyTask extends AbstractBackgroundTask {
     }
 
     public static BackgroundAssemblyTask create(AssemblyLineEntity assemblyLineEntity, @NonNull String branchName, @Nullable String commitId) throws Exception {
-        Set<String> locks = new HashSet<>(16);
-        locks.add("SOURCE_CODE_" + assemblyLineEntity.getSourceCodeId());
+        TreeSet<String> locks = new TreeSet();
+        locks.add("Project" +
+                "_" + assemblyLineEntity.getProjectId());
         List<IAssemblyStepTask> tasks = TaskConfigFormat.parse(assemblyLineEntity.getConfig());
         Map<String, Object> localCacheMap = new HashMap<>();
 
         AssemblyLineLogService assemblyLineLogService = SpringContextUtil.getBean("assemblyLineLogService", AssemblyLineLogService.class);
         AssemblyLineLogEntity assemblyLineLogEntity = new AssemblyLineLogEntity();
         assemblyLineLogEntity.setAssemblyLineId(assemblyLineEntity.getId());
-        assemblyLineLogEntity.setSourceCodeId(assemblyLineEntity.getSourceCodeId());
+        assemblyLineLogEntity.setProjectId(assemblyLineEntity.getProjectId());
         assemblyLineLogEntity.setBranch(branchName);
         assemblyLineLogEntity.setCommitId(commitId);
         assemblyLineLogEntity.setConfig(assemblyLineEntity.getConfig());
@@ -66,7 +67,7 @@ public class BackgroundAssemblyTask extends AbstractBackgroundTask {
                     locks.add(lock);
                 }
             }
-            task.init(localCacheMap, assemblyLineEntity.getSourceCodeId(), branchName, commitId, 0, 0, assemblyLineLogEntity);
+            task.init(localCacheMap, assemblyLineEntity.getProjectId(), branchName, commitId, 0, 0, assemblyLineLogEntity);
         }
         return new BackgroundAssemblyTask(assemblyLineEntity, branchName, commitId, assemblyLineLogEntity, tasks, locks);
     }
@@ -91,7 +92,7 @@ public class BackgroundAssemblyTask extends AbstractBackgroundTask {
                 assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.running);
 
                 //
-                Optional<ProjectEntity> projectEntity = projectService.getModel(this.assemblyLineEntity.getSourceCodeId());
+                Optional<ProjectEntity> projectEntity = projectService.getModel(this.assemblyLineEntity.getProjectId());
                 if (projectEntity.isPresent()) {
                     //先将代码仓库切换到指定版本
                     GitHelper gitHelper = new GitHelper(projectEntity.get());

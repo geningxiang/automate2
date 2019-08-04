@@ -50,16 +50,6 @@ public class ExecFormatter {
                         continue;
                     }
                     validate(s);
-                    String fn;
-                    int i = s.indexOf(" ");
-                    if (i > 0) {
-                        fn = s.substring(0, i);
-                    } else {
-                        fn = s;
-                    }
-//                    if (!ALLOW_MAP.containsKey(fn)) {
-//                        throw new IllegalAccessException("the command 【" + fn + "】 is not allow");
-//                    }
                     list.add(s);
                 }
             }
@@ -69,6 +59,8 @@ public class ExecFormatter {
         }
         return StringUtils.join(list, " && ");
     }
+
+
 
     /**
      * 验证单行命令的正确性
@@ -80,6 +72,19 @@ public class ExecFormatter {
         if (StringUtils.isBlank(command)) {
             throw new IllegalArgumentException("command is blank");
         }
+
+        String fn;
+        int i = command.indexOf(" ");
+        if (i > 0) {
+            fn = command.substring(0, i);
+        } else {
+            fn = command;
+        }
+        //是否允许 TODO 暂时是没有判断白名单
+//        if (!ALLOW_MAP.containsKey(fn)) {
+//            throw new IllegalAccessException("the command 【" + fn + "】 is not allow");
+//        }
+
         for (String illegalCharacter : ILLEGAL_CHARACTERS) {
             if (command.contains(illegalCharacter)) {
                 throw new IllegalArgumentException(illegalCharacter + " is not allow");

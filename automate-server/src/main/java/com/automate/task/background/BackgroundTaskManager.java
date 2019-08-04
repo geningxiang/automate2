@@ -164,7 +164,7 @@ public class BackgroundTaskManager implements Runnable {
         private BackgroundThreadPool(int maximumPoolSize) {
             super(0,
                     maximumPoolSize,
-                    5L,
+                    60,
                     TimeUnit.SECONDS,
                     new SynchronousQueue<>(),
                     new BackgroundTaskManager.CustomThreadFactory()
@@ -188,14 +188,14 @@ public class BackgroundTaskManager implements Runnable {
                             waitingQueue.size());
                 }
 
-                if (((AbstractBackgroundTask) r).getLocks() != null) {
-                    try {
-                        //申请锁
-                        BackgroundLock.acquire((AbstractBackgroundTask) r);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
+                try {
+                    //申请锁
+                    BackgroundLock.acquire((AbstractBackgroundTask) r);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
                 ((AbstractBackgroundTask) r).updateStatus(BackgroundStatus.running);
             }
 
@@ -209,10 +209,9 @@ public class BackgroundTaskManager implements Runnable {
                     ((AbstractBackgroundTask) r).setEndTime(System.currentTimeMillis());
                     this.currentMap.remove(((AbstractBackgroundTask) r).getUniqueId());
 
-                    if (((AbstractBackgroundTask) r).getLocks() != null) {
-                        //释放锁
-                        BackgroundLock.release((AbstractBackgroundTask) r);
-                    }
+                    //释放锁
+                    BackgroundLock.release((AbstractBackgroundTask) r);
+
 
                     if (backgroundTaskMonitor != null) {
                         backgroundTaskMonitor.onComplete(

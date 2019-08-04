@@ -16,12 +16,13 @@ import java.sql.Timestamp;
 public class AssemblyLineEntity {
 
     private Integer id;
+
     /**
-     * 代码仓库ID
+     * 项目ID
      *
-     * @see SourceCodeEntity#getId()
+     * @see ProjectEntity#getId()
      */
-    private Integer sourceCodeId;
+    private Integer projectId;
     /**
      * 分支名称
      */
@@ -70,13 +71,13 @@ public class AssemblyLineEntity {
     }
 
     @Basic
-    @Column(name = "SOURCE_CODE_ID", nullable = true)
-    public Integer getSourceCodeId() {
-        return sourceCodeId;
+    @Column(name = "PROJECT_ID", nullable = true)
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setSourceCodeId(Integer sourceCodeId) {
-        this.sourceCodeId = sourceCodeId;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     @Basic

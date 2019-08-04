@@ -2,6 +2,7 @@ package com.automate.task.background;
 
 import org.springframework.lang.NonNull;
 
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
@@ -31,41 +32,40 @@ public class BackgroundLock {
     private static final Lock LOCK = new ReentrantLock();
 
     public static void acquire(AbstractBackgroundTask task) throws InterruptedException {
-        if (task.getLocks() != null) {
-            task.updateStatus(BackgroundStatus.acquire);
-            for (int i = 0; i < task.getLocks().length; i++) {
-
-                String key = task.getLocks()[i];
-                Semaphore s = new Semaphore(1);
-                Semaphore value = LOCK_MAP.putIfAbsent(key, s);
-                if (value == null) {
-                    value = s;
+        if (task.getLockBuilder() != null) {
+            TreeSet<String> locks = task.getLockBuilder().build();
+            if(locks != null && locks.size() > 0){
+                task.updateStatus(BackgroundStatus.acquire);
+                for (String lockKey : locks) {
+                    Semaphore s = new Semaphore(1);
+                    Semaphore value = LOCK_MAP.putIfAbsent(lockKey, s);
+                    if (value == null) {
+                        value = s;
+                    }
+                    //获得许可
+                    value.acquire();
                 }
-
-                //获得许可
-                value.acquire();
-                task.setLockIndex(i + 1);
-
             }
         }
     }
 
     public static void release(AbstractBackgroundTask task) {
-        if (task.getLocks() != null) {
-            for (int i = task.getLocks().length - 1; i >= 0; i--) {
-                LOCK.lock();
-                try {
-                    Semaphore s = LOCK_MAP.get(task.getLocks()[i]);
-                    if (s != null) {
-                        //释放资源
-                        s.release();
-                        LOCK_MAP.remove(task.getLocks()[i]);
-
+        if (task.getLockBuilder() != null) {
+            TreeSet<String> locks = task.getLockBuilder().build();
+            if(locks != null && locks.size() > 0){
+                for (String lockKey : locks) {
+                    LOCK.lock();
+                    try {
+                        Semaphore s = LOCK_MAP.get(lockKey);
+                        if (s != null) {
+                            //释放资源
+                            s.release();
+                            LOCK_MAP.remove(lockKey);
+                        }
+                    } finally {
+                        LOCK.unlock();
                     }
-                } finally {
-                    LOCK.unlock();
                 }
-
             }
         }
     }
@@ -103,6 +103,24 @@ public class BackgroundLock {
             LOCK_MAP.remove(value);
         } finally {
             LOCK.unlock();
+        }
+    }
+
+    public static class Builder{
+        private TreeSet<String> locks = new TreeSet();
+
+        public Builder addLockByProject(int projectId){
+            locks.add("Project_" + projectId);
+            return this;
+        }
+
+        public Builder addLockByApplication(int applicationId){
+            locks.add("ApplicationId" + applicationId);
+            return this;
+        }
+
+        public TreeSet build(){
+            return locks;
         }
     }
 

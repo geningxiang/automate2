@@ -3,7 +3,7 @@ package com.automate.task.background;
 /**
  * Created with IntelliJ IDEA.
  * Description:
- *
+ * 后台任务监控接口
  * @author: genx
  * @date: 2019/2/2 10:28
  */

@@ -27,7 +27,7 @@ public class AssemblyLineLogEntity {
 
     private Integer id;
     private Integer assemblyLineId;
-    private Integer sourceCodeId;
+    private Integer projectId;
     private String branch;
     private String commitId;
     private String config;
@@ -59,13 +59,13 @@ public class AssemblyLineLogEntity {
     }
 
     @Basic
-    @Column(name = "SOURCE_CODE_ID", nullable = true)
-    public Integer getSourceCodeId() {
-        return sourceCodeId;
+    @Column(name = "PROJECT_ID", nullable = true)
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setSourceCodeId(Integer sourceCodeId) {
-        this.sourceCodeId = sourceCodeId;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     @Basic

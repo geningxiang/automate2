@@ -1,6 +1,5 @@
 package com.automate.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.automate.common.SystemConfig;
 import com.automate.common.utils.FileListSha1Util;
 import com.automate.common.utils.ZipUtil;
@@ -24,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,6 +39,10 @@ public class ProjectPackageService {
 
     @Autowired
     private ProjectPackageRepository projectPackageRepository;
+
+    public Optional<ProjectPackageEntity> findById(int id){
+        return projectPackageRepository.findById(id);
+    }
 
     public Page<ProjectPackageEntity> findAll(Pageable pageable) {
         return projectPackageRepository.findAll(pageable);
