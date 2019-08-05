@@ -84,7 +84,6 @@ public class ProjectPackageService {
      * @return
      * @throws IOException
      */
-    @Deprecated
     public ProjectPackageEntity create(int projectId, String version, String branch, String commitId, String remark, File file, ProjectPackageEntity.Type type, int userId) throws IOException {
         ProjectPackageEntity projectPackageEntity = buildProjectPackageEntity(projectId, version, branch, commitId, remark, type, userId);
 

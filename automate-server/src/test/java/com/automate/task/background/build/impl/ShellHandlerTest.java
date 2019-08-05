@@ -24,7 +24,7 @@ public class ShellHandlerTest {
         shellHandler.setScripts("ping www.baidu.com\n" +
                 "mvn clean package -DskipTests=true");
 
-        StringBuilder content = new StringBuilder(10240);
+        StringBuffer content = new StringBuffer(10240);
         Map<String, Object> tempMap = new HashMap();
         tempMap.put("baseDir", new File("D:\\idea-workspace\\automate2\\automate-server").getAbsolutePath());
         boolean result = shellHandler.execute(tempMap, content);

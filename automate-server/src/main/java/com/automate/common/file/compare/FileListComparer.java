@@ -1,6 +1,7 @@
 package com.automate.common.file.compare;
 
 import com.automate.vo.FileComparerResult;
+import com.automate.vo.PathSha1Info;
 
 import java.util.*;
 
@@ -34,6 +35,21 @@ public class FileListComparer {
             }
         }
         return map.values();
+
+    }
+
+    public static LinkedList<FileComparerResult> compare(List<PathSha1Info>... fileLists) {
+        ArrayList<String[]>[] data = new ArrayList[fileLists.length];
+        for (int i = 0; i < fileLists.length; i++) {
+
+            List<PathSha1Info> fileList = fileLists[i];
+            ArrayList list = new ArrayList(fileList.size());
+            for (PathSha1Info pathSha1Info : fileList) {
+                list.add(new String[]{pathSha1Info.getPath(), pathSha1Info.getSha1()});
+            }
+            data[i] = list;
+        }
+        return compare(data);
 
     }
 

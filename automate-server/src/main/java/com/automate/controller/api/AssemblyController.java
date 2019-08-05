@@ -53,7 +53,7 @@ public class AssemblyController extends BaseController {
     public ResponseEntity list(Integer sourceCodeId) {
         List<AssemblyLineEntity> list;
         if (sourceCodeId != null && sourceCodeId > 0) {
-            list = assemblyLineService.getAllBySourceCodeId(sourceCodeId);
+            list = assemblyLineService.getAllByProjectId(sourceCodeId);
         } else {
             list = new ArrayList<>(0);
         }

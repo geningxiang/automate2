@@ -66,20 +66,20 @@ public class AssemblyLineService implements IEventHandler {
         assemblyLineRepository.save(model);
     }
 
-    public List<AssemblyLineEntity> getAllBySourceCodeId(int sourceCodeId){
-        return assemblyLineRepository.getAllBySourceCodeId(sourceCodeId);
+    public List<AssemblyLineEntity> getAllByProjectId(int projectId){
+        return assemblyLineRepository.getAllByProjectId(projectId);
     }
 
-    public List<AssemblyLineEntity> getAllBySourceCodeIdWidthAutoTrigger(int sourceCodeId){
-        return assemblyLineRepository.getAllBySourceCodeIdAndAutoTrigger(sourceCodeId, true);
+    public List<AssemblyLineEntity> getAllByProjectIdAndAutoTrigger(int projectId){
+        return assemblyLineRepository.getAllByProjectIdAndAutoTrigger(projectId, true);
     }
 
 
     @Subscribe
-    public void sourceCodePushed(SourceCodePullEvent sourceCodePullEvent) {
+    public void onProjectPushed(SourceCodePullEvent sourceCodePullEvent) {
         logger.debug("pushed:{}", JSON.toJSONString(sourceCodePullEvent));
 
-        List<AssemblyLineEntity> list = this.getAllBySourceCodeIdWidthAutoTrigger(sourceCodePullEvent.getSourceCodeId());
+        List<AssemblyLineEntity> list = this.getAllByProjectIdAndAutoTrigger(sourceCodePullEvent.getProjectId());
         if(list.size() > 0){
             for (AssemblyLineEntity assemblyLineEntity : list) {
 

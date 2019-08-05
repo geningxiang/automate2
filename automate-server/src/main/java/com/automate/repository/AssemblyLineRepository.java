@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface AssemblyLineRepository extends PagingAndSortingRepository<AssemblyLineEntity, Integer>, JpaSpecificationExecutor<AssemblyLineEntity> {
 
-    List<AssemblyLineEntity> getAllBySourceCodeId(int sourceCodeId);
+    List<AssemblyLineEntity> getAllByProjectId(int projectId);
 
-    List<AssemblyLineEntity> getAllBySourceCodeIdAndAutoTrigger(int sourceCodeId, boolean autoTrigger);
+    List<AssemblyLineEntity> getAllByProjectIdAndAutoTrigger(int projectId, boolean autoTrigger);
 }

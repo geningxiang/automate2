@@ -12,7 +12,7 @@ public interface IBuildHandler {
 
     String getName();
 
-    boolean execute(Map<String, Object> tempMap, StringBuilder content);
+    boolean execute(Map<String, Object> tempMap, StringBuffer content);
 
     /**
      * 验证

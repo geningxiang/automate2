@@ -9,18 +9,18 @@ package com.automate.event.po;
  */
 public class SourceCodePullEvent implements IEvent {
 
-    private final Integer sourceCodeId;
+    private final Integer projectId;
     private final String branchName;
     private final String commitId;
 
-    public SourceCodePullEvent(Integer sourceCodeId, String branchName, String commitId) {
-        this.sourceCodeId = sourceCodeId;
+    public SourceCodePullEvent(Integer projectId, String branchName, String commitId) {
+        this.projectId = projectId;
         this.branchName = branchName;
         this.commitId = commitId;
     }
 
-    public int getSourceCodeId() {
-        return sourceCodeId;
+    public int getProjectId() {
+        return projectId;
     }
 
     public String getBranchName() {

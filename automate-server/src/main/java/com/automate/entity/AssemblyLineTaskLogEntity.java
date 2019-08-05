@@ -2,7 +2,6 @@ package com.automate.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
@@ -102,16 +101,17 @@ public class AssemblyLineTaskLogEntity {
     @Basic
     @Column(name = "CONTENT", nullable = true, length = -1)
     public String getContent() {
-        return content.toString();
+        return this.content != null ? content.toString() : "";
     }
 
     public void setContent(String content) {
         this.content = new StringBuffer(content);
     }
+
     public void appendLine(String content) {
-        if(this.content == null){
-            synchronized (this){
-                if(this.content == null){
+        if (this.content == null) {
+            synchronized (this) {
+                if (this.content == null) {
                     this.content = new StringBuffer(1024);
                 }
             }
@@ -129,7 +129,7 @@ public class AssemblyLineTaskLogEntity {
         this.status = status;
     }
 
-    public void setStatus(AssemblyLineLogEntity.Status status){
+    public void setStatus(AssemblyLineLogEntity.Status status) {
         this.status = status.ordinal();
     }
 

@@ -27,7 +27,7 @@ public class ShellHandler implements IBuildHandler {
 
 
     @Override
-    public boolean execute(Map<String, Object> tempMap, StringBuilder content) {
+    public boolean execute(Map<String, Object> tempMap, StringBuffer content) {
         try {
             ExecCommand execCommand = new ExecCommand(Arrays.asList(scripts), null, null, null);
             if (execCommand != null) {

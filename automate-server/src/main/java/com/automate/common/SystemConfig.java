@@ -60,7 +60,7 @@ public class SystemConfig {
      * @param projectEntity
      * @return
      */
-    public static String getSourceCodeDir(ProjectEntity projectEntity) {
+    public static String getProjectBaseDir(ProjectEntity projectEntity) {
         if (projectEntity == null || projectEntity.getId() == null) {
             return null;
         }

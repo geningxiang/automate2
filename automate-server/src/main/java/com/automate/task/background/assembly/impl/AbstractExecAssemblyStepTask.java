@@ -27,7 +27,7 @@
 //        ExecCommand execCommand = buildExecCommand();
 //        if (execCommand != null) {
 //
-//            execCommand.setDir(new File(SystemConfig.getSourceCodeDir(getProjectEntity())));
+//            execCommand.setDir(new File(SystemConfig.getProjectBaseDir(getProjectEntity())));
 //
 //
 //            ExecHelper.exec(execCommand);

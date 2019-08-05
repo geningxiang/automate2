@@ -25,7 +25,7 @@
 //
 //    public String getPath() {
 //        if (this.path.contains(BASE_DIR)) {
-//            return this.path.replace(BASE_DIR, SystemConfig.getSourceCodeDir(getProjectEntity()));
+//            return this.path.replace(BASE_DIR, SystemConfig.getProjectBaseDir(getProjectEntity()));
 //        } else {
 //            return this.path;
 //        }

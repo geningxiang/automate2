@@ -247,7 +247,7 @@ public class ProjectEntity implements IVCSRepository {
     @Transient
     @Override
     public String getLocalDir() {
-        return SystemConfig.getSourceCodeDir(this);
+        return SystemConfig.getProjectBaseDir(this);
     }
 
     @Transient
