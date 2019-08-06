@@ -2,7 +2,7 @@ package com.automate.service;
 
 import com.automate.entity.AssemblyLineEntity;
 import com.automate.task.background.BackgroundTaskManager;
-import com.automate.task.background.assembly.BackgroundAssemblyTask;
+import com.automate.task.background.build.BackgroundBuildTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +65,7 @@ public class AssemblyLineServiceTest {
     public void test() throws Exception {
         Optional<AssemblyLineEntity> assemblyLineEntity = assemblyLineService.getModel(1);
 
-        backgroundTaskManager.execute(BackgroundAssemblyTask.create(assemblyLineEntity.get(), "master", null));
-
-
-        Thread.sleep(20000);
+        backgroundTaskManager.execute(new BackgroundBuildTask(assemblyLineEntity.get(), "master", null));
 
     }
 

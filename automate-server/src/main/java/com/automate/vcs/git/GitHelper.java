@@ -186,14 +186,17 @@ public class GitHelper extends AbstractVCSHelper {
             git = Git.wrap(db);
 
             git.checkout().setName(branchName).call();
+            String id;
             if(StringUtils.isNotBlank(commitId)) {
                 Ref resetCommand = git.reset().setMode(ResetCommand.ResetType.HARD).setRef(commitId).call();
-                return resetCommand.getObjectId().toObjectId().name();
+                id = resetCommand.getObjectId().toObjectId().name();
             } else {
                 //reset hard
                 Ref ref = git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + branchName).call();
-                return ref.getObjectId().toObjectId().name();
+                id = ref.getObjectId().toObjectId().name();
             }
+            logger.debug("localDir:{},branch:{},commitId:{};切换到{}", this.localDir, branchName, commitId, id);
+            return id;
         } finally {
             if(git != null){
                 git.close();

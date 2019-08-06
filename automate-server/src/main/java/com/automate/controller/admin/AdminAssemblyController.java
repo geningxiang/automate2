@@ -46,7 +46,7 @@ public class AdminAssemblyController extends BaseController {
     }
 
     @RequestMapping("/detail")
-    public String detail(Integer id, ModelMap modelMap) {
+    public String detail(Integer id, Integer projectId,  ModelMap modelMap) {
         AssemblyLineEntity assemblyLineEntity = null;
         if (id != null && id > 0) {
             Optional<AssemblyLineEntity> model = assemblyLineService.getModel(id);
@@ -56,6 +56,7 @@ public class AdminAssemblyController extends BaseController {
         }
         if (assemblyLineEntity == null) {
             assemblyLineEntity = new AssemblyLineEntity();
+            assemblyLineEntity.setProjectId(projectId);
         }
         modelMap.put("assemblyLineEntity", assemblyLineEntity);
         return "assembly/assembly_detail";

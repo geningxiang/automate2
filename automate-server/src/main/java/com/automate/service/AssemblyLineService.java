@@ -6,7 +6,7 @@ import com.automate.event.handle.IEventHandler;
 import com.automate.event.po.SourceCodePullEvent;
 import com.automate.repository.AssemblyLineRepository;
 import com.automate.task.background.BackgroundTaskManager;
-import com.automate.task.background.assembly.BackgroundAssemblyTask;
+import com.automate.task.background.build.BackgroundBuildTask;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,11 +66,11 @@ public class AssemblyLineService implements IEventHandler {
         assemblyLineRepository.save(model);
     }
 
-    public List<AssemblyLineEntity> getAllByProjectId(int projectId){
+    public List<AssemblyLineEntity> getAllByProjectId(int projectId) {
         return assemblyLineRepository.getAllByProjectId(projectId);
     }
 
-    public List<AssemblyLineEntity> getAllByProjectIdAndAutoTrigger(int projectId){
+    public List<AssemblyLineEntity> getAllByProjectIdAndAutoTrigger(int projectId) {
         return assemblyLineRepository.getAllByProjectIdAndAutoTrigger(projectId, true);
     }
 
@@ -80,14 +80,14 @@ public class AssemblyLineService implements IEventHandler {
         logger.debug("pushed:{}", JSON.toJSONString(sourceCodePullEvent));
 
         List<AssemblyLineEntity> list = this.getAllByProjectIdAndAutoTrigger(sourceCodePullEvent.getProjectId());
-        if(list.size() > 0){
+        if (list.size() > 0) {
             for (AssemblyLineEntity assemblyLineEntity : list) {
 
 
-                if(StringUtils.isNotBlank(assemblyLineEntity.getBranches()) && isMatch(assemblyLineEntity.getBranches(), sourceCodePullEvent.getBranchName())){
-                    logger.debug("触发自动化流水线:id={}" , assemblyLineEntity.getId());
+                if (StringUtils.isNotBlank(assemblyLineEntity.getBranches()) && isMatch(assemblyLineEntity.getBranches(), sourceCodePullEvent.getBranchName())) {
+                    logger.debug("触发自动化流水线:id={}", assemblyLineEntity.getId());
                     try {
-                        backgroundTaskManager.execute(BackgroundAssemblyTask.create(assemblyLineEntity, sourceCodePullEvent.getBranchName(), sourceCodePullEvent.getCommitId()));
+                        backgroundTaskManager.execute(new BackgroundBuildTask(assemblyLineEntity, sourceCodePullEvent.getBranchName(), sourceCodePullEvent.getCommitId()));
                     } catch (Exception e) {
                         logger.error("发布后台任务失败", e);
                     }
@@ -96,10 +96,10 @@ public class AssemblyLineService implements IEventHandler {
         }
     }
 
-    public boolean isMatch(String pattern, String branchName){
-        try{
+    public boolean isMatch(String pattern, String branchName) {
+        try {
             return Pattern.matches(pattern, branchName);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("匹配分支的正则表达式格式错误", e);
         }
         return false;

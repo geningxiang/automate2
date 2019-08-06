@@ -58,9 +58,9 @@ public class PackageController extends BaseController {
         }
         //查询是否有重复
         String sha1 = DigestUtils.sha1Hex(fileData.getBytes());
-        ProjectPackageEntity projectPackageEntity = projectPackageService.getFirstBySha1OrderByIdDesc(sha1);
+        ProjectPackageEntity projectPackageEntity = projectPackageService.getFirstByFileSha1OrderByIdDesc(sha1);
         if(projectPackageEntity != null){
-            return ResponseEntity.of(HttpStatus.CONFLICT, "SHA1已存在", projectPackageEntity);
+            return ResponseEntity.of(HttpStatus.CONFLICT, "文件SHA1已存在", projectPackageEntity);
         }
         try {
             model.setUserId(sessionUser.getAdminUser().getId());

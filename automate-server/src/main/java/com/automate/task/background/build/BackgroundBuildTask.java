@@ -13,6 +13,7 @@ import com.automate.service.AssemblyLineTaskLogService;
 import com.automate.service.ProjectService;
 import com.automate.task.background.AbstractBackgroundTask;
 import com.automate.task.background.BackgroundLock;
+import com.automate.vcs.git.GitHelper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class BackgroundBuildTask extends AbstractBackgroundTask {
     private List<AssemblyLineTaskLogEntity> taskLogList = new ArrayList(32);
     private List<IBuildHandler> buildHandlerList = new ArrayList<>(32);
 
+    public BackgroundBuildTask(AssemblyLineEntity assemblyLineEntity, @NonNull String branchName, @Nullable String commitId) throws Exception {
+        this(assemblyLineEntity, assemblyLineEntity.getProjectId(), branchName, commitId);
+    }
 
     public BackgroundBuildTask(AssemblyLineEntity assemblyLineEntity, int projectId, @NonNull String branchName, @Nullable String commitId) throws Exception {
         super(new BackgroundLock.Builder().addLockByProject(assemblyLineEntity.getProjectId()));
@@ -50,8 +54,6 @@ public class BackgroundBuildTask extends AbstractBackgroundTask {
 
         assemblyLineLogService = SpringContextUtil.getBean("assemblyLineLogService", AssemblyLineLogService.class);
         assemblyLineTaskLogService = SpringContextUtil.getBean("assemblyLineTaskLogService", AssemblyLineTaskLogService.class);
-
-
         assemblyLineLogEntity.setAssemblyLineId(assemblyLineEntity.getId());
         assemblyLineLogEntity.setProjectId(assemblyLineEntity.getProjectId());
         assemblyLineLogEntity.setBranch(branchName);
@@ -60,7 +62,6 @@ public class BackgroundBuildTask extends AbstractBackgroundTask {
         assemblyLineLogEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.init);
         assemblyLineLogService.save(assemblyLineLogEntity);
-
 
         /*
         [
@@ -120,24 +121,41 @@ public class BackgroundBuildTask extends AbstractBackgroundTask {
 
     @Override
     public void run() {
+        ProjectService projectService = SpringContextUtil.getBean("projectService", ProjectService.class);
+
+        Optional<ProjectEntity> projectEntity = projectService.getModel(projectId);
+        //前置步骤 切换vcs到指定版本
+        assemblyLineLogEntity.setStartTime(new Timestamp(System.currentTimeMillis()));
+
+        if (!projectEntity.isPresent()) {
+            assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.error);
+            assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
+            assemblyLineLogService.save(assemblyLineLogEntity);
+            return;
+        }
+
+        //先将代码仓库切换到指定版本
+        GitHelper gitHelper = new GitHelper(projectEntity.get());
+        try {
+            assemblyLineLogEntity.setCommitId(gitHelper.checkOut(assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.error);
+            assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
+            assemblyLineLogService.save(assemblyLineLogEntity);
+            return;
+        }
 
         assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.running);
-        assemblyLineLogEntity.setStartTime(new Timestamp(System.currentTimeMillis()));
         assemblyLineLogService.save(assemblyLineLogEntity);
 
         AssemblyLineTaskLogEntity item;
         IBuildHandler buildHandler;
         Map<String, Object> tempMap = new HashMap(64);
 
-        ProjectService projectService = SpringContextUtil.getBean("projectService", ProjectService.class);
-
-
-        Optional<ProjectEntity> projectEntity = projectService.getModel(projectId);
 
         //项目基础文件夹
         tempMap.put("baseDir", SystemConfig.getProjectBaseDir(projectEntity.get()));
-
-
         tempMap.put("projectId", this.projectId);
         tempMap.put("version", "");
         tempMap.put("branch", this.assemblyLineLogEntity.getBranch());

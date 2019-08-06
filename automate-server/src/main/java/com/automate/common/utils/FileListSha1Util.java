@@ -28,8 +28,6 @@ import java.util.zip.ZipInputStream;
 public class FileListSha1Util {
 
 
-
-
     public static LinkedList<PathSha1Info> list(File file) throws IOException {
         if (!file.exists()) {
             throw new FileNotFoundException(file.getAbsolutePath());

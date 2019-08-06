@@ -74,7 +74,10 @@ public class ProjectPackageEntity {
      */
     private String filePath;
 
-    private String sha1;
+    /**
+     * 不是很有用 war、zip 每次打包都会有不同的sha1
+     */
+    private String fileSha1;
 
     /**
      * 文件后缀
@@ -86,6 +89,10 @@ public class ProjectPackageEntity {
      */
     private String fileList;
 
+
+    /**
+     * 应为已该字段作为主要依据
+     */
     private String fileListSha1;
 
     /**
@@ -187,12 +194,12 @@ public class ProjectPackageEntity {
 
     @Basic
     @Column(name = "SHA1", nullable = true, length = 255)
-    public String getSha1() {
-        return sha1;
+    public String getFileSha1() {
+        return fileSha1;
     }
 
-    public void setSha1(String sha1) {
-        this.sha1 = sha1;
+    public void setFileSha1(String fileSha1) {
+        this.fileSha1 = fileSha1;
     }
 
     @Basic

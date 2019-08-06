@@ -1,7 +1,7 @@
 <div class="form-group">
     <label class="col-sm-2 col-sm-2 control-label">任务名称</label>
     <div class="col-sm-10">
-        <input type="text" class="form-control" name="name" value="{{name || '文件包提取'}}" required>
+        <input type="text" class="form-control" name="name" value="{{name || '制品提取'}}" required>
     </div>
 </div>
 <div class="form-group">

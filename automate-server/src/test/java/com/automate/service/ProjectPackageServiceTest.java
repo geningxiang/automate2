@@ -3,6 +3,7 @@ package com.automate.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.automate.common.file.compare.FileListComparer;
+import com.automate.common.utils.FileListSha1Util;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.vo.FileComparerResult;
 import com.automate.vo.PathSha1Info;
@@ -49,7 +50,7 @@ public class ProjectPackageServiceTest {
     @Test
     public void getFirstBySha1OrderByIdDesc() {
 
-        ProjectPackageEntity model = projectPackageService.getFirstBySha1OrderByIdDesc("823a84ec14149e34ff28af79a47a519e080d409e");
+        ProjectPackageEntity model = projectPackageService.getFirstByFileSha1OrderByIdDesc("823a84ec14149e34ff28af79a47a519e080d409e");
 
         System.out.println(JSON.toJSONString(model));
 
@@ -58,13 +59,13 @@ public class ProjectPackageServiceTest {
     @Test
     public void test() {
 
-        ProjectPackageEntity model1 = projectPackageService.getFirstBySha1OrderByIdDesc("68339599f2322155473302cdb174a21e48bfcae4");
+        ProjectPackageEntity model1 = projectPackageService.getFirstByFileSha1OrderByIdDesc("68339599f2322155473302cdb174a21e48bfcae4");
 
 
         List<PathSha1Info> list1 = JSONArray.parseArray(model1.getFileList(), PathSha1Info.class);
 
 
-        ProjectPackageEntity model2 = projectPackageService.getFirstBySha1OrderByIdDesc("467356a642c4c59ec6a3103bfa707a4209282493");
+        ProjectPackageEntity model2 = projectPackageService.getFirstByFileSha1OrderByIdDesc("467356a642c4c59ec6a3103bfa707a4209282493");
 
         List<PathSha1Info> list2 = JSONArray.parseArray(model2.getFileList(), PathSha1Info.class);
 
@@ -90,4 +91,8 @@ public class ProjectPackageServiceTest {
         System.out.println(b);
 
     }
+
+
+
+
 }

@@ -5,7 +5,7 @@
 <Workspace>
 	<Local Expanded="Yes">
 		<Model Expanded="Yes" ID="{CB604EFF-5B00-49B4-9BA7-10D2FEC6945B}" Name="Automate2" Selected="Yes" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="Automate2.pdm"/>
-		<Model Expanded="Yes" ID="{60FBC549-5BEA-4C75-96A4-E98FC7245D44}" Name="Automate2_1" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="Automate2_1.pdm"/>
+		<Model Expanded="Yes" ID="{60FBC549-5BEA-4C75-96A4-E98FC7245D44}" Loaded="No" Name="Automate2_1" Type="{CDE44E21-9669-11D1-9914-006097355D9B}" URL="Automate2_1.pdm"/>
 	</Local>
 	<BrowserModule Name="Repository"/>
 </Workspace>

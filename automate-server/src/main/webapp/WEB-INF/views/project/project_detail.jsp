@@ -36,7 +36,7 @@
                 <header class="panel-heading clearfix">
                     <h3 class="pull-left">流水线列表</h3>
                     <div class="pull-right">
-                        <a class="btn btn-info" style="margin-top: 20px;" href="/admin/assembly/detail?sourceCodeId=${id}" target="_blank">
+                        <a class="btn btn-info" style="margin-top: 20px;" href="/admin/assembly/detail?projectId=${id}" target="_blank">
                             <i class="fa fa-plus"></i> 创建流水线
                         </a>
                     </div>
@@ -237,7 +237,7 @@
     }
 
     function queryAssemblyList(){
-        Core.get('/api/assembly/list', {sourceCodeId: id}, function(msg){
+        Core.get('/api/assembly/assemblyLines', {projectId: id}, function(msg){
             console.log('流水线', msg);
             $("#assemblyList").html(template('assemblyListTemplate', msg));
 
@@ -248,7 +248,7 @@
     var pageNo = 1;
     var pageSize = 10;
     function queryAssemblyLogList(){
-        Core.get('/api/assembly/logList', {sourceCodeId: id, pageNo: pageNo, pageSize: pageSize}, function(msg){
+        Core.get('/api/assembly/assemblyLineLogs', {projectId: id, pageNo: pageNo, pageSize: pageSize}, function(msg){
             console.log('流水线执行记录', msg);
             $("#assemblyLogList").html(template('assemblyLogListTemplate', msg.data));
         });
@@ -276,7 +276,7 @@
 
     function startRun(){
         if($("#assemblyRunForm").valid()){
-            Core.post('/api/assembly/start', $("#assemblyRunForm").serializeData(), function(msg){
+            Core.post('/api/assembly/startAssemblyLine', $("#assemblyRunForm").serializeData(), function(msg){
                 console.log('运行流水线', msg);
                 if(msg.status == 200){
                     $("#assemblyRunContent").modal('hide');

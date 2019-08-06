@@ -48,9 +48,24 @@ public class ProjectPackageService {
         return projectPackageRepository.findAll(pageable);
     }
 
-    public ProjectPackageEntity getFirstBySha1OrderByIdDesc(String sha1){
-        return projectPackageRepository.getFirstBySha1OrderByIdDesc(sha1);
+    /**
+     * 根据文件的sha1 查找 只能用来判断上传的文件是否重复
+     * @param sha1
+     * @return
+     */
+    public ProjectPackageEntity getFirstByFileSha1OrderByIdDesc(String sha1){
+        return projectPackageRepository.getFirstByFileSha1OrderByIdDesc(sha1);
     }
+
+    /**
+     * 根据内部具体文件的sha1生成的总的sha1
+     * @param sha1
+     * @return
+     */
+    public ProjectPackageEntity getFirstByFileListSha1OrderByIdDesc(String sha1){
+        return projectPackageRepository.getFirstByFileListSha1OrderByIdDesc(sha1);
+    }
+
 
     public ProjectPackageEntity create(ProjectPackageEntity model, CommonsMultipartFile fileData) throws IOException {
         String fileType = fileData.getOriginalFilename().substring(fileData.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase();
@@ -61,7 +76,7 @@ public class ProjectPackageService {
             List<PathSha1Info> list = FileListSha1Util.list(destFile);
             model.setFileList(list);
             model.setFilePath(destFile.getAbsolutePath());
-            model.setSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
+            model.setFileSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
             model.setSuffix(fileType);
             projectPackageRepository.save(model);
             logger.info("保存更新包,projectId={}, filePath={}", model.getProjectId(), model.getFilePath());
@@ -107,7 +122,7 @@ public class ProjectPackageService {
 
         }
         projectPackageEntity.setFilePath(destFile.getAbsolutePath());
-        projectPackageEntity.setSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
+        projectPackageEntity.setFileSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
         projectPackageEntity.setSuffix(fileType);
 
         projectPackageEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));

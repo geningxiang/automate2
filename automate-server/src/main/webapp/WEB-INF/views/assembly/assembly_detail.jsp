@@ -60,7 +60,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">代码仓库ID</label>
                             <div class="col-sm-10">
-                                <form:input path="assemblyLineEntity.sourceCodeId" cssClass="form-control"/>
+                                <form:input path="assemblyLineEntity.projectId" cssClass="form-control" readonly="true"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -101,12 +101,12 @@
                 <header class="panel-heading clearfix">
                     步骤
                     <div class="btn-group pull-right">
-                        <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button" aria-expanded="false"> 新增任务 <i class="fa fa-plus"></i> </button>
+                        <button data-toggle="dropdown" class="btn btn-success dropdown-toggle" type="button" aria-expanded="false"> 新增步骤 <i class="fa fa-plus"></i> </button>
                         <ul class="dropdown-menu">
-                            <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.MavenAssemblyStepTask')">Maven任务</a></li>
-                            <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.ExecAssemblyStepTask')">自定义Exec任务</a></li>
-                            <li><a href="javascript:addTask('com.automate.task.background.assembly.impl.PackageExtractAssemblyStepTask')">文件包提取任务</a></li>
-                            <li><a href="javascript:addTask(com.automate.task.background.impl.ApplicationUpdateAssemblyStepTask)">应用更新任务</a></li>
+                            <li><a href="javascript:addTask('com.automate.task.background.build.impl.ShellHandler')">Shell脚本</a></li>
+
+                            <li><a href="javascript:addTask('com.automate.task.background.build.impl.PackageHandler')">提取制品</a></li>
+
                         </ul>
                     </div>
                 </header>

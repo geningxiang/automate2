@@ -1,20 +1,12 @@
 !function (window, $) {
     var ASSEMBLY_MAP = {
-        'com.automate.task.background.assembly.impl.MavenAssemblyStepTask': {
-            name: 'Maven任务',
-            tpl: '/resources/assets/assembly/mavenTask.tpl'
-        },
-        'com.automate.task.background.assembly.impl.ExecAssemblyStepTask': {
-            name: '自定义Exec任务',
+        'com.automate.task.background.build.impl.ShellHandler': {
+            name: 'Shell脚本',
             tpl: '/resources/assets/assembly/execTask.tpl'
         },
-        'com.automate.task.background.assembly.impl.PackageExtractAssemblyStepTask': {
+        'com.automate.task.background.build.impl.PackageHandler': {
             name: '文件包提取任务',
             tpl: '/resources/assets/assembly/packageExtractTask.tpl'
-        },
-        'com.automate.task.background.assembly.impl.ApplicationUpdateAssemblyStepTask': {
-            name: '应用更新任务',
-            tpl: '/resources/assets/assembly/applicationUpdateTask.tpl'
         }
     }
 
@@ -70,13 +62,19 @@
     var keyIndex = 1;
     window.AssemblyUtil = {
         init: function (jsonStr) {
+            var temp = [];
             var jsonArray = [];
             try {
-                jsonArray = JSON.parse(jsonStr.replace(/[\r]/g, "\\r").replace(/[\n]/g, "\\n"));
-                console.log(jsonArray);
+                temp = JSON.parse(jsonStr.replace(/[\r]/g, "\\r").replace(/[\n]/g, "\\n"));
+                console.log(temp);
+                //TODO 暂时不考虑分步骤的概念  页面太花时间
+                if (temp.length > 0) {
+                    jsonArray = temp[0].steps;
+                }
             } catch (e) {
                 console.warn(e);
             }
+
 
             var item;
             for (var i = 0; i < jsonArray.length; i++) {
@@ -126,8 +124,14 @@
                 for (var key in tempMap) {
                     list.push(tempMap[key]);
                 }
-                data.config = JSON.stringify(list);
+                var life1 = {
+                    "lifeName": "default",
+                    "steps": list
+                };
+
+                data.config = JSON.stringify([life1]);
                 console.log(data);
+
 
                 $.post('/api/assembly/assemblyLine', data, function (msg) {
                     console.log(msg);
