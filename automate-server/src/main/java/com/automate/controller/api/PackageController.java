@@ -1,14 +1,11 @@
 package com.automate.controller.api;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.automate.common.ResponseEntity;
 import com.automate.common.SessionUser;
 import com.automate.common.SessionUserManager;
 import com.automate.controller.BaseController;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.service.ProjectPackageService;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,20 +48,19 @@ public class PackageController extends BaseController {
     }
 
     @RequestMapping(value = "/packageUpload", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ResponseEntity packageUpload(ProjectPackageEntity model, @RequestParam("fileData") CommonsMultipartFile fileData, HttpServletRequest request) {
+    public ResponseEntity packageUpload(Integer projectId, String version, String branch, String remark, Integer type, @RequestParam("fileData") CommonsMultipartFile fileData, HttpServletRequest request) {
         SessionUser sessionUser = SessionUserManager.getSessionUser(request);
-        if(sessionUser == null){
+        if (sessionUser == null) {
             return ResponseEntity.of(HttpStatus.UNAUTHORIZED, "请登录");
         }
-        //查询是否有重复
-        String sha1 = DigestUtils.sha1Hex(fileData.getBytes());
-        ProjectPackageEntity projectPackageEntity = projectPackageService.getFirstByFileSha1OrderByIdDesc(sha1);
-        if(projectPackageEntity != null){
-            return ResponseEntity.of(HttpStatus.CONFLICT, "文件SHA1已存在", projectPackageEntity);
+
+        ProjectPackageEntity.Type t = ProjectPackageEntity.Type.valueOf(type);
+        if (t == ProjectPackageEntity.Type.UNKNOWN) {
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "请指定更新类型");
         }
         try {
-            model.setUserId(sessionUser.getAdminUser().getId());
-            projectPackageService.create(model, fileData);
+
+            projectPackageService.createByUpload(projectId, version, branch, "", remark, fileData, t, sessionUser.getAdminUser().getId());
             return ResponseEntity.ok("上传成功", null);
         } catch (IOException e) {
             e.printStackTrace();

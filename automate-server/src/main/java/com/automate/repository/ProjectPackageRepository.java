@@ -15,14 +15,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProjectPackageRepository extends PagingAndSortingRepository<ProjectPackageEntity, Integer>, JpaSpecificationExecutor<ProjectPackageEntity> {
 
-    /**
-     * 根据文件的sha1查找包
-     * @param sha1
-     * @return
-     */
-    ProjectPackageEntity getFirstByFileSha1OrderByIdDesc(String sha1);
+
+    ProjectPackageEntity getFirstBySha1OrderByIdDesc(String sha1);
 
 
-    ProjectPackageEntity getFirstByFileListSha1OrderByIdDesc(String sha1);
 
 }

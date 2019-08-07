@@ -1,16 +1,7 @@
 package com.automate.entity;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.automate.vo.PathSha1Info;
-import org.apache.commons.codec.digest.DigestUtils;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,7 +16,7 @@ public class ProjectPackageEntity {
     /**
      * 更新类型
      */
-    public enum Type{
+    public enum Type {
         /**
          * 未知  只是占个位
          */
@@ -37,7 +28,14 @@ public class ProjectPackageEntity {
         /**
          * 增量更新
          */
-        PART
+        PART;
+
+        public static Type valueOf(Integer type) {
+            if (type != null && type >= 0 && type <= Type.values().length) {
+                return Type.values()[type];
+            }
+            return UNKNOWN;
+        }
     }
 
     private int id;
@@ -75,25 +73,16 @@ public class ProjectPackageEntity {
     private String filePath;
 
     /**
-     * 不是很有用 war、zip 每次打包都会有不同的sha1
-     */
-    private String fileSha1;
-
-    /**
      * 文件后缀
      */
     private String suffix;
 
-    /**
-     * 文件列表
-     */
-    private String fileList;
-
 
     /**
-     * 应为已该字段作为主要依据
+     * 根据 fileList 计算出来的 sha1
+     * @see FileListShaEntity#getSha1()
      */
-    private String fileListSha1;
+    private String sha1;
 
     /**
      * 版本号
@@ -113,7 +102,6 @@ public class ProjectPackageEntity {
      * type == UPLOAD 时 上传用户ID
      */
     private Integer userId;
-
 
 
     @Id
@@ -147,7 +135,7 @@ public class ProjectPackageEntity {
     }
 
     public void setType(Type type) {
-        if(type != null) {
+        if (type != null) {
             this.type = type.ordinal();
         }
     }
@@ -194,12 +182,12 @@ public class ProjectPackageEntity {
 
     @Basic
     @Column(name = "SHA1", nullable = true, length = 255)
-    public String getFileSha1() {
-        return fileSha1;
+    public String getSha1() {
+        return sha1;
     }
 
-    public void setFileSha1(String fileSha1) {
-        this.fileSha1 = fileSha1;
+    public void setSha1(String sha1) {
+        this.sha1 = sha1;
     }
 
     @Basic
@@ -210,36 +198,6 @@ public class ProjectPackageEntity {
 
     public void setSuffix(String suffix) {
         this.suffix = suffix;
-    }
-
-    @Basic
-    @Column(name = "FILE_LIST", nullable = true, length = -1)
-    public String getFileList() {
-        return fileList;
-    }
-
-    @Deprecated
-    public void setFileList(String fileList) {
-        this.fileList = fileList;
-    }
-
-    public void setFileList(List<PathSha1Info> list){
-        this.fileList = JSON.toJSONString(list);
-        Map<String, String> map = new TreeMap();
-        for (PathSha1Info pathSha1Info : list) {
-            map.put(pathSha1Info.getPath(), pathSha1Info.getSha1());
-        }
-        this.fileListSha1 = DigestUtils.sha1Hex(JSON.toJSONString(map));
-    }
-
-    @Basic
-    @Column(name = "FILE_LIST_SHA1", nullable = true, length = 255)
-    public String getFileListSha1() {
-        return fileListSha1;
-    }
-
-    public void setFileListSha1(String fileListSha1) {
-        this.fileListSha1 = fileListSha1;
     }
 
     @Basic
@@ -271,7 +229,6 @@ public class ProjectPackageEntity {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
-
 
 
 }

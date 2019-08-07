@@ -132,8 +132,8 @@
             <td>{{item.sha1}}</td>
             <td>{{ item.userId || '后台构建' }}</td>
             <td>
-                <button class="btn btn-success btn-xs" onclick="showFileList('{{item.id}}')">
-                    <i class="fa fa-files-o"></i> 文件列表
+                <button class="btn btn-success btn-xs" onclick="downFileListTxt('{{item.sha1}}')">
+                    <i class="fa fa-files-o"></i> 下载文件列表
                 </button>
 
                 <button class="btn btn-success btn-xs" onclick="">
@@ -144,33 +144,6 @@
         {{/each}}
     </table>
     {{@pageFooter($data)}}
-</script>
-
-<script id="fileListModelContentTemplate" type="text/html">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">{{packagePath}}</h4>
-    </div>
-    <div class="modal-body">
-        <table class="table table-advance table-hover">
-            <thead>
-            <tr>
-                <th>路径</th>
-                <th>SHA1</th>
-                <th>大小</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{each fileArray item i}}
-            <tr>
-                <td><p>{{item.path}}</p></td>
-                <td><p>{{item.sha1}}</p></td>
-                <td><p>{{item.size}}</p></td>
-            </tr>
-            {{/each}}
-            </tbody>
-        </table>
-    </div>
 </script>
 
 <jsp:include page="../common/common_js.jsp"></jsp:include>
@@ -214,18 +187,9 @@
         queryList();
     });
 
-    function showFileList(id) {
-        var item = cacheMap[id];
-        console.log('showFileList', item);
-        if (item) {
-            var fileArray = JSON.parse(item.fileList);
-            $("#fileListModelContent").html(template('fileListModelContentTemplate', {
-                packagePath: item.packagePath,
-                fileArray: fileArray
-            }));
-
-            $('#fileListModal').modal('show');
-        }
+    function downFileListTxt(sha1){
+        if(sha1)
+        window.open('/api/fileListSha/down/txt/'+sha1);
     }
 
     function showUpload() {

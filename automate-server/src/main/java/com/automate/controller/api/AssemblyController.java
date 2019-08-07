@@ -161,8 +161,25 @@ public class AssemblyController extends BaseController {
         if (id == null || id <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
         }
+        Optional<AssemblyLineLogEntity> assemblyLineLogEntity = assemblyLineLogService.getModel(id);
+        if(assemblyLineLogEntity.isPresent()){
+            return ResponseEntity.ok(assemblyLineLogEntity.get());
+        } else {
+            return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的执行日志");
+        }
+    }
+
+    /**
+     *
+     * @param id 流水线任务ID
+     * @return
+     */
+    @RequestMapping(value = "/assemblyLineTaskLogs", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity assemblyLineTaskLogList(Integer id) {
+        if (id == null || id <= 0) {
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
+        }
         List<AssemblyLineTaskLogEntity> list = assemblyLineTaskLogService.findAllByAssemblyLineLogId(id);
         return ResponseEntity.ok(list);
     }
-
 }

@@ -23,16 +23,9 @@
             </ul>
         </li>
         <li class="sub-menu">
-            <a href="javascript:;"> <i class="fa fa-youtube-play"></i> <span>构建</span> </a>
-            <ul class="sub">
-                <li><a href="/admin/assembly/list" target="mainContent">流水线</a></li>
-                <li><a href="/admin/assembly/assemblyLoglist" target="mainContent">构建记录</a></li>
-            </ul>
-        </li>
-        <li class="sub-menu">
             <a href="javascript:;"> <i class="fa fa-bullhorn"></i> <span>发布</span> </a>
             <ul class="sub">
-                <li><a href="/admin/package/list" target="mainContent">包列表</a></li>
+                <li><a href="/admin/package/list" target="mainContent">制品列表</a></li>
                 <li><a href="javascript:alert('开发中');" target="mainContent">发布申请</a></li>
                 <li><a href="javascript:alert('开发中');" target="mainContent">更新记录</a></li>
             </ul>

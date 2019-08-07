@@ -59,9 +59,9 @@ public class PackageHandler implements IBuildHandler {
         content.append("开始提取文件包:").append(this.path).append(System.lineSeparator());
 
         try {
-            ProjectPackageEntity applicationPackageEntity = projectPackageService.create(projectId, version, branch, commitId, "后台构建生成", file, ProjectPackageEntity.Type.WHOLE, 0);
+            ProjectPackageEntity projectPackageEntity = projectPackageService.createByBuild(projectId, version, branch, commitId, "后台构建生成", file);
 
-            content.append("包目标路径:").append(applicationPackageEntity.getFilePath()).append(System.lineSeparator());
+            content.append("包目标路径:").append(projectPackageEntity.getFilePath()).append(System.lineSeparator());
 
             return true;
         } catch (IOException e) {

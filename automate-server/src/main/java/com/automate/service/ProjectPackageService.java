@@ -3,7 +3,9 @@ package com.automate.service;
 import com.automate.common.SystemConfig;
 import com.automate.common.utils.FileListSha1Util;
 import com.automate.common.utils.ZipUtil;
+import com.automate.entity.FileListShaEntity;
 import com.automate.entity.ProjectPackageEntity;
+import com.automate.repository.FileListShaRepository;
 import com.automate.repository.ProjectPackageRepository;
 import com.automate.vo.PathSha1Info;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -40,8 +42,16 @@ public class ProjectPackageService {
     @Autowired
     private ProjectPackageRepository projectPackageRepository;
 
-    public Optional<ProjectPackageEntity> findById(int id){
+    @Autowired
+    private FileListShaRepository fileListShaRepository;
+
+    public Optional<ProjectPackageEntity> findById(int id) {
         return projectPackageRepository.findById(id);
+    }
+
+
+    public Iterable<ProjectPackageEntity> findAll() {
+        return projectPackageRepository.findAll();
     }
 
     public Page<ProjectPackageEntity> findAll(Pageable pageable) {
@@ -49,41 +59,67 @@ public class ProjectPackageService {
     }
 
     /**
-     * 根据文件的sha1 查找 只能用来判断上传的文件是否重复
-     * @param sha1
-     * @return
-     */
-    public ProjectPackageEntity getFirstByFileSha1OrderByIdDesc(String sha1){
-        return projectPackageRepository.getFirstByFileSha1OrderByIdDesc(sha1);
-    }
-
-    /**
      * 根据内部具体文件的sha1生成的总的sha1
      * @param sha1
      * @return
      */
-    public ProjectPackageEntity getFirstByFileListSha1OrderByIdDesc(String sha1){
-        return projectPackageRepository.getFirstByFileListSha1OrderByIdDesc(sha1);
+    public ProjectPackageEntity getFirstBySha1OrderByIdDesc(String sha1) {
+        return projectPackageRepository.getFirstBySha1OrderByIdDesc(sha1);
     }
 
 
-    public ProjectPackageEntity create(ProjectPackageEntity model, CommonsMultipartFile fileData) throws IOException {
+    /**
+     * 手动上传  创建项目文件包
+     * @param projectId
+     * @param version
+     * @param branch
+     * @param commitId
+     * @param remark
+     * @param fileData
+     * @param type
+     * @param userId
+     * @return
+     * @throws IOException
+     */
+    public ProjectPackageEntity createByUpload(int projectId, String version, String branch, String commitId, String remark,  CommonsMultipartFile fileData, ProjectPackageEntity.Type type, int userId) throws IOException {
         String fileType = fileData.getOriginalFilename().substring(fileData.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase();
         if ("war".equals(fileType) || "zip".equals(fileType)) {
-            //读取文件列表
-            File destFile = new File(buildFilePath(model.getProjectId(), fileType));
+            //创建一个文件 用来存产出物
+            File destFile = new File(buildFilePath(projectId, fileType));
+            //转存文件
             fileData.transferTo(destFile);
-            List<PathSha1Info> list = FileListSha1Util.list(destFile);
-            model.setFileList(list);
-            model.setFilePath(destFile.getAbsolutePath());
-            model.setFileSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
-            model.setSuffix(fileType);
-            projectPackageRepository.save(model);
-            logger.info("保存更新包,projectId={}, filePath={}", model.getProjectId(), model.getFilePath());
-            return model;
+            return create(projectId, version, branch, commitId, remark, destFile, type, userId);
         } else {
             throw new IllegalArgumentException("不支持的文件后缀,当前仅支持war、zip");
         }
+    }
+
+    /**
+     * 自动构建 创建项目文件包
+     * @param projectId
+     * @param version
+     * @param branch
+     * @param commitId
+     * @param remark
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public ProjectPackageEntity createByBuild(int projectId, String version, String branch, String commitId, String remark, File file) throws IOException {
+        String fileType;
+        File destFile;
+        if (file.isDirectory()) {
+            //文件夹 打包成zip
+            fileType = "zip";
+            destFile = new File(buildFilePath(projectId, fileType));
+            ZipUtil.compress(file, destFile);
+        } else {
+            //非文件夹  复制文件
+            fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
+            destFile = new File(buildFilePath(projectId, fileType));
+            FileUtils.copyFile(file, destFile);
+        }
+        return create(projectId, version, branch, commitId, remark, destFile, ProjectPackageEntity.Type.WHOLE, 0);
     }
 
     /**
@@ -99,37 +135,39 @@ public class ProjectPackageService {
      * @return
      * @throws IOException
      */
-    public ProjectPackageEntity create(int projectId, String version, String branch, String commitId, String remark, File file, ProjectPackageEntity.Type type, int userId) throws IOException {
-        ProjectPackageEntity projectPackageEntity = buildProjectPackageEntity(projectId, version, branch, commitId, remark, type, userId);
-
+    private ProjectPackageEntity create(int projectId, String version, String branch, String commitId, String remark, File file, ProjectPackageEntity.Type type, int userId) throws IOException {
         //读取文件列表
         List<PathSha1Info> list = FileListSha1Util.list(file);
-        projectPackageEntity.setFileList(list);
+        String fileList = FileListSha1Util.parseToFileList(list);
+        String sha1 = DigestUtils.sha1Hex(fileList);
 
-        String fileType;
-        File destFile;
-        if (file.isDirectory()) {
-            //文件夹 打包成zip
-            fileType = "zip";
-            destFile = new File(buildFilePath(projectId, fileType));
-            ZipUtil.compress(file, destFile);
-
-        } else {
-            //非文件夹  复制文件
-            fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-            destFile = new File(buildFilePath(projectId, fileType));
-            FileUtils.copyFile(file, destFile);
-
+        ProjectPackageEntity local = this.getFirstBySha1OrderByIdDesc( sha1);
+        if(local != null){
+            file.delete();
+            throw new IllegalArgumentException("sha1已存在:"+ sha1);
         }
-        projectPackageEntity.setFilePath(destFile.getAbsolutePath());
-        projectPackageEntity.setFileSha1(DigestUtils.sha1Hex(new FileInputStream(destFile)));
-        projectPackageEntity.setSuffix(fileType);
 
-        projectPackageEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        //保存 sha1 fileList关系
+        this.saveSha1AndFileList(sha1, fileList);
+
+        ProjectPackageEntity projectPackageEntity = buildProjectPackageEntity(projectId, version, branch, commitId, remark, type, userId);
+        projectPackageEntity.setFilePath(file.getAbsolutePath());
+        projectPackageEntity.setSha1(sha1);
+        String fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
+        projectPackageEntity.setSuffix(fileType);
         projectPackageRepository.save(projectPackageEntity);
         logger.info("保存更新包,projectId={}, filePath={}", projectId, projectPackageEntity.getFilePath());
         return projectPackageEntity;
     }
+
+    private void saveSha1AndFileList(String sha1, String fileList){
+        FileListShaEntity fileListShaEntity = new FileListShaEntity();
+        fileListShaEntity.setSha1(sha1);
+        fileListShaEntity.setFileList(fileList);
+        fileListShaEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        fileListShaRepository.save(fileListShaEntity);
+    }
+
 
     private ProjectPackageEntity buildProjectPackageEntity(int projectId, String version, String branch, String commitId, String remark, ProjectPackageEntity.Type type, int userId) {
         ProjectPackageEntity projectPackageEntity = new ProjectPackageEntity();

@@ -19,7 +19,7 @@ public class SimHashTest {
 
 
     public static void main(String[] args) throws IOException {
-        LinkedList<PathSha1Info> list1 = FileListSha1Util.list(new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2"));
+        List<PathSha1Info> list1 = FileListSha1Util.list(new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2"));
 
         List<String> datas1 = new ArrayList(list1.size());
         for (PathSha1Info pathSha1Info : list1) {
@@ -32,7 +32,7 @@ public class SimHashTest {
         System.out.println(simHash1.simHash());
 
 
-        LinkedList<PathSha1Info> list2 = FileListSha1Util.list(new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2 - 副本"));
+        List<PathSha1Info> list2 = FileListSha1Util.list(new File("D:\\idea-workspace\\automate2\\automate-server\\target\\Automate2 - 副本"));
 
         List<String> datas2 = new ArrayList(list2.size());
         for (PathSha1Info pathSha1Info : list2) {
