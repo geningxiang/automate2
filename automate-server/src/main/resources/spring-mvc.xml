@@ -34,6 +34,8 @@
 
     <!-- 静态资源 -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:resources mapping="/*.ico" location="/"/>
+
 
     <!-- 自定义拦截器 -->
     <mvc:interceptors>
