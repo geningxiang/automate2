@@ -34,7 +34,9 @@ public class ExecCommand {
      */
     private File dir;
 
-    private StringBuffer out = new StringBuffer(2048);
+    private StringBuffer msg = new StringBuffer(1024);
+    private StringBuffer error = new StringBuffer(1024);
+
 
     /**
      * 返回状态码
@@ -88,16 +90,16 @@ public class ExecCommand {
     }
 
     public void inputRead(String line) {
-        this.out.append(line).append(System.lineSeparator());
+        this.msg.append(line).append(System.lineSeparator());
         if (this.cmdStreamMonitor != null) {
             this.cmdStreamMonitor.onMsg(line);
         }
     }
 
     public void errorRead(String line) {
-        this.out.append(line).append(System.lineSeparator());
+        this.error.append(line).append(System.lineSeparator());
         if (this.cmdStreamMonitor != null) {
-            this.cmdStreamMonitor.onMsg(line);
+            this.cmdStreamMonitor.onError(line);
         }
     }
 
@@ -136,7 +138,17 @@ public class ExecCommand {
     }
 
     public StringBuffer getOut() {
+        StringBuffer out = new StringBuffer(this.msg);
+        out.append(this.error);
         return out;
+    }
+
+    public StringBuffer getMsg() {
+        return msg;
+    }
+
+    public StringBuffer getError() {
+        return error;
     }
 
     public int getExitValue() {

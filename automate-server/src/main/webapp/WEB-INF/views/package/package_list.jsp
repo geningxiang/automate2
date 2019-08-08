@@ -109,7 +109,7 @@
             <th>备注</th>
             <th>创建时间</th>
             <th>文件类型</th>
-            <th>SHA1</th>
+            <th>sha256</th>
             <th>上传人</th>
             <th>操作</th>
         </tr>
@@ -129,10 +129,10 @@
             <td>{{item.remark}}</td>
             <td>{{dateFormat(item.createTime, 'yyyy-MM-dd HH:mm:ss')}}</td>
             <td>{{item.suffix}}</td>
-            <td>{{item.sha1}}</td>
+            <td>{{item.sha256}}</td>
             <td>{{ item.userId || '后台构建' }}</td>
             <td>
-                <button class="btn btn-success btn-xs" onclick="downFileListTxt('{{item.sha1}}')">
+                <button class="btn btn-success btn-xs" onclick="downFileListTxt('{{item.sha256}}')">
                     <i class="fa fa-files-o"></i> 下载文件列表
                 </button>
 
@@ -187,9 +187,9 @@
         queryList();
     });
 
-    function downFileListTxt(sha1){
-        if(sha1)
-        window.open('/api/fileListSha/down/txt/'+sha1);
+    function downFileListTxt(sha256){
+        if(sha256)
+        window.open('/api/download/fileListSha/txt/'+sha256);
     }
 
     function showUpload() {

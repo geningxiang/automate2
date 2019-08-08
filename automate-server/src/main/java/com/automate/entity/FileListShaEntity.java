@@ -14,18 +14,18 @@ import java.util.Objects;
 @Table(name = "CA2_FILE_LIST_SHA")
 public class FileListShaEntity {
 
-    private String sha1;
+    private String sha256;
     private String fileList;
     private Timestamp createTime;
 
     @Id
-    @Column(name = "SHA1", nullable = false, length = 64)
-    public String getSha1() {
-        return sha1;
+    @Column(name = "SHA256", nullable = false, length = 64)
+    public String getSha256() {
+        return sha256;
     }
 
-    public void setSha1(String sha1) {
-        this.sha1 = sha1;
+    public void setSha256(String sha256) {
+        this.sha256 = sha256;
     }
 
     @Basic

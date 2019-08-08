@@ -95,13 +95,6 @@
             <version>1.1.12</version>
         </dependency>
 
-        <!--
-        <dependency>
-          <groupId>com.microsoft.sqlserver</groupId>
-          <artifactId>mssql-jdbc</artifactId>
-          <version>6.3.6.jre8-preview</version>
-        </dependency>
-        -->
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>

@@ -44,9 +44,9 @@ public class ApplicationUpdateApplyEntity {
 
     /**
      * 容器ID
-     * @see ContainerEntity#getId()
+     * @see ApplicationEntity#getId()
      */
-    private Integer containerId;
+    private Integer applicationId;
 
     /**
      * 容器代码文件的 MD5列表
@@ -114,13 +114,13 @@ public class ApplicationUpdateApplyEntity {
     }
 
     @Basic
-    @Column(name = "CONTAINER_ID", nullable = true)
-    public Integer getContainerId() {
-        return containerId;
+    @Column(name = "APPLICATION_ID", nullable = true)
+    public Integer getApplicationId() {
+        return applicationId;
     }
 
-    public void setContainerId(Integer containerId) {
-        this.containerId = containerId;
+    public void setApplicationId(Integer applicationId) {
+        this.applicationId = applicationId;
     }
 
     @Basic

@@ -1,13 +1,13 @@
 package com.automate.service;
 
 import com.automate.common.SystemConfig;
-import com.automate.common.utils.FileListSha1Util;
+import com.automate.common.utils.FileListSha256Util;
 import com.automate.common.utils.ZipUtil;
 import com.automate.entity.FileListShaEntity;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.repository.FileListShaRepository;
 import com.automate.repository.ProjectPackageRepository;
-import com.automate.vo.PathSha1Info;
+import com.automate.vo.PathSha256Info;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -59,12 +58,12 @@ public class ProjectPackageService {
     }
 
     /**
-     * 根据内部具体文件的sha1生成的总的sha1
-     * @param sha1
+     * 根据内部具体文件的sha256生成的总的sha256
+     * @param sha256
      * @return
      */
-    public ProjectPackageEntity getFirstBySha1OrderByIdDesc(String sha1) {
-        return projectPackageRepository.getFirstBySha1OrderByIdDesc(sha1);
+    public ProjectPackageEntity getFirstBySha256OrderByIdDesc(String sha256) {
+        return projectPackageRepository.getFirstBySha256OrderByIdDesc(sha256);
     }
 
 
@@ -81,7 +80,7 @@ public class ProjectPackageService {
      * @return
      * @throws IOException
      */
-    public ProjectPackageEntity createByUpload(int projectId, String version, String branch, String commitId, String remark,  CommonsMultipartFile fileData, ProjectPackageEntity.Type type, int userId) throws IOException {
+    public ProjectPackageEntity createByUpload(int projectId, String version, String branch, String commitId, String remark, CommonsMultipartFile fileData, ProjectPackageEntity.Type type, int userId) throws IOException {
         String fileType = fileData.getOriginalFilename().substring(fileData.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase();
         if ("war".equals(fileType) || "zip".equals(fileType)) {
             //创建一个文件 用来存产出物
@@ -137,22 +136,23 @@ public class ProjectPackageService {
      */
     private ProjectPackageEntity create(int projectId, String version, String branch, String commitId, String remark, File file, ProjectPackageEntity.Type type, int userId) throws IOException {
         //读取文件列表
-        List<PathSha1Info> list = FileListSha1Util.list(file);
-        String fileList = FileListSha1Util.parseToFileList(list);
-        String sha1 = DigestUtils.sha1Hex(fileList);
+        List<PathSha256Info> list = FileListSha256Util.list(file);
+        String fileList = FileListSha256Util.parseToFileList(list);
 
-        ProjectPackageEntity local = this.getFirstBySha1OrderByIdDesc( sha1);
-        if(local != null){
+        String sha256 = DigestUtils.sha256Hex(fileList);
+
+        ProjectPackageEntity local = this.getFirstBySha256OrderByIdDesc(sha256);
+        if (local != null) {
             file.delete();
-            throw new IllegalArgumentException("sha1已存在:"+ sha1);
+            throw new IllegalArgumentException("sha256已存在:" + sha256);
         }
 
-        //保存 sha1 fileList关系
-        this.saveSha1AndFileList(sha1, fileList);
+        //保存 sha256 fileList关系
+        this.saveSha256AndFileList(sha256, fileList);
 
         ProjectPackageEntity projectPackageEntity = buildProjectPackageEntity(projectId, version, branch, commitId, remark, type, userId);
         projectPackageEntity.setFilePath(file.getAbsolutePath());
-        projectPackageEntity.setSha1(sha1);
+        projectPackageEntity.setSha256(sha256);
         String fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
         projectPackageEntity.setSuffix(fileType);
         projectPackageRepository.save(projectPackageEntity);
@@ -160,9 +160,9 @@ public class ProjectPackageService {
         return projectPackageEntity;
     }
 
-    private void saveSha1AndFileList(String sha1, String fileList){
+    private void saveSha256AndFileList(String sha256, String fileList) {
         FileListShaEntity fileListShaEntity = new FileListShaEntity();
-        fileListShaEntity.setSha1(sha1);
+        fileListShaEntity.setSha256(sha256);
         fileListShaEntity.setFileList(fileList);
         fileListShaEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         fileListShaRepository.save(fileListShaEntity);

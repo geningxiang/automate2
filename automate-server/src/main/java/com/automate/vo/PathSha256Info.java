@@ -8,17 +8,17 @@ import java.io.File;
  * @author genx
  * @date 2019/6/7 19:28
  */
-public class PathSha1Info {
+public class PathSha256Info {
 
     private static final String BACKSLASH = "\\";
     private static final String SLASH = "/";
 
 
     private String path;
-    private String sha1;
+    private String sha256;
     private long size;
 
-    public PathSha1Info(String path, String sha1, long size) {
+    public PathSha256Info(String path, String sha256, long size) {
         if (BACKSLASH.equals(File.separator)) {
             //window环境下的特殊处理    \\ 转 /
             this.path = path.replace(BACKSLASH, SLASH);
@@ -26,7 +26,7 @@ public class PathSha1Info {
             this.path = path;
         }
 
-        this.sha1 = sha1;
+        this.sha256 = sha256;
         this.size = size;
     }
 
@@ -34,8 +34,8 @@ public class PathSha1Info {
         return path;
     }
 
-    public String getSha1() {
-        return sha1;
+    public String getSha256() {
+        return sha256;
     }
 
     public long getSize() {

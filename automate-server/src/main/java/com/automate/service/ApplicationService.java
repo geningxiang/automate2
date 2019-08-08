@@ -34,8 +34,6 @@ public class ApplicationService {
 
     public void doUpdate(ProjectPackageEntity projectPackageEntity, ApplicationEntity applicationEntity){
 
-
-
     }
 
     public Page<ApplicationEntity> findAll(Pageable pageable) {
@@ -49,7 +47,7 @@ public class ApplicationService {
     /**
      * 查询对象
      **/
-    public Optional<ApplicationEntity> getModel(int id) {
+    public Optional<ApplicationEntity> findById(int id) {
         return applicationRepository.findById(id);
     }
 
@@ -84,16 +82,24 @@ public class ApplicationService {
         return containerOperation(containerEntity.getServerId(), containerEntity.getScriptCheck());
     }
 
-    public static List<String[]> fileMd5List(ApplicationEntity containerEntity) throws Exception {
-        Assert.hasText(containerEntity.getSourceDir(), "当前未配置容器内容文件夹");
-        ServerEntity serverEntity = ServerService.getModelByCache(containerEntity.getServerId());
+    public static List<String[]> fileMd5List(ApplicationEntity applicationEntity) throws Exception {
+        Assert.hasText(applicationEntity.getSourceDir(), "当前未配置容器内容文件夹");
+        ServerEntity serverEntity = ServerService.getModelByCache(applicationEntity.getServerId());
         Assert.notNull(serverEntity, "未找到相应的服务器");
         SSHSession sshSession = new SSHSession(serverEntity);
-        return SSHUtil.md5sum(sshSession, containerEntity.getSourceDir());
-
+        return SSHUtil.md5sum(sshSession, applicationEntity.getSourceDir());
     }
 
-    public static ExecCommand containerOperation(Integer serverId, String script) throws Exception {
+    public static List<String[]> fileSha256List(ApplicationEntity applicationEntity) throws Exception {
+        Assert.hasText(applicationEntity.getSourceDir(), "当前未配置容器内容文件夹");
+        ServerEntity serverEntity = ServerService.getModelByCache(applicationEntity.getServerId());
+        Assert.notNull(serverEntity, "未找到相应的服务器");
+        SSHSession sshSession = new SSHSession(serverEntity);
+        return SSHUtil.sha256sum(sshSession, applicationEntity.getSourceDir());
+    }
+
+
+    private static ExecCommand containerOperation(Integer serverId, String script) throws Exception {
         ServerEntity serverEntity = ServerService.getModelByCache(serverId);
         Assert.notNull(serverEntity, "未找到相应的服务器");
         SSHSession sshSession = new SSHSession(serverEntity);

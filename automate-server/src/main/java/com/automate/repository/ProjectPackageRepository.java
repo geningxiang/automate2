@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 public interface ProjectPackageRepository extends PagingAndSortingRepository<ProjectPackageEntity, Integer>, JpaSpecificationExecutor<ProjectPackageEntity> {
 
 
-    ProjectPackageEntity getFirstBySha1OrderByIdDesc(String sha1);
+    ProjectPackageEntity getFirstBySha256OrderByIdDesc(String sha1);
 
 
 

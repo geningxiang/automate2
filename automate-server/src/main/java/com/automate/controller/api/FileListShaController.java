@@ -1,18 +1,15 @@
 package com.automate.controller.api;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.automate.common.Charsets;
 import com.automate.common.ResponseEntity;
 import com.automate.controller.BaseController;
 import com.automate.entity.FileListShaEntity;
-import com.automate.entity.ProjectPackageEntity;
 import com.automate.service.FileListShaService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,15 +33,30 @@ public class FileListShaController extends BaseController {
     @Autowired
     private FileListShaService fileListShaService;
 
-    @RequestMapping(value = "/fileListSha/down/txt/{sha1}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public void list(@PathVariable("sha1") String sha1,  HttpServletResponse response) throws IOException {
-        if(StringUtils.isBlank(sha1)){
+    @RequestMapping(value = "/fileListSha/{sha256}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<JSONObject> fileListSha(@PathVariable("sha256") String sha256) throws IOException {
+        if (StringUtils.isBlank(sha256)) {
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "sha256 is required");
+        }
+        Optional<FileListShaEntity> model = fileListShaService.findById(sha256);
+        if (!model.isPresent()) {
+            return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的sha1文件树");
+        }
+        JSONObject data = new JSONObject(2);
+        data.put("sha256", sha256);
+        data.put("fileList", JSONArray.parseArray(model.get().getFileList()));
+        return ResponseEntity.ok(data);
+    }
+
+    @RequestMapping(value = "/download/fileListSha/txt/{sha256}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public void txt(@PathVariable("sha256") String sha256, HttpServletResponse response) throws IOException {
+        if (StringUtils.isBlank(sha256)) {
             response.sendError(HttpStatus.BAD_REQUEST.value());
             return;
         }
 
-        Optional<FileListShaEntity> model = fileListShaService.findById(sha1);
-        if(!model.isPresent()){
+        Optional<FileListShaEntity> model = fileListShaService.findById(sha256);
+        if (!model.isPresent()) {
             response.sendError(HttpStatus.NOT_FOUND.value());
             return;
         }
@@ -54,7 +66,7 @@ public class FileListShaController extends BaseController {
         StringBuilder sb = new StringBuilder(102400);
         for (int i = 0; i < jsonArray.size(); i++) {
             item = jsonArray.getJSONArray(i);
-            if(i > 0){
+            if (i > 0) {
                 sb.append("\n");
             }
             sb.append(item.getString(0)).append("\t").append(item.getString(1));
@@ -62,7 +74,7 @@ public class FileListShaController extends BaseController {
         //设置响应头和客户端保存文件名
         response.setCharacterEncoding("utf-8");
         response.setContentType("multipart/form-data");
-        response.setHeader("Content-disposition", "attachment;filename=" + sha1 + ".txt");
+        response.setHeader("Content-disposition", "attachment;filename=" + sha256 + ".txt");
         IOUtils.write(sb.toString(), response.getOutputStream(), Charsets.UTF_8);
 
     }

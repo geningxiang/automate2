@@ -1,12 +1,11 @@
 package com.automate.common.file.compare;
 
-import com.automate.common.utils.FileListSha1Util;
-import com.automate.vo.PathSha1Info;
+import com.automate.common.utils.FileListSha256Util;
+import com.automate.vo.PathSha256Info;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -16,14 +15,14 @@ import java.util.List;
  * @author: genx
  * @date: 2019/4/11 23:12
  */
-public class FileListSha1ComparerTest {
+public class FileListSha256ComparerTest {
 
 
     public static void main(String[] args) throws IOException {
 
-        List<PathSha1Info> list1 = FileListSha1Util.list(new File("E:\\tools\\apache-tomcat-8.5.35"));
+        List<PathSha256Info> list1 = FileListSha256Util.list(new File("E:\\tools\\apache-tomcat-8.5.35"));
 
-        List<PathSha1Info> list2 = FileListSha1Util.list(new File("E:\\tools\\apache-tomcat-9.0.13"));
+        List<PathSha256Info> list2 = FileListSha256Util.list(new File("E:\\tools\\apache-tomcat-9.0.13"));
 
 
         ArrayList<String[]> lst1 = parse(list1);
@@ -54,10 +53,10 @@ public class FileListSha1ComparerTest {
 //        }
     }
 
-    private static ArrayList<String[]> parse(List<PathSha1Info> list) {
+    private static ArrayList<String[]> parse(List<PathSha256Info> list) {
         ArrayList<String[]> result = new ArrayList<>(2048);
-        for (PathSha1Info pathMd5Info : list) {
-            result.add(new String[]{pathMd5Info.getPath(), pathMd5Info.getSha1()});
+        for (PathSha256Info pathMd5Info : list) {
+            result.add(new String[]{pathMd5Info.getPath(), pathMd5Info.getSha256()});
         }
         return result;
     }

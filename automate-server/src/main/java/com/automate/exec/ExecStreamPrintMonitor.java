@@ -19,6 +19,11 @@ public class ExecStreamPrintMonitor implements IExecStreamMonitor {
     }
 
     @Override
+    public void onError(String line) {
+        System.err.println(line);
+    }
+
+    @Override
     public void onEnd(int exitValue) {
         System.out.println("finished " + exitValue);
     }

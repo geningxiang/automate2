@@ -1,7 +1,7 @@
 package com.automate.common.file.compare;
 
 import com.automate.vo.FileComparerResult;
-import com.automate.vo.PathSha1Info;
+import com.automate.vo.PathSha256Info;
 
 import java.util.*;
 
@@ -38,14 +38,14 @@ public class FileListComparer {
 
     }
 
-    public static LinkedList<FileComparerResult> compare(List<PathSha1Info>... fileLists) {
+    public static LinkedList<FileComparerResult> compare(List<PathSha256Info>... fileLists) {
         ArrayList<String[]>[] data = new ArrayList[fileLists.length];
         for (int i = 0; i < fileLists.length; i++) {
 
-            List<PathSha1Info> fileList = fileLists[i];
+            List<PathSha256Info> fileList = fileLists[i];
             ArrayList list = new ArrayList(fileList.size());
-            for (PathSha1Info pathSha1Info : fileList) {
-                list.add(new String[]{pathSha1Info.getPath(), pathSha1Info.getSha1()});
+            for (PathSha256Info pathSha256Info : fileList) {
+                list.add(new String[]{pathSha256Info.getPath(), pathSha256Info.getSha256()});
             }
             data[i] = list;
         }

@@ -82,7 +82,7 @@ public class ProjectPackageEntity {
      * 根据 fileList 计算出来的 sha1
      * @see FileListShaEntity#getSha1()
      */
-    private String sha1;
+    private String sha256;
 
     /**
      * 版本号
@@ -181,13 +181,13 @@ public class ProjectPackageEntity {
     }
 
     @Basic
-    @Column(name = "SHA1", nullable = true, length = 255)
-    public String getSha1() {
-        return sha1;
+    @Column(name = "SHA256", nullable = true, length = 64)
+    public String getSha256() {
+        return sha256;
     }
 
-    public void setSha1(String sha1) {
-        this.sha1 = sha1;
+    public void setSha256(String sha256) {
+        this.sha256 = sha256;
     }
 
     @Basic

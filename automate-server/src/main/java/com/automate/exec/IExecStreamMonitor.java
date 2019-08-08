@@ -21,6 +21,12 @@ public interface IExecStreamMonitor {
     void onMsg(String line);
 
     /**
+     *
+     * @param line
+     */
+    void onError(String line);
+
+    /**
      * 结束
      * @param exitValue
      */

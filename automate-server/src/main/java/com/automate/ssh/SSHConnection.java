@@ -1,21 +1,19 @@
 package com.automate.ssh;
 
 import com.automate.common.Charsets;
-import com.automate.common.utils.SystemUtil;
 import com.automate.exec.ExecCommand;
-import com.automate.exec.ExecHelper;
-import com.automate.exec.ExecStreamReader;
 import com.automate.exec.ExecThreadPool;
+import com.automate.exec.IExecStreamMonitor;
 import com.jcraft.jsch.*;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -95,8 +93,8 @@ public class SSHConnection {
             channel = (ChannelExec) this.session.openChannel("exec");
 
             channel.setCommand(execCommand.getCommand());
-            channel.setOutputStream(null);
 
+            channel.setOutputStream(null);
             ByteArrayOutputStream errStream = new ByteArrayOutputStream();
             channel.setErrStream(errStream);
             execCommand.start();
@@ -141,6 +139,32 @@ public class SSHConnection {
                 channel.disconnect();
             }
         }
+    }
+
+    public int exec(String script, List<String> out, StringBuffer error) throws IllegalAccessException {
+        ExecCommand execCommand = new ExecCommand(script, new IExecStreamMonitor() {
+            @Override
+            public void onStart(String command) {
+
+            }
+
+            @Override
+            public void onMsg(String line) {
+                out.add(line);
+            }
+
+            @Override
+            public void onError(String line) {
+                error.append(line).append(System.lineSeparator());
+            }
+
+            @Override
+            public void onEnd(int exitValue) {
+
+            }
+        });
+        this.exec(execCommand);
+        return execCommand.getExitValue();
     }
 
     public void uploadLocalFileToRemote(String localFile, String remoteDir, SftpProgressMonitor sftpProgressMonitor) throws Exception {
