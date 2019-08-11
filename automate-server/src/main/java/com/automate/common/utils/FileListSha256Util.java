@@ -37,6 +37,12 @@ public class FileListSha256Util {
         return array.toJSONString();
     }
 
+    public static String parseToFileListByArray(List<String[]> pathSha256InfoList) {
+        Collections.sort(pathSha256InfoList, Comparator.comparing(o -> o[0]));
+        return JSONArray.toJSONString(pathSha256InfoList);
+    }
+
+
     public static ArrayList<PathSha256Info> list(File file) throws IOException {
         if (!file.exists()) {
             throw new FileNotFoundException(file.getAbsolutePath());

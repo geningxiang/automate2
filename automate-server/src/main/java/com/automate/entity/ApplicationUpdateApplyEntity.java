@@ -48,15 +48,11 @@ public class ApplicationUpdateApplyEntity {
      */
     private Integer applicationId;
 
-    /**
-     * 容器代码文件的 MD5列表
-     */
-    private String containerFileMd5List;
 
     /**
      * 根据md5List 计算得到的 sha1  用于不同容器相同程序文件的检索
      */
-    private String containerFileSha1;
+    private String applicationFileSha256;
 
     /**
      * 发起用户
@@ -124,23 +120,13 @@ public class ApplicationUpdateApplyEntity {
     }
 
     @Basic
-    @Column(name = "CONTAINER_FILE_MD5_LIST", nullable = true, length = -1)
-    public String getContainerFileMd5List() {
-        return containerFileMd5List;
+    @Column(name = "APPLICATION_FILE_SHA256", nullable = true, length = 64)
+    public String getApplicationFileSha256() {
+        return applicationFileSha256;
     }
 
-    public void setContainerFileMd5List(String containerFileMd5List) {
-        this.containerFileMd5List = containerFileMd5List;
-    }
-
-    @Basic
-    @Column(name = "CONTAINER_FILE_SHA1", nullable = true, length = 64)
-    public String getContainerFileSha1() {
-        return containerFileSha1;
-    }
-
-    public void setContainerFileSha1(String containerFileSha1) {
-        this.containerFileSha1 = containerFileSha1;
+    public void setApplicationFileSha256(String applicationFileSha256) {
+        this.applicationFileSha256 = applicationFileSha256;
     }
 
     @Basic

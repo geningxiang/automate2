@@ -32,6 +32,11 @@ public class ApplicationEntity {
      */
     private String sourceDir;
 
+    /**
+     * 备份文件夹 ${baseDir}/backup
+     */
+    private String backupDir;
+
     private String scriptStart;
     private String scriptStop;
     private String scriptCheck;
@@ -156,6 +161,16 @@ public class ApplicationEntity {
 
     public void setSourceDir(String sourceDir) {
         this.sourceDir = sourceDir;
+    }
+
+    @Basic
+    @Column(name = "BACKUP_DIR", nullable = true)
+    public String getBackupDir() {
+        return backupDir;
+    }
+
+    public void setBackupDir(String backupDir) {
+        this.backupDir = backupDir;
     }
 
     public JSONObject toJson(){

@@ -28,7 +28,7 @@ public class BasicAssemblyTest {
 
     @Test
     public void test() throws IllegalAccessException, InterruptedException {
-        ExecCommand execCommand = new ExecCommand(ImmutableList.of("mvn clean package -DskipTests=true"), null, new File("D:/github-workspace/SpringBootDemo"),new IExecStreamMonitor() {
+        ExecCommand execCommand = new ExecCommand(ImmutableList.of("mvn clean package -DskipTests=true"), null, new File("D:/github-workspace/SpringBootDemo"), new IExecStreamMonitor() {
             @Override
             public void onStart(String commond) {
                 System.out.println(commond);
@@ -37,6 +37,11 @@ public class BasicAssemblyTest {
             @Override
             public void onMsg(String line) {
                 System.out.println(line);
+            }
+
+            @Override
+            public void onError(String line) {
+                System.err.println(line);
             }
 
             @Override

@@ -41,8 +41,9 @@ public class ProjectPackageService {
     @Autowired
     private ProjectPackageRepository projectPackageRepository;
 
+
     @Autowired
-    private FileListShaRepository fileListShaRepository;
+    private FileListShaService fileListShaService;
 
     public Optional<ProjectPackageEntity> findById(int id) {
         return projectPackageRepository.findById(id);
@@ -148,7 +149,7 @@ public class ProjectPackageService {
         }
 
         //保存 sha256 fileList关系
-        this.saveSha256AndFileList(sha256, fileList);
+        this.fileListShaService.save(sha256, fileList);
 
         ProjectPackageEntity projectPackageEntity = buildProjectPackageEntity(projectId, version, branch, commitId, remark, type, userId);
         projectPackageEntity.setFilePath(file.getAbsolutePath());
@@ -160,13 +161,7 @@ public class ProjectPackageService {
         return projectPackageEntity;
     }
 
-    private void saveSha256AndFileList(String sha256, String fileList) {
-        FileListShaEntity fileListShaEntity = new FileListShaEntity();
-        fileListShaEntity.setSha256(sha256);
-        fileListShaEntity.setFileList(fileList);
-        fileListShaEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        fileListShaRepository.save(fileListShaEntity);
-    }
+
 
 
     private ProjectPackageEntity buildProjectPackageEntity(int projectId, String version, String branch, String commitId, String remark, ProjectPackageEntity.Type type, int userId) {

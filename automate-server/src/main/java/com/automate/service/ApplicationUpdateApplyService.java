@@ -1,11 +1,11 @@
 package com.automate.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.automate.entity.ApplicationUpdateApplyEntity;
+import com.automate.common.utils.FileListSha256Util;
 import com.automate.entity.ApplicationEntity;
+import com.automate.entity.ApplicationUpdateApplyEntity;
 import com.automate.entity.ProjectPackageEntity;
-import com.automate.repository.ApplicationUpdateApplyRepository;
 import com.automate.repository.ApplicationRepository;
+import com.automate.repository.ApplicationUpdateApplyRepository;
 import com.automate.repository.ProjectPackageRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,39 +40,45 @@ public class ApplicationUpdateApplyService {
         return applicationUpdateApplyRepository.findAll(pageable);
     }
 
+    public Optional<ApplicationUpdateApplyEntity> findById(int id) {
+        return applicationUpdateApplyRepository.findById(id);
+    }
+
     /**
      * 发布申请
      */
-    public void apply(int packageId, int[] containerIds) throws Exception {
+    public void apply(int packageId, int[] applicationIds) throws Exception {
 
         Optional<ProjectPackageEntity> applicationPackageEntity = projectPackageRepository.findById(packageId);
         if (!applicationPackageEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的更新包");
         }
-        for (int containerId : containerIds) {
-            this.apply(applicationPackageEntity.get(), containerId);
+        for (int applicationId : applicationIds) {
+            this.apply(applicationPackageEntity.get(), applicationId);
         }
 
     }
 
-    public void apply(ProjectPackageEntity applicationPackageEntity, int containerId) throws Exception {
-        Optional<ApplicationEntity> containerEntity = applicationRepository.findById(containerId);
+    public void apply(ProjectPackageEntity applicationPackageEntity, int applicationId) throws Exception {
+        Optional<ApplicationEntity> containerEntity = applicationRepository.findById(applicationId);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的容器");
         }
 
-        List<String[]> fileMd5List = ApplicationService.fileMd5List(containerEntity.get());
 
         ApplicationUpdateApplyEntity model = new ApplicationUpdateApplyEntity();
 
         model.setProjectId(applicationPackageEntity.getProjectId());
         model.setProjectPackageId(applicationPackageEntity.getId());
-        model.setContainerId(containerId);
+        model.setApplicationId(applicationId);
 
-        String fileList = JSONArray.toJSONString(fileMd5List);
-        model.setContainerFileMd5List(fileList);
-
-        model.setContainerFileSha1(DigestUtils.sha1Hex(fileList));
+        if (applicationPackageEntity.getType() == ProjectPackageEntity.Type.PART.ordinal()) {
+            //增量更新  需要读取当前容器源代码的 sh256
+            List<String[]> fileSha256List = ApplicationService.fileSha256List(containerEntity.get());
+            String fileList = FileListSha256Util.parseToFileListByArray(fileSha256List);
+            String sha256 = DigestUtils.sha256Hex(fileList);
+            model.setApplicationFileSha256(sha256);
+        }
 
         //TODO
         model.setCreateUserId(0);

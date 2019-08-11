@@ -19,6 +19,7 @@
       <mapping class="com.automate.entity.ApplicationUpdateApplyEntity"/>
       <mapping class="com.automate.entity.ProjectEntity"/>
       <mapping class="com.automate.entity.Ca2FileListShaEntity"/>
+      <mapping class="com.automate.entity.Ca2ApplicationBackupEntity"/>
 
   </session-factory>
 </hibernate-configuration>

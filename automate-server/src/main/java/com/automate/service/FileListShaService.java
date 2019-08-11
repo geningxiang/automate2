@@ -5,6 +5,7 @@ import com.automate.repository.FileListShaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 /**
@@ -21,5 +22,14 @@ public class FileListShaService {
 
     public Optional<FileListShaEntity> findById(String sha1){
         return fileListShaRepository.findById(sha1);
+    }
+
+
+    public void save(String sha256, String fileList) {
+        FileListShaEntity fileListShaEntity = new FileListShaEntity();
+        fileListShaEntity.setSha256(sha256);
+        fileListShaEntity.setFileList(fileList);
+        fileListShaEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        fileListShaRepository.save(fileListShaEntity);
     }
 }

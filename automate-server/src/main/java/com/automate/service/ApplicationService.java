@@ -82,14 +82,6 @@ public class ApplicationService {
         return containerOperation(containerEntity.getServerId(), containerEntity.getScriptCheck());
     }
 
-    public static List<String[]> fileMd5List(ApplicationEntity applicationEntity) throws Exception {
-        Assert.hasText(applicationEntity.getSourceDir(), "当前未配置容器内容文件夹");
-        ServerEntity serverEntity = ServerService.getModelByCache(applicationEntity.getServerId());
-        Assert.notNull(serverEntity, "未找到相应的服务器");
-        SSHSession sshSession = new SSHSession(serverEntity);
-        return SSHUtil.md5sum(sshSession, applicationEntity.getSourceDir());
-    }
-
     public static List<String[]> fileSha256List(ApplicationEntity applicationEntity) throws Exception {
         Assert.hasText(applicationEntity.getSourceDir(), "当前未配置容器内容文件夹");
         ServerEntity serverEntity = ServerService.getModelByCache(applicationEntity.getServerId());

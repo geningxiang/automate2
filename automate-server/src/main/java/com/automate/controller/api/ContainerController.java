@@ -149,7 +149,7 @@ public class ContainerController extends BaseController {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("id is required");
         }
-        Optional<ApplicationEntity> containerEntity = applicationService.getModel(id);
+        Optional<ApplicationEntity> containerEntity = applicationService.findById(id);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应容器");
         }

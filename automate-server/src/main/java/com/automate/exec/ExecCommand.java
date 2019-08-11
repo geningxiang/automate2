@@ -137,6 +137,10 @@ public class ExecCommand {
         this.dir = dir;
     }
 
+    /**
+     * msg + error
+     * @return
+     */
     public StringBuffer getOut() {
         StringBuffer out = new StringBuffer(this.msg);
         out.append(this.error);

@@ -50,7 +50,7 @@ public class ServerController {
         if (id == null || id <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误", null);
         }
-        Optional<ServerEntity> model = serverService.getModel(id);
+        Optional<ServerEntity> model = serverService.findById(id);
         if (!model.isPresent()) {
             return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的服务器", null);
         }

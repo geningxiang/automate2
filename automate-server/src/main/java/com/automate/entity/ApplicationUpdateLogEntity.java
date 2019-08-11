@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 
+ * Description: 应用更新日志
  * @author genx
  * @date 2019/7/23 23:21
  */
@@ -54,27 +54,21 @@ public class ApplicationUpdateLogEntity {
      */
     private Timestamp doneTime;
 
+    /**
+     * @see AssemblyLineLogEntity.Status
+     */
     private Integer status;
 
     /**
-     * 更新前的 fileList
+     * 更新前的 SHA256
      */
-    private String beforeFileList;
+    private String beforeSha256;
+
 
     /**
-     * 更新前的 SHA1
+     * 更新后的 SHA256
      */
-    private String beforeSha1;
-
-    /**
-     * 更新后的 fileList
-     */
-    private String afterFileList;
-
-    /**
-     * 更新后的 SHA1
-     */
-    private String afterSha1;
+    private String afterSha256;
 
     /**
      * 更新日志
@@ -182,44 +176,29 @@ public class ApplicationUpdateLogEntity {
         this.status = status;
     }
 
-    @Basic
-    @Column(name = "BEFORE_FILE_LIST", nullable = true, length = -1)
-    public String getBeforeFileList() {
-        return beforeFileList;
+    public void setStatus(AssemblyLineLogEntity.Status status) {
+        this.status = status.ordinal();
     }
 
-    public void setBeforeFileList(String beforeFileList) {
-        this.beforeFileList = beforeFileList;
-    }
 
     @Basic
-    @Column(name = "BEFORE_SHA1", nullable = true, length = 255)
-    public String getBeforeSha1() {
-        return beforeSha1;
+    @Column(name = "BEFORE_SHA256", nullable = true, length = 64)
+    public String getBeforeSha256() {
+        return beforeSha256;
     }
 
-    public void setBeforeSha1(String beforeSha1) {
-        this.beforeSha1 = beforeSha1;
+    public void setBeforeSha256(String beforeSha256) {
+        this.beforeSha256 = beforeSha256;
     }
 
     @Basic
-    @Column(name = "AFTER_FILE_LIST", nullable = true, length = -1)
-    public String getAfterFileList() {
-        return afterFileList;
+    @Column(name = "AFTER_SHA256", nullable = true, length = 64)
+    public String getAfterSha256() {
+        return afterSha256;
     }
 
-    public void setAfterFileList(String afterFileList) {
-        this.afterFileList = afterFileList;
-    }
-
-    @Basic
-    @Column(name = "AFTER_SHA1", nullable = true, length = 255)
-    public String getAfterSha1() {
-        return afterSha1;
-    }
-
-    public void setAfterSha1(String afterSha1) {
-        this.afterSha1 = afterSha1;
+    public void setAfterSha256(String afterSha256) {
+        this.afterSha256 = afterSha256;
     }
 
     @Basic

@@ -118,7 +118,7 @@ public class SSHConnection {
             int exitValue = executeFuture.get(execCommand.getTimeout(), execCommand.getUnit());
             execCommand.end(exitValue);
 
-            if(exitValue != 0){
+            if (exitValue != 0) {
                 execCommand.errorRead(errStream.toString(Charsets.UTF_8.name()));
             }
         } catch (Exception e) {
@@ -135,7 +135,7 @@ public class SSHConnection {
                 }
             }
 
-            if(channel != null){
+            if (channel != null) {
                 channel.disconnect();
             }
         }
@@ -185,6 +185,44 @@ public class SSHConnection {
             }
         }
     }
+
+    public void mkdir(String dir) throws Exception {
+        ChannelSftp channel = null;
+        try {
+            channel = (ChannelSftp) this.session.openChannel("sftp");
+            channel.connect();
+            try {
+                //判断是否需要创建文件夹
+                channel.stat(dir);
+            } catch (SftpException e) {
+                channel.mkdir(dir);
+            }
+        } finally {
+            if (channel != null) {
+                channel.disconnect();
+            }
+        }
+    }
+
+    public int tar(String sourceDir, String targetFilePath, Appendable log) throws Exception {
+        final String dir = targetFilePath.substring(0, targetFilePath.lastIndexOf("/"));
+
+        StringBuilder cmd = new StringBuilder(512);
+        cmd.append("cd ");
+        cmd.append(sourceDir);
+        cmd.append(" && tar -zcvf ");
+        cmd.append(targetFilePath);
+        cmd.append(" ./");
+        logger.debug(cmd.toString());
+        ExecCommand execCommand = new ExecCommand(cmd.toString());
+
+        this.mkdir(dir);
+        this.exec(execCommand);
+
+        log.append(execCommand.getOut().toString());
+        return execCommand.getExitValue();
+    }
+
 
     public String getHost() {
         return host;

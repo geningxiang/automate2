@@ -58,6 +58,12 @@ public class CmdController {
                     }
 
                     @Override
+                    public void onError(String line) {
+                        logger.debug(line);
+                        sb.append(line).append(System.lineSeparator());
+                    }
+
+                    @Override
                     public void onEnd(int exitValue) {
                         sb.append("finished ").append(exitValue).append(System.lineSeparator());
                     }

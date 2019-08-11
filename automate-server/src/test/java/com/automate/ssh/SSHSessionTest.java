@@ -52,13 +52,13 @@ public class SSHSessionTest {
         s.doWork(sshConnection -> {
 
             String targetDir = "/www/automate-temp2/webapps/ROOT/";
-            if(!targetDir.endsWith("/")){
+            if (!targetDir.endsWith("/")) {
                 targetDir += "/";
             }
             int prefixLen = targetDir.length();
 
             // 递归生成各文件的的MD5值
-            ExecCommand execCommand = new ExecCommand("cd " + targetDir + " && "+"find ./ -type f -print0 | xargs -0 md5sum", new IExecStreamMonitor() {
+            ExecCommand execCommand = new ExecCommand("cd " + targetDir + " && " + "find ./ -type f -print0 | xargs -0 md5sum", new IExecStreamMonitor() {
                 @Override
                 public void onStart(String command) {
 
@@ -67,11 +67,12 @@ public class SSHSessionTest {
                 @Override
                 public void onMsg(String line) {
                     System.out.println(line);
-//                    String[] ss = line.split("  ");
-//                    if(ss.length == 2){
-//                        list.add(new String[]{ss[1].substring(prefixLen), ss[0]});
-//                    }
 
+                }
+
+                @Override
+                public void onError(String line) {
+                    System.err.println(line);
                 }
 
                 @Override

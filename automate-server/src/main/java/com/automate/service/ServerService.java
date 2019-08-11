@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class ServerService {
 
-
     private static Cache<Integer, ServerEntity> serverLocalCache = Caffeine.newBuilder()
             .initialCapacity(64)
             .expireAfterWrite(10, TimeUnit.MINUTES)
@@ -43,12 +42,12 @@ public class ServerService {
     /**
      * 查询对象
      **/
-    public Optional<ServerEntity> getModel(int id) {
+    public Optional<ServerEntity> findById(int id) {
         return serverRepository.findById(id);
     }
 
     private static ServerEntity getModelStatic(int id) {
-        Optional<ServerEntity> model = SpringContextUtil.getBean("serverService", ServerService.class).getModel(id);
+        Optional<ServerEntity> model = SpringContextUtil.getBean("serverService", ServerService.class).findById(id);
         return model.isPresent() ? model.get() : null;
     }
 
