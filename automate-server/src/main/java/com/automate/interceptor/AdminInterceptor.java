@@ -3,6 +3,7 @@ package com.automate.interceptor;
 import com.automate.common.SessionUser;
 import com.automate.common.annotation.AllowNoLogin;
 import com.automate.contants.CommonContants;
+import com.automate.entity.UserEntity;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
@@ -54,14 +55,19 @@ public class AdminInterceptor implements HandlerInterceptor {
             SessionUser sessionUser = (SessionUser) request.getSession().getAttribute(CommonContants.SESSION_USER_KEY);
             if (sessionUser == null) {
 
-                if (handlerMethod.hasMethodAnnotation(ResponseBody.class) || handlerMethod.getBeanType().isAnnotationPresent(RestController.class)) {
-                    //返回数据的情况
-                    response.sendError(401, "请登录");
-                } else {
-                    //跳转到登陆
-                    response.sendRedirect("/login");
-                }
-                return false;
+                //暂时绕过授权
+                UserEntity adminUser  = new UserEntity();
+                adminUser.setId(1);
+                request.getSession().setAttribute(CommonContants.SESSION_USER_KEY, new SessionUser(adminUser));
+
+//                if (handlerMethod.hasMethodAnnotation(ResponseBody.class) || handlerMethod.getBeanType().isAnnotationPresent(RestController.class)) {
+//                    //返回数据的情况
+//                    response.sendError(401, "请登录");
+//                } else {
+//                    //跳转到登陆
+//                    response.sendRedirect("/login");
+//                }
+//                return false;
             }
         }
         return true;

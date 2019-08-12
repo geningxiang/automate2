@@ -23,7 +23,6 @@
                         <th>ID</th>
                         <th>NAME</th>
                         <th>STATUS</th>
-                        <th>锁</th>
                     </tr>
                     <tbody>
                         <c:if test="${fn:length(runningList)==0}">
@@ -36,20 +35,6 @@
                                 <td>${_item.uniqueId}</td>
                                 <td>${_item.name}</td>
                                 <td>${_item.status}</td>
-                                <td>
-                                    &nbsp;
-                                    <c:forEach var="_lock" items="${_item.locks}" varStatus="lockStatus">
-                                        <c:choose>
-                                            <c:when test="${_item.lockIndex > lockStatus.index}">
-                                                <span class="label label-success">${_lock}</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="label label-warning">${_lock}</span>
-                                            </c:otherwise>
-                                        </c:choose>
-
-                                    </c:forEach>
-                                </td>
                             </tr>
                         </c:forEach>
                     </tbody>

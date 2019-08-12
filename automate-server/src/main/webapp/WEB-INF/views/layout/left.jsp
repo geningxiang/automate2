@@ -25,9 +25,9 @@
         <li class="sub-menu">
             <a href="javascript:;"> <i class="fa fa-bullhorn"></i> <span>发布</span> </a>
             <ul class="sub">
-                <li><a href="/admin/package/list" target="mainContent">制品列表</a></li>
-                <li><a href="javascript:alert('开发中');" target="mainContent">发布申请</a></li>
-                <li><a href="javascript:alert('开发中');" target="mainContent">更新记录</a></li>
+                <li><a href="/admin/package/list" target="mainContent">包列表</a></li>
+                <li><a href="/admin/application/updateApplyList" target="mainContent">更新申请记录</a></li>
+                <li><a href="/admin/application/updateLogList" target="mainContent">更新记录</a></li>
             </ul>
         </li>
         <li class="sub-menu">
@@ -43,7 +43,7 @@
             <a href="javascript:;"> <i class="fa fa-laptop"></i> <span>服务器</span> </a>
             <ul class="sub">
                 <li><a href="/admin/server/list.do" target="mainContent">服务器列表</a></li>
-                <li><a href="/admin/container/list.do" target="mainContent">容器列表</a></li>
+                <li><a href="/admin/application/list.do" target="mainContent">应用列表</a></li>
             </ul>
         </li>
         <li class="sub-menu">

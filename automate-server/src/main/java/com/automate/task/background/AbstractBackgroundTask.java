@@ -112,4 +112,6 @@ public abstract class AbstractBackgroundTask implements Runnable {
     public BackgroundLock.Builder getLockBuilder() {
         return lockBuilder;
     }
+
+
 }

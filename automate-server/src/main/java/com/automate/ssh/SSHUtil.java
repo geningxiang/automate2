@@ -36,7 +36,6 @@ public class SSHUtil {
             targetDir += "/";
         }
         String cmd = "cd " + targetDir + " && find ./ -type f -print0 | xargs -0 sha256sum";
-        logger.debug(cmd);
 
         // 递归生成各文件的的MD5值
         ExecCommand execCommand = new ExecCommand(cmd, new IExecStreamMonitor() {

@@ -13,16 +13,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.bouncycastle.util.Times;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +50,10 @@ public class ApplicationUpdateLogService {
 
     @Autowired
     private FileListShaService fileListShaService;
+
+    public Page<ApplicationUpdateLogEntity> findAll(Specification specification, Pageable pageable) {
+        return applicationUpdateLogRepository.findAll(specification, pageable);
+    }
 
     public Page<ApplicationUpdateLogEntity> findAll(Pageable pageable) {
         return applicationUpdateLogRepository.findAll(pageable);
@@ -98,7 +100,6 @@ public class ApplicationUpdateLogService {
         try {
 
 
-
             s.doWork(sshConnection -> {
 
                 //1.上传更新文件
@@ -112,7 +113,7 @@ public class ApplicationUpdateLogService {
                 execLog.append("######## 关闭应用 ########").append(System.lineSeparator());
 
                 //关闭容器
-                ExecCommand stopCmd = ApplicationService.containerStop(applicationEntity.get());
+                ExecCommand stopCmd = ApplicationService.containerStop(sshConnection, applicationEntity.get());
 
                 execLog.append(stopCmd.getOut()).append(System.lineSeparator());
 
@@ -120,13 +121,12 @@ public class ApplicationUpdateLogService {
                     throw new RuntimeException("关闭应用失败");
                 }
 
-                //TODO 备份
                 StringBuilder cmd = new StringBuilder(1024);
                 //删除旧代码
                 cmd.append("rm -rf ").append(sourceDir);
 
                 cmd.append(" && mkdir -p -v ").append(sourceDir);
-
+                //解压
                 cmd.append(" && unzip -o ").append(remoteDir).append(file.getName()).append(" -d ").append(sourceDir);
 
                 //删除 压缩包
@@ -134,7 +134,7 @@ public class ApplicationUpdateLogService {
 
                 execLog.append("######## 开始更新应用 ########").append(System.lineSeparator());
                 execLog.append(cmd).append(System.lineSeparator());
-                ExecCommand execCommand = new ExecCommand(cmd.toString(), new ExecStreamPrintMonitor());
+                ExecCommand execCommand = new ExecCommand(cmd.toString());
                 sshConnection.exec(execCommand);
 
                 execLog.append(execCommand.getOut()).append(System.lineSeparator());
@@ -154,7 +154,7 @@ public class ApplicationUpdateLogService {
                 this.fileListShaService.save(afterSha256, afterFileList);
 
                 //启动容器
-                ExecCommand startCmd = ApplicationService.containerStart(applicationEntity.get());
+                ExecCommand startCmd = ApplicationService.containerStart(sshConnection, applicationEntity.get());
                 execLog.append(startCmd.getOut()).append(System.lineSeparator());
 
                 if (startCmd.getExitValue() != 0) {
@@ -170,7 +170,6 @@ public class ApplicationUpdateLogService {
 
         } catch (Exception e) {
             execLog.append(ExceptionUtils.getStackTrace(e));
-
             applicationUpdateLogEntity.setStatus(AssemblyLineLogEntity.Status.error);
             applicationUpdateLogEntity.setLog(execLog.toString());
             applicationUpdateLogEntity.setDoneTime(new Timestamp(System.currentTimeMillis()));

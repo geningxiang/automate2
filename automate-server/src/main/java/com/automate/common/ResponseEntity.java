@@ -15,32 +15,39 @@ public class ResponseEntity<T> {
     private T data;
     private long timestamp;
 
-    private ResponseEntity(HttpStatus status, String msg, T data){
-        this.status = status.value();
+
+    private ResponseEntity(int status, String msg, T data) {
+        this.status = status;
         this.msg = msg;
         this.data = data;
         this.timestamp = System.currentTimeMillis();
     }
+
 
     public static <T> ResponseEntity<T> ok(T data) {
         return ok("", data);
     }
 
     public static <T> ResponseEntity<T> ok(String msg, T data) {
-        return new ResponseEntity(HttpStatus.OK,msg, data);
+        return new ResponseEntity(HttpStatus.OK.value(), msg, data);
     }
 
     public static ResponseEntity ok() {
-        return new ResponseEntity(HttpStatus.OK,"", null);
+        return new ResponseEntity(HttpStatus.OK.value(), "", null);
     }
 
     public static ResponseEntity of(HttpStatus status, String msg) {
-        return new ResponseEntity(status, msg, null);
+        return new ResponseEntity(status.value(), msg, null);
     }
 
     public static <T> ResponseEntity<T> of(HttpStatus status, String msg, T data) {
+        return new ResponseEntity(status.value(), msg, data);
+    }
+
+    public static <T> ResponseEntity<T> of(int status, String msg, T data) {
         return new ResponseEntity(status, msg, data);
     }
+
 
     public int getStatus() {
         return status;

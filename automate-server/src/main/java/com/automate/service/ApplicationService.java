@@ -4,8 +4,8 @@ import com.automate.entity.ApplicationEntity;
 import com.automate.entity.ProjectPackageEntity;
 import com.automate.entity.ServerEntity;
 import com.automate.exec.ExecCommand;
-import com.automate.exec.ExecStreamPrintMonitor;
 import com.automate.repository.ApplicationRepository;
+import com.automate.ssh.SSHConnection;
 import com.automate.ssh.SSHSession;
 import com.automate.ssh.SSHUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class ApplicationService {
     private ApplicationRepository applicationRepository;
 
 
-    public void doUpdate(ProjectPackageEntity projectPackageEntity, ApplicationEntity applicationEntity){
+    public void doUpdate(ProjectPackageEntity projectPackageEntity, ApplicationEntity applicationEntity) {
 
     }
 
@@ -69,17 +69,44 @@ public class ApplicationService {
 
     public static ExecCommand containerStart(ApplicationEntity containerEntity) throws Exception {
         Assert.hasText(containerEntity.getScriptStart(), "当前未配置容器启动脚本");
-        return containerOperation(containerEntity.getServerId(), containerEntity.getScriptStart());
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStart());
+        getSSHSession(containerEntity.getServerId()).doWork(sshConnection -> sshConnection.exec(execCommand));
+        return execCommand;
+    }
+
+    public static ExecCommand containerStart(SSHConnection sshConnection, ApplicationEntity containerEntity) throws Exception {
+        Assert.hasText(containerEntity.getScriptStart(), "当前未配置容器启动脚本");
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStart());
+        sshConnection.exec(execCommand);
+        return execCommand;
     }
 
     public static ExecCommand containerStop(ApplicationEntity containerEntity) throws Exception {
         Assert.hasText(containerEntity.getScriptStop(), "当前未配置容器停止脚本");
-        return containerOperation(containerEntity.getServerId(), containerEntity.getScriptStop());
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStop());
+        getSSHSession(containerEntity.getServerId()).doWork(sshConnection -> sshConnection.exec(execCommand));
+        return execCommand;
+    }
+
+    public static ExecCommand containerStop(SSHConnection sshConnection, ApplicationEntity containerEntity) throws Exception {
+        Assert.hasText(containerEntity.getScriptStop(), "当前未配置容器停止脚本");
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptStop());
+        sshConnection.exec(execCommand);
+        return execCommand;
     }
 
     public static ExecCommand containerCheck(ApplicationEntity containerEntity) throws Exception {
         Assert.hasText(containerEntity.getScriptCheck(), "当前未配置容器检查脚本");
-        return containerOperation(containerEntity.getServerId(), containerEntity.getScriptCheck());
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptCheck());
+        getSSHSession(containerEntity.getServerId()).doWork(sshConnection -> sshConnection.exec(execCommand));
+        return execCommand;
+    }
+
+    public static ExecCommand containerCheck(SSHConnection sshConnection, ApplicationEntity containerEntity) throws Exception {
+        Assert.hasText(containerEntity.getScriptCheck(), "当前未配置容器检查脚本");
+        ExecCommand execCommand = new ExecCommand(containerEntity.getScriptCheck());
+        sshConnection.exec(execCommand);
+        return execCommand;
     }
 
     public static List<String[]> fileSha256List(ApplicationEntity applicationEntity) throws Exception {
@@ -91,13 +118,11 @@ public class ApplicationService {
     }
 
 
-    private static ExecCommand containerOperation(Integer serverId, String script) throws Exception {
+
+
+    private static SSHSession getSSHSession(int serverId) {
         ServerEntity serverEntity = ServerService.getModelByCache(serverId);
         Assert.notNull(serverEntity, "未找到相应的服务器");
-        SSHSession sshSession = new SSHSession(serverEntity);
-        ExecCommand execCommand = new ExecCommand(script);
-        execCommand.setCmdStreamMonitor(new ExecStreamPrintMonitor());
-        sshSession.doWork(sshConnection -> sshConnection.exec(execCommand));
-        return execCommand;
+        return new SSHSession(serverEntity);
     }
 }

@@ -92,6 +92,8 @@ public class SSHConnection {
         try {
             channel = (ChannelExec) this.session.openChannel("exec");
 
+            logger.debug(execCommand.getCommand());
+
             channel.setCommand(execCommand.getCommand());
 
             channel.setOutputStream(null);
@@ -213,7 +215,6 @@ public class SSHConnection {
         cmd.append(" && tar -zcvf ");
         cmd.append(targetFilePath);
         cmd.append(" ./");
-        logger.debug(cmd.toString());
         ExecCommand execCommand = new ExecCommand(cmd.toString());
 
         this.mkdir(dir);

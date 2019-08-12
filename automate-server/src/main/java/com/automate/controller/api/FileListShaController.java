@@ -33,6 +33,29 @@ public class FileListShaController extends BaseController {
     @Autowired
     private FileListShaService fileListShaService;
 
+    /**
+     * 根据sha256 查找文件列表
+     * @param sha256
+     * @return
+     * {
+     *   "data": {
+     *     "sha256": "080c1cbbcd9662e4ddd6c8826806dab79cece58edc12c781f982bdf0b158172d",
+     *     "fileList": [
+     *       [
+     *         "WEB-INF/classes/com/automate/build/IBuildHelper.class",
+     *         "4a056dd2ed3d981bcde3226a1fc8acb4f48f350b28100387114b4cde345a3422"
+     *       ],
+     *       [
+     *         "WEB-INF/classes/com/automate/build/MyCat.class",
+     *         "425743e33ec7799109be0c3a7183f26cf89f81f02c51a62247530f10d7b64f86"
+     *       ],...
+     *     ]
+     *   },
+     *   "msg": "",
+     *   "status": 200,
+     *   "timestamp": 1565614463109
+     * }
+     */
     @RequestMapping(value = "/fileListSha/{sha256}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<JSONObject> fileListSha(@PathVariable("sha256") String sha256) throws IOException {
         if (StringUtils.isBlank(sha256)) {
@@ -48,6 +71,13 @@ public class FileListShaController extends BaseController {
         return ResponseEntity.ok(data);
     }
 
+    /**
+     * 根据sha256 下载文件列表
+     * @param sha256
+     * @param response
+     * @return txt文本文件
+     * @throws IOException
+     */
     @RequestMapping(value = "/download/fileListSha/txt/{sha256}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public void txt(@PathVariable("sha256") String sha256, HttpServletResponse response) throws IOException {
         if (StringUtils.isBlank(sha256)) {
@@ -76,6 +106,6 @@ public class FileListShaController extends BaseController {
         response.setContentType("multipart/form-data");
         response.setHeader("Content-disposition", "attachment;filename=" + sha256 + ".txt");
         IOUtils.write(sb.toString(), response.getOutputStream(), Charsets.UTF_8);
-
     }
+
 }

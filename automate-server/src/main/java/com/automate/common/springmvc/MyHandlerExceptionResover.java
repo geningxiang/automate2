@@ -2,7 +2,7 @@ package com.automate.common.springmvc;
 
 import com.alibaba.fastjson.JSON;
 import com.automate.common.ResponseEntity;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,12 +35,14 @@ public class MyHandlerExceptionResover implements HandlerExceptionResolver {
         //把异常信息记入日志
         logger.error("捕获异常", ex);
 
-        if (ex instanceof MaxUploadSizeExceededException) {
-            return sendError(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED, "上传文件超出最大限制", response, handler);
+        if (ex instanceof NullPointerException) {
+            return sendError(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionUtils.getStackTrace(ex), response, handler);
+        } else if (ex instanceof MaxUploadSizeExceededException) {
+            return sendError(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED, ex.getMessage(), response, handler);
         } else if (ex instanceof IllegalArgumentException) {
-            return sendError(HttpStatus.BAD_REQUEST, StringUtils.isNotEmpty(ex.getMessage()) ? ex.getMessage() : "参数错误", response, handler);
+            return sendError(HttpStatus.BAD_REQUEST, ex.getMessage(), response, handler);
         } else {
-            return sendError(HttpStatus.INTERNAL_SERVER_ERROR, "发生内部异常", response, handler);
+            return sendError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), response, handler);
         }
     }
 

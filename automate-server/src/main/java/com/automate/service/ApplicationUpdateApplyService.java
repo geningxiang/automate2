@@ -11,6 +11,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -36,6 +37,10 @@ public class ApplicationUpdateApplyService {
     @Autowired
     private ApplicationRepository applicationRepository;
 
+    public Page<ApplicationUpdateApplyEntity> findAll(Specification specification, Pageable pageable) {
+        return applicationUpdateApplyRepository.findAll(specification, pageable);
+    }
+
     public Page<ApplicationUpdateApplyEntity> findAll(Pageable pageable) {
         return applicationUpdateApplyRepository.findAll(pageable);
     }
@@ -47,27 +52,25 @@ public class ApplicationUpdateApplyService {
     /**
      * 发布申请
      */
-    public void apply(int packageId, int[] applicationIds) throws Exception {
+    public void apply(int packageId, int[] applicationIds, int applyUserId) throws Exception {
 
         Optional<ProjectPackageEntity> applicationPackageEntity = projectPackageRepository.findById(packageId);
         if (!applicationPackageEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的更新包");
         }
         for (int applicationId : applicationIds) {
-            this.apply(applicationPackageEntity.get(), applicationId);
+            this.apply(applicationPackageEntity.get(), applicationId, applyUserId);
         }
 
     }
 
-    public void apply(ProjectPackageEntity applicationPackageEntity, int applicationId) throws Exception {
+    public void apply(ProjectPackageEntity applicationPackageEntity, int applicationId, int applyUserId) throws Exception {
         Optional<ApplicationEntity> containerEntity = applicationRepository.findById(applicationId);
         if (!containerEntity.isPresent()) {
             throw new IllegalArgumentException("未找到相应的容器");
         }
 
-
         ApplicationUpdateApplyEntity model = new ApplicationUpdateApplyEntity();
-
         model.setProjectId(applicationPackageEntity.getProjectId());
         model.setProjectPackageId(applicationPackageEntity.getId());
         model.setApplicationId(applicationId);
@@ -80,12 +83,15 @@ public class ApplicationUpdateApplyService {
             model.setApplicationFileSha256(sha256);
         }
 
-        //TODO
-        model.setCreateUserId(0);
+        model.setCreateUserId(applyUserId);
         model.setCreateTime(new Timestamp(System.currentTimeMillis()));
         model.setStatus(ApplicationUpdateApplyEntity.Status.APPLY);
         model.setAuditUserId(0);
         applicationUpdateApplyRepository.save(model);
+    }
+
+    public void save(ApplicationUpdateApplyEntity applicationUpdateApplyEntity){
+        this.applicationUpdateApplyRepository.save(applicationUpdateApplyEntity);
     }
 
 }
