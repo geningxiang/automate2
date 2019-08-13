@@ -4,11 +4,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.automate.common.Charsets;
 import com.automate.common.ResponseEntity;
+import com.automate.common.utils.FileListSha256Util;
 import com.automate.controller.BaseController;
+import com.automate.entity.ApplicationEntity;
 import com.automate.entity.FileListShaEntity;
+import com.automate.service.ApplicationService;
 import com.automate.service.FileListShaService;
+import com.automate.vo.FileListShaSearchVO;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -32,6 +41,9 @@ public class FileListShaController extends BaseController {
 
     @Autowired
     private FileListShaService fileListShaService;
+    
+    @Autowired
+    private ApplicationService applicationService;
 
     /**
      * 根据sha256 查找文件列表
@@ -68,6 +80,54 @@ public class FileListShaController extends BaseController {
         JSONObject data = new JSONObject(2);
         data.put("sha256", sha256);
         data.put("fileList", JSONArray.parseArray(model.get().getFileList()));
+        return ResponseEntity.ok(data);
+    }
+
+    /**
+     * 查询你想要的的 文件sha256列表
+     * @param keys
+     * 例如 080c1cbbcd9662e4ddd6c8826806dab79cece58edc12c781f982bdf0b158172d,applicationId:1
+     * applicationId:1 代表查询应用【1】的当前文件sha256列表
+     * @return
+     */
+    @RequestMapping(value = "/fileListSha/search", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity fileListSearch(String[] keys){
+        FileListShaSearchVO[] data;
+        if(keys != null && keys.length > 0){
+            data = new FileListShaSearchVO[keys.length];
+            String key;
+            FileListShaSearchVO item;
+            for (int i = 0; i < keys.length; i++) {
+                key = keys[i];
+                if(key.startsWith("applicationId:")){
+                    //TODO 权限判断
+                    Optional<ApplicationEntity> applicationEntity = applicationService.findById(NumberUtils.toInt(key.substring(14)));
+                    if(applicationEntity.isPresent()){
+                        try {
+                            item = new FileListShaSearchVO(key);
+                            List<String[]> fileSha256List = ApplicationService.fileSha256List(applicationEntity.get());
+                            String fileList = FileListSha256Util.parseToFileListByArray(fileSha256List);
+                            String sha256 = DigestUtils.sha256Hex(fileList);
+                            item.setFileList(fileSha256List);
+                            item.setSha256(sha256);
+                            data[i] = item;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Optional<FileListShaEntity> model = fileListShaService.findById(key);
+                    if (model.isPresent()) {
+                        item = new FileListShaSearchVO(key);
+                        item.setFileList(JSONArray.parseArray(model.get().getFileList()));
+                        item.setSha256(model.get().getSha256());
+                        data[i] = item;
+                    }
+                }
+            }
+        } else {
+            data = new FileListShaSearchVO[0];
+        }
         return ResponseEntity.ok(data);
     }
 

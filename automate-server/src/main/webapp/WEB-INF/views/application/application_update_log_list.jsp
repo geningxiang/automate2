@@ -41,12 +41,27 @@
             <td>【{{item.applyId}}】</td>
             <td>{{dateFormat(item.createTime, 'yyyy-MM-dd HH:mm:ss')}}</td>
             <td>{{dateFormat(item.doneTime, 'yyyy-MM-dd HH:mm:ss')}}</td>
-            <td>{{item.status}}</td>
+            <td>
+                {{if item.status == 0}}
+                初始化
+                {{else if item.status == 1}}
+                更新中
+                {{else if item.status == 2}}
+                已取消
+                {{else if item.status == 3}}
+                发生错误
+                {{else if item.status == 4}}
+                更新成功
+                {{/if}}
+            </td>
             <td>
                 <p>更新前: {{item.beforeSha256}}</p>
                 <p>更新后: {{item.afterSha256}}</p>
             </td>
             <td>
+                <button class="btn btn-success btn-xs" onclick="alert('请稍后')">
+                    <i class="fa fa-hand-o-right"></i> 更新详情
+                </button>&nbsp;&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-success btn-xs" onclick="compare('{{item.beforeSha256}}','{{item.afterSha256}}')">
                     <i class="fa fa-hand-o-right"></i> 文件树比对
                 </button>
@@ -89,6 +104,10 @@
     $(function () {
         queryList();
     });
+
+    function compare(sha1, sha2){
+
+    }
 
 
 </script>

@@ -40,7 +40,15 @@
             <td>【{{item.applicationId}}】</td>
             <td>【{{item.createUserId}}】</td>
             <td>{{dateFormat(item.createTime, 'yyyy-MM-dd HH:mm:ss')}}</td>
-            <td>{{item.status}}</td>
+            <td>
+                {{if item.status == 0}}
+                申请中
+                {{else if item.status == 1}}
+                已处理
+                {{else if item.status == 2}}
+                已拒绝
+                {{/if}}
+            </td>
             <td>{{item.auditUserId || '-'}}</td>
             <td></td>
             <td>
