@@ -1,18 +1,14 @@
 #!/bin/bash
 
-#Tomcat名称
-TOMCAT_NAME=tomcat-automate
-
 #Tomcat根目录
 TOMCAT_HOME=/var/web-server/tomcat-automate
-
 
 #检查当前程序是否运行
 FIND_STRING="${TOMCAT_HOME}"
 
 # 注入环境变量
-export JAVA_HOME=/usr/local/jdk1.8.0_211
-export JAVA_OPTS="-server -Ddefault.client.encoding=GBK -Dfile.encoding=GBK -Duser.language=Zh -Dconfig.location=file:/var/caimao-server/tomcat-automate/bin/automate.properties"
+#export JAVA_HOME=/usr/local/jdk1.8.0_211
+#export JAVA_OPTS="-server -Ddefault.client.encoding=GBK -Dfile.encoding=GBK -Duser.language=Zh -Dconfig.location=file:/var/caimao-server/tomcat-automate/bin/automate.properties"
 
 
 psid=0

@@ -60,11 +60,7 @@ public class BackgroundTaskManagerTest {
                 }
             });
         }
-        try {
-            Thread.sleep(600000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 
 }

@@ -51,6 +51,9 @@ public class SSHConnection {
         //设置第一次登陆时候的提示，可选值：（ask | yes | no）
         config.put("StrictHostKeyChecking", "no");
         session.setConfig(config);
+
+        session.setTimeout(600000);
+
         session.connect();
     }
 
