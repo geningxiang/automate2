@@ -81,6 +81,7 @@ public class FileListShaController extends BaseController {
         data.put("sha256", sha256);
         data.put("fileList", JSONArray.parseArray(model.get().getFileList()));
         return ResponseEntity.ok(data);
+
     }
 
     /**

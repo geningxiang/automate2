@@ -32,6 +32,10 @@ public class ApplicationService {
     private ApplicationRepository applicationRepository;
 
 
+    public List<ApplicationEntity> queryAllByProjectIdOrderById(int projectId){
+        return applicationRepository.queryAllByProjectIdOrderById(projectId);
+    }
+
     public void doUpdate(ProjectPackageEntity projectPackageEntity, ApplicationEntity applicationEntity) {
 
     }

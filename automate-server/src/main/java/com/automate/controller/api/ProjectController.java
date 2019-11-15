@@ -4,14 +4,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.automate.common.ResponseEntity;
 import com.automate.controller.BaseController;
+import com.automate.entity.ApplicationEntity;
 import com.automate.entity.HookLogEntity;
-import com.automate.entity.ProjectEntity;
 import com.automate.entity.ProjectBranchEntity;
-import com.automate.entity.ProjectPackageEntity;
+import com.automate.entity.ProjectEntity;
+import com.automate.service.ApplicationService;
 import com.automate.service.HookLogService;
-import com.automate.service.ProjectPackageService;
-import com.automate.service.ProjectService;
 import com.automate.service.ProjectBranchService;
+import com.automate.service.ProjectService;
 import com.automate.task.background.BackgroundLock;
 import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.TestVCSRepository;
@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,6 +41,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class ProjectController extends BaseController {
+
+    @Autowired
+    private ApplicationService applicationService;
 
     @Autowired
     private ProjectService projectService;
@@ -153,6 +157,20 @@ public class ProjectController extends BaseController {
     public ResponseEntity<Page<HookLogEntity>> hookList(Integer pageNo, Integer pageSize) {
         Page<HookLogEntity> pager = hookLogService.findAll(buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id")));
         return ResponseEntity.ok(pager);
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/project/{id}/applications", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity<List<JSONObject>> applicationList(@PathVariable("id") Integer id) {
+        if (id == null || id <= 0) {
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
+        }
+        List<ApplicationEntity> list = applicationService.queryAllByProjectIdOrderById(id);
+        return ResponseEntity.ok(list.stream().map(item -> item.toJson()).collect(Collectors.toList()));
     }
 
 }

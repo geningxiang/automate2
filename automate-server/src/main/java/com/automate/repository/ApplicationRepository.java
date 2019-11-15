@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -15,4 +17,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApplicationRepository extends PagingAndSortingRepository<ApplicationEntity, Integer>, JpaSpecificationExecutor<ApplicationEntity> {
 
+    List<ApplicationEntity> queryAllByProjectIdOrderById(int projectId);
 }
