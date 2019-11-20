@@ -9,9 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -185,6 +183,30 @@ public class SSHConnection {
             }
             channel.put(localFile, remoteDir, sftpProgressMonitor);
         } finally {
+            if (channel != null) {
+                channel.disconnect();
+            }
+        }
+    }
+
+    public void downloadRemoteFileToLocal(String directory, String remoteFileName,String localFile){
+        ChannelSftp channel=null;
+        try{
+            channel = (ChannelSftp) this.session.openChannel("sftp");
+            channel.connect();
+            File file = null;
+            OutputStream output = null;
+            file = new File(localFile);
+            if (file.exists()){
+                file.delete();
+            }
+            file.createNewFile();
+            output = new FileOutputStream(file);
+            channel.cd(directory);
+            channel.get(remoteFileName, output);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
             if (channel != null) {
                 channel.disconnect();
             }
