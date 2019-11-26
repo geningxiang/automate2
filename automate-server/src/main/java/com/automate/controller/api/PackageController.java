@@ -5,7 +5,9 @@ import com.automate.common.SessionUser;
 import com.automate.common.SessionUserManager;
 import com.automate.controller.BaseController;
 import com.automate.entity.ProjectPackageEntity;
+import com.automate.service.ApplicationUpdateApplyService;
 import com.automate.service.ProjectPackageService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +35,9 @@ public class PackageController extends BaseController {
 
     @Autowired
     private ProjectPackageService projectPackageService;
+
+    @Autowired
+    private ApplicationUpdateApplyService applicationUpdateApplyService;
 
     /**
      * 包列表

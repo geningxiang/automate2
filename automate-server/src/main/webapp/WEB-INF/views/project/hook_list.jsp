@@ -83,7 +83,7 @@
     });
 
     function query() {
-        Core.post('/api/sourcecode/hookList', {pageNo: pageNo, pageSize: pageSize}, function(msg){
+        Core.post('/api/hookList', {pageNo: pageNo, pageSize: pageSize}, function(msg){
 
             $("#hookListContent").html(template('hookListTemplate', msg.data));
         });

@@ -25,6 +25,6 @@ public class ApplicationUpdateApplyServiceTest {
     @Test
     public void apply() throws Exception {
 
-        applicationUpdateApplyService.apply(20, new int[]{1}, 1);
+        applicationUpdateApplyService.apply(22, new int[]{1}, 1);
     }
 }

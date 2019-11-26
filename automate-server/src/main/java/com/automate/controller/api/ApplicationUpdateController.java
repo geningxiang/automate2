@@ -57,9 +57,16 @@ public class ApplicationUpdateController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/applicationUpdate/apply", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ResponseEntity apply(int packageId, int[] applicationIds, HttpServletRequest request) {
+    public ResponseEntity apply(Integer packageId, Integer[] applicationIds, HttpServletRequest request) {
+        if(packageId == null || applicationIds == null || applicationIds.length == 0){
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
+        }
         try {
-            applicationUpdateApplyService.apply(packageId, applicationIds, SessionUserManager.getSessionUser(request).getAdminUser().getId());
+            int[] pp = new int[applicationIds.length];
+            for (int i = 0; i < applicationIds.length; i++) {
+                pp[i] = applicationIds[i];
+            }
+            applicationUpdateApplyService.apply(packageId, pp, SessionUserManager.getSessionUser(request).getAdminUser().getId());
             return ResponseEntity.ok("已申请", null);
         } catch (Exception e) {
             return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionUtils.getStackTrace(e));

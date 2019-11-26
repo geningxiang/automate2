@@ -10,6 +10,7 @@ import org.apache.commons.io.filefilter.NameFileFilter;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpRequest;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -23,6 +24,8 @@ import java.util.*;
  * @date: 2019/1/31 15:18
  */
 public class Test {
+
+
 
     public static void main(String[] args) {
         String s = "D:\\github-workspace\\incubator-skywalking";

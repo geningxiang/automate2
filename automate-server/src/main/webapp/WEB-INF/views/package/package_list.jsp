@@ -95,6 +95,39 @@
         </div>
     </div>
     <!-- vertical center large Modal end -->
+    <div class="modal fade modal-dialog-center" id="applyModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content-wrap">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">申请更新</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="applyModalForm" class="form-horizontal tasi-form" method="post">
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">包</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" name="packageId" id="packageId" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">选择更新应用</label>
+                                <div class="col-sm-10" id="application-list">
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success" type="button" onclick="doApply()">申请跟新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 
@@ -136,7 +169,7 @@
                     <i class="fa fa-files-o"></i> 下载文件列表
                 </button>
 
-                <button class="btn btn-success btn-xs" onclick="">
+                <button class="btn btn-success btn-xs" onclick="showApply('{{item.projectId}}', '{{item.id}}')">
                     <i class="fa fa-hand-o-right"></i> 申请更新
                 </button>
             </td>
@@ -192,12 +225,41 @@
         window.open('/api/download/fileListSha/txt/'+sha256);
     }
 
+    function showApply(projectId, packageId){
+        $.get('/api/project/'+projectId+'/applications', function(data){
+            console.log('查询应用列表', data);
+
+
+            if(data.status == 200 && data.data.length > 0){
+                var html = '';
+                $('#packageId').val(packageId);
+                $.each(data.data, function(index, item){
+                    html += '<input type="checkbox" name="applicationIds" value="'+item.id+'">[' + item.id + ']' + item.name +'<br>';
+                });
+
+                $('#application-list').html(html);
+                $('#applyModal').modal('show');
+            }
+        });
+
+    }
+
+    function doApply(){
+        var data = $('#applyModalForm').serializeArray();
+        console.log('提交申请', data);
+        $.post('/api/applicationUpdate/apply', data , function(msg){
+            console.log('提交申请返回',msg);
+            alert(msg.msg);
+            $('#applyModal').modal('hide');
+        });
+
+    }
+
     function showUpload() {
         $('#uploadModal').modal('show');
     }
 
     var loading = false;
-
     function startUpload() {
         var validResult = $("#packageUploadForm").valid();
         console.log('validateResult', validResult);
