@@ -10,7 +10,6 @@ import com.automate.entity.ApplicationEntity;
 import com.automate.entity.ServerEntity;
 import com.automate.exec.ExecCommand;
 import com.automate.service.ApplicationService;
-import com.automate.service.ContainerTypeService;
 import com.automate.service.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,8 +34,7 @@ public class ContainerController extends BaseController {
     @Autowired
     private ApplicationService applicationService;
 
-    @Autowired
-    private ContainerTypeService containerTypeService;
+
 
     @RequestMapping(value = "/containers", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<JSONArray> containers() {

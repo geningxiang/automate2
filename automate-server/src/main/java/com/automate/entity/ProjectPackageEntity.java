@@ -79,8 +79,8 @@ public class ProjectPackageEntity {
 
 
     /**
-     * 根据 fileList 计算出来的 sha1
-     * @see FileListShaEntity#getSha1()
+     * 根据 fileList 计算出来的 sha256
+     * @see FileListShaEntity#getSha256()
      */
     private String sha256;
 
@@ -181,7 +181,7 @@ public class ProjectPackageEntity {
     }
 
     @Basic
-    @Column(name = "SHA256", nullable = true, length = 64)
+    @Column(name = "SHA256", nullable = true, length = 512)
     public String getSha256() {
         return sha256;
     }

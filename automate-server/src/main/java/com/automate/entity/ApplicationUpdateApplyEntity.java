@@ -120,7 +120,7 @@ public class ApplicationUpdateApplyEntity {
     }
 
     @Basic
-    @Column(name = "APPLICATION_FILE_SHA256", nullable = true, length = 64)
+    @Column(name = "APPLICATION_FILE_SHA256", nullable = true, length = 512)
     public String getApplicationFileSha256() {
         return applicationFileSha256;
     }

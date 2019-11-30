@@ -2,10 +2,10 @@ package com.automate.service;
 
 import com.alibaba.fastjson.JSON;
 import com.automate.common.utils.SpringContextUtil;
-import com.automate.entity.ProjectEntity;
 import com.automate.entity.ProjectBranchEntity;
-import com.automate.repository.ProjectRepository;
+import com.automate.entity.ProjectEntity;
 import com.automate.repository.ProjectBranchRepository;
+import com.automate.repository.ProjectRepository;
 import com.automate.vcs.IVCSHelper;
 import com.automate.vcs.VCSHelper;
 import com.automate.vcs.git.GitHelper;
@@ -72,6 +72,9 @@ public class ProjectService {
         int total = 0;
         if (!cvsHelper.isLocalRepositoryExist()) {
             updateBranchList = cvsHelper.init();
+            total += sync(sourceCodeEntity, cvsHelper, updateBranchList);
+        } else {
+            updateBranchList = cvsHelper.update();
             total += sync(sourceCodeEntity, cvsHelper, updateBranchList);
         }
         return total;

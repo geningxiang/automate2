@@ -72,7 +72,7 @@
 
 
     function queryList() {
-        $.get("/api/applicationUpdate/applys", {pageNo: pageNo, pageSize: pageSize} , function (msg) {
+        $.get("/api/applicationUpdate/applyList", {pageNo: pageNo, pageSize: pageSize} , function (msg) {
             console.log('应用更新申请列表', msg);
             if (msg.status == 200) {
                 $("#applicationUpdateApplyList").html(template("applicationUpdateApplyListTemplate", msg.data));

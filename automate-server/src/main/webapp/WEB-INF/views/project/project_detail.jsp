@@ -30,6 +30,19 @@
         </div>
     </div>
 
+
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading clearfix">
+                    <h3 class="pull-left">应用列表</h3>
+                </header>
+                <div id="applicationList" class="panel-body form-horizontal tasi-form">
+                </div>
+            </section>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-12">
             <section class="panel">
@@ -144,6 +157,26 @@
     </table>
 </script>
 
+<!-- 流水线运行记录模板 -->
+<script id="applicationListTemplate" type="text/html">
+    <table class="table table-hover p-table">
+        <tr>
+            <th>应用</th>
+            <th>所属服务器</th>
+            <th>最后更新时间</th>
+            <th>操作</th>
+        </tr>
+        {{each data item i}}
+        <tr>
+            <td>【{{item.id}}】{{item.name}}</td>
+            <td>{{item.serverId}}</td>
+            <td></td>
+            <td><button class="btn btn-warning btn-xs" onclick=""><i class="fa fa-list-ol"></i> 更新记录</button></td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
 <!-- 流水线列表模板 -->
 <script id="assemblyListTemplate" type="text/html">
     <table class="table table-hover p-table">
@@ -220,6 +253,8 @@
         querySourceCodeDetail();
         queryBranchList();
         queryAssemblyList();
+
+        queryApplicationList();
     }
 
     function querySourceCodeDetail(){
@@ -242,6 +277,13 @@
             $("#assemblyList").html(template('assemblyListTemplate', msg));
 
             queryAssemblyLogList();
+        });
+    }
+
+    function queryApplicationList(){
+        Core.get('/api/project/'+id+'/applications',{},function(msg){
+            console.log('应用列表', msg);
+            $('#applicationList').html(template('applicationListTemplate', msg));
         });
     }
 

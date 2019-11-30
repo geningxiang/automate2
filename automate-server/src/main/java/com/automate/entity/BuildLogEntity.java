@@ -11,8 +11,6 @@ import java.util.Objects;
  * @author: genx
  * @date: 2019/2/3 21:40
  */
-@Entity
-@Table(name = "CA2_BUILD_LOG")
 public class BuildLogEntity {
     /**
      * 状态

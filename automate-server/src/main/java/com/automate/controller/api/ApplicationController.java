@@ -55,7 +55,7 @@ public class ApplicationController {
      *   "timestamp": 1565614463109
      * }
      */
-    @RequestMapping(value = "/application/fileListSha/{id}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/application/{id}/fileListSha", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<JSONObject> fileListSha(@PathVariable("id") Integer id) {
         if (id == null || id  <= 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "id is required");
@@ -85,7 +85,7 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationEntity.toJson());
     }
 
-    @RequestMapping(value = "/application/{id}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/application/{id}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<JSONObject> get(@PathVariable("id") Integer id) {
         Assert.notNull(id, "id 不能为空");
         Optional<ApplicationEntity> applicationEntity = applicationService.findById(id);

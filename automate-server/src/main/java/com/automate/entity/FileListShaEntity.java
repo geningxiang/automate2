@@ -19,7 +19,7 @@ public class FileListShaEntity {
     private Timestamp createTime;
 
     @Id
-    @Column(name = "SHA256", nullable = false, length = 64)
+    @Column(name = "SHA256", nullable = false, length = 512)
     public String getSha256() {
         return sha256;
     }

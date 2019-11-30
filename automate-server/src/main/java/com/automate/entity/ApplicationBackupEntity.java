@@ -50,7 +50,7 @@ public class ApplicationBackupEntity {
     }
 
     @Basic
-    @Column(name = "SHA256", nullable = true, length = 64)
+    @Column(name = "SHA256", nullable = true, length = 512)
     public String getSha256() {
         return sha256;
     }

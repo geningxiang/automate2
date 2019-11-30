@@ -55,11 +55,11 @@
                 {{/if}}
             </td>
             <td>
-                <p>更新前: {{item.beforeSha256}}</p>
-                <p>更新后: {{item.afterSha256}}</p>
+                <p>更新前: <code>{{item.beforeSha256}}</code></p>
+                <p>更新后: <code>{{item.afterSha256}}</code></p>
             </td>
             <td>
-                <button class="btn btn-success btn-xs" onclick="alert('请稍后')">
+                <button class="btn btn-success btn-xs" onclick="applicationUpdateDetail('{{item.id}}')">
                     <i class="fa fa-hand-o-right"></i> 更新详情
                 </button>&nbsp;&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-success btn-xs" onclick="compare('{{item.beforeSha256}}','{{item.afterSha256}}')">
@@ -109,6 +109,9 @@
 
     }
 
+    function applicationUpdateDetail(applicationUpdateLogId){
+        window.open('/admin/application/updateLogDetail?applicationUpdateLogId=' + applicationUpdateLogId);
+    }
 
 </script>
 </body>

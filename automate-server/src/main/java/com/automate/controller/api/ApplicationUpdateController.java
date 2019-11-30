@@ -58,7 +58,7 @@ public class ApplicationUpdateController extends BaseController {
      */
     @RequestMapping(value = "/applicationUpdate/apply", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ResponseEntity apply(Integer packageId, Integer[] applicationIds, HttpServletRequest request) {
-        if(packageId == null || applicationIds == null || applicationIds.length == 0){
+        if (packageId == null || applicationIds == null || applicationIds.length == 0) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
         }
         try {
@@ -81,7 +81,7 @@ public class ApplicationUpdateController extends BaseController {
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/applicationUpdate/applys", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/applicationUpdate/applyList", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity applyList(@Nullable Integer projectId, @Nullable Integer applicationId, Integer pageNo, Integer pageSize) {
         PageRequest pageRequest = buildPageRequest(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Specification<ApplicationUpdateApplyEntity> specification = (Specification) (root, criteriaQuery, criteriaBuilder) -> {
@@ -110,7 +110,7 @@ public class ApplicationUpdateController extends BaseController {
         Optional<ApplicationUpdateApplyEntity> applicationUpdateApplyEntity = applicationUpdateApplyService.findById(applyId);
         if (applicationUpdateApplyEntity.isPresent()) {
 
-            if(applicationUpdateApplyEntity.get().getStatus() != ApplicationUpdateApplyEntity.Status.APPLY.ordinal()){
+            if (applicationUpdateApplyEntity.get().getStatus() != ApplicationUpdateApplyEntity.Status.APPLY.ordinal()) {
                 return ResponseEntity.of(HttpStatus.BAD_REQUEST, "当前申请已处理:status=" + applicationUpdateApplyEntity.get().getStatus());
             }
             //TODO 申请的状态
@@ -142,6 +142,23 @@ public class ApplicationUpdateController extends BaseController {
         };
         Page<ApplicationUpdateLogEntity> pager = applicationUpdateLogService.findAll(specification, pageRequest);
         return ResponseEntity.ok(pager);
+    }
+
+    /**
+     * 更新详情
+     * @param applicationUpdateLogId
+     * @return
+     */
+    @RequestMapping(value = "/applicationUpdate/logDetail", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public ResponseEntity logDetail(@Nullable Integer applicationUpdateLogId) {
+        if (applicationUpdateLogId == null || applicationUpdateLogId <= 0) {
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
+        }
+        Optional<ApplicationUpdateLogEntity> model = applicationUpdateLogService.findById(applicationUpdateLogId);
+        if (model.isPresent()) {
+            return ResponseEntity.ok(model);
+        }
+        return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应的更新日志");
     }
 
 }

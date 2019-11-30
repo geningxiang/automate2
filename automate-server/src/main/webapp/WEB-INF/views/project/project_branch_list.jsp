@@ -67,8 +67,8 @@
             window.open("/admin/project/branchDetail?id=" + id);
     }
 
-    function sourceCodeSync(id) {
-        Core.post("/api/project/sync", {id: id}, function (data) {
+    function projectSync(id) {
+        Core.post("/api/projectSync", {id: id}, function (data) {
             console.log(data);
             if (data.status == 200) {
                 if (data.data > 0) {

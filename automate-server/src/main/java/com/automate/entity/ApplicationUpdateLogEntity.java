@@ -182,7 +182,7 @@ public class ApplicationUpdateLogEntity {
 
 
     @Basic
-    @Column(name = "BEFORE_SHA256", nullable = true, length = 64)
+    @Column(name = "BEFORE_SHA256", nullable = true, length = 512)
     public String getBeforeSha256() {
         return beforeSha256;
     }
@@ -192,7 +192,7 @@ public class ApplicationUpdateLogEntity {
     }
 
     @Basic
-    @Column(name = "AFTER_SHA256", nullable = true, length = 64)
+    @Column(name = "AFTER_SHA256", nullable = true, length = 512)
     public String getAfterSha256() {
         return afterSha256;
     }

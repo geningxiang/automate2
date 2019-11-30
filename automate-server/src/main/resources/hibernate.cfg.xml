@@ -5,21 +5,6 @@
 <hibernate-configuration>
   <session-factory>
     <property name="connection.url">jdbc:mysql://192.168.1.190:3306/automate2</property>
-    <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-      <mapping class="com.automate.entity.UserEntity"/>
-      <mapping class="com.automate.entity.SourceCodeEntity"/>
-      <mapping class="com.automate.entity.ProjectBranchEntity"/>
-      <mapping class="com.automate.entity.Ca2BuildLogEntity"/>
-      <mapping class="com.automate.entity.AssemblyLineEntity"/>
-      <mapping class="com.automate.entity.AssemblyLineLogEntity"/>
-      <mapping class="com.automate.entity.Ca2AssemblyLineTaskLogEntity"/>
-      <mapping class="com.automate.entity.ContainerEntity"/>
-      <mapping class="com.automate.entity.ContainerTypeEntity"/>
-      <mapping class="com.automate.entity.ApplicationPackageEntity"/>
-      <mapping class="com.automate.entity.ApplicationUpdateApplyEntity"/>
-      <mapping class="com.automate.entity.ProjectEntity"/>
-      <mapping class="com.automate.entity.Ca2FileListShaEntity"/>
-      <mapping class="com.automate.entity.Ca2ApplicationBackupEntity"/>
 
   </session-factory>
 </hibernate-configuration>
