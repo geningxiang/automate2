@@ -46,6 +46,10 @@ public class TestVCSRepository implements IVCSRepository {
         this.userName = userName;
     }
 
+    public void setVcsUserName(String userName){
+        this.userName = userName;
+    }
+
     @Override
     public String getPassWord() {
         return passWord;
@@ -54,4 +58,10 @@ public class TestVCSRepository implements IVCSRepository {
     public void setPassWord(String passWord) {
         this.passWord = passWord;
     }
+
+    public void setVcsPassWord(String passWord){
+        this.passWord = passWord;
+    }
+
+
 }

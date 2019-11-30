@@ -13,6 +13,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,8 @@ import java.util.Optional;
  */
 @Service
 public class ApplicationUpdateLogService {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private ApplicationUpdateLogRepository applicationUpdateLogRepository;
@@ -224,9 +228,13 @@ public class ApplicationUpdateLogService {
         StringBuilder backUpFilePath = new StringBuilder(256);
         backUpFilePath.append(applicationEntity.getBackupDir());
         if (!applicationEntity.getBackupDir().endsWith("/")) {
-            backUpFilePath.append(backUpFilePath.append("/"));
+            backUpFilePath.append("/");
         }
         backUpFilePath.append(FastDateFormat.getInstance("yyyyMMddHHmmssSSS").format(System.currentTimeMillis())).append(".tar.gz");
+
+        logger.info("{} ==> {}", applicationEntity.getSourceDir(), backUpFilePath.toString());
+
+        execLog.append(applicationEntity.getSourceDir()).append(" ==> ").append(backUpFilePath.toString()).append(System.lineSeparator());
 
         //原文件夹 压缩
         sshConnection.tar(applicationEntity.getSourceDir(), backUpFilePath.toString(), execLog);
