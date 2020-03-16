@@ -28,7 +28,7 @@ public class Test {
 
 
     public static void main(String[] args) {
-        String s = "D:\\github-workspace\\incubator-skywalking";
+        String s = "E:\\github-workspace\\jeecg-boot\\jeecg-boot";
 
         File dir = new File(s);
 

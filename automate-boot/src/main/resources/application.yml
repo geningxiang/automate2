@@ -1,0 +1,17 @@
+logging:
+  level:
+    root: info
+
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: automate-server
+
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.190:3306/automate2?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456

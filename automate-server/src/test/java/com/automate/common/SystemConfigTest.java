@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.junit.Assert.*;
-
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -32,11 +30,10 @@ public class SystemConfigTest {
     @Test
     public void test() throws IOException {
 
-
     }
 
     @Test
-    public void pathTest(){
+    public void pathTest() {
         String classResourcePath = SystemConfig.class.getName().replaceAll("\\.", "/") + ".class";
 
         URL resource = SystemConfig.class.getClassLoader().getSystemClassLoader().getResource(classResourcePath);

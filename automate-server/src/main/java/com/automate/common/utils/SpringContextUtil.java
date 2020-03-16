@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContextAware;
  * @date: 2019/2/3 21:50
  */
 public class SpringContextUtil implements ApplicationContextAware {
+
     /**
      * Spring应用上下文环境
      */
