@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.automate</groupId>
-    <artifactId>automate-api</artifactId>
+    <artifactId>automate-boot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>automate-api</name>
+    <name>automate-boot</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -76,6 +76,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.github.geningxiang</groupId>
+                <artifactId>javadoc-mvn-plugin</artifactId>
+                <version>1.1.2</version>
             </plugin>
         </plugins>
     </build>

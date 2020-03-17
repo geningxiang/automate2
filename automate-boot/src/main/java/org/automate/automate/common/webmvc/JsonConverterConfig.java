@@ -1,4 +1,4 @@
-package org.automate.automate.config;
+package org.automate.automate.common.webmvc;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;

@@ -2,6 +2,7 @@ package org.automate.automate.repository;
 
 import org.automate.automate.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,11 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<UserEntity, Integer>, JpaSpecificationExecutor<UserEntity> {
 
-    /**
-     * 根据用户名 查询用户
-     *
-     * @param userName
-     * @return
-     */
-    UserEntity findFirstByUserName(String userName);
+    @Query("select u from UserEntity u where u.status = 1 and ( u.userName = ?1 or u.mobile = ?1 or u.email = ?1) ")
+    UserEntity findNormalUserByKey(String key);
 }

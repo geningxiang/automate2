@@ -1,7 +1,7 @@
 package org.automate.automate.entity;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
@@ -55,7 +55,7 @@ public class UserEntity {
     /**
      * 最后修改时间
      */
-    private Date updateTime;
+    private Timestamp updateTime;
 
     /**
      * 手机号码
@@ -66,6 +66,16 @@ public class UserEntity {
      * 邮件地址
      */
     private String email;
+
+    /**
+     * 允许添加服务器资源
+     */
+    private Boolean allowCreateServer;
+
+    /**
+     * 允许添加项目
+     */
+    private Boolean allowCreateProject;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -137,14 +147,13 @@ public class UserEntity {
         this.status = status.ordinal();
     }
 
-
     @Basic
     @Column(name = "UPDATE_TIME", nullable = true)
-    public Date getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 

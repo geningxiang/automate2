@@ -1,7 +1,9 @@
-package org.automate.automate.service;
+package org.automate.automate.service.impl;
 
 import org.automate.automate.entity.UserEntity;
 import org.automate.automate.repository.UserRepository;
+import org.automate.automate.service.IBaseEntityService;
+import org.automate.automate.service.IUserService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -17,15 +19,18 @@ import java.util.Optional;
  * @date: 2019/1/30 21:52
  */
 @Service
-public class UserService {
+public class UserServiceImpl implements IUserService {
 
     @Resource
     private UserRepository userRepository;
 
-    public UserEntity findFirstByUserName(String userName) {
-        Assert.hasText(userName, "userName is null");
-        return this.userRepository.findFirstByUserName(userName);
+
+    @Override
+    public UserEntity findNormalUserByKey(String key) {
+        Assert.hasText(key, "userName is null");
+        return this.userRepository.findNormalUserByKey(key);
     }
+
 
     public Iterable<UserEntity> findAll() {
         return userRepository.findAll(Sort.by("id"));

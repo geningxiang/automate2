@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 /**
@@ -48,11 +50,15 @@ public class ExceptionHandlerController {
         if (ex instanceof MaxUploadSizeExceededException) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "上传文件大小超过限制");
         } else if (ex instanceof IllegalArgumentException) {
-            return ResponseEntity.of(HttpStatus.BAD_REQUEST, "参数错误");
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, ex.getMessage());
+        } else if (ex instanceof MethodArgumentTypeMismatchException) {
+            return ResponseEntity.of(HttpStatus.BAD_REQUEST, ((MethodArgumentTypeMismatchException) ex).getName() + "参数错误");
+        } else if (ex instanceof AuthenticationException) {
+            return ResponseEntity.of(HttpStatus.UNAUTHORIZED, "请登录");
         }
 
         logger.error("全局异常捕获", ex);
-        return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, "服务器处理时发生异常");
+        return ResponseEntity.of(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
 }
