@@ -69,6 +69,24 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
+
+
+        <!-- git java api -->
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.3.0.201903130848-r</version>
+        </dependency>
+
+
+        <!-- java 操作 svn -->
+        <dependency>
+            <groupId>org.tmatesoft.svnkit</groupId>
+            <artifactId>svnkit</artifactId>
+            <version>1.9.3</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
