@@ -18,14 +18,16 @@ public class CommitLog {
     private long commitTime;
 
     /**
-     * 作者  暂时不考虑
+     * 作者
      */
-    private Person author;
+    private String author;
 
     /**
-     * 提交者
+     * 邮箱地址
+     * git 有
+     * svn 没有
      */
-    private Person committer;
+    private String email;
 
     /**
      * 提交说明
@@ -49,20 +51,20 @@ public class CommitLog {
         this.commitTime = commitTime;
     }
 
-//    public Person getAuthor() {
-//        return author;
-//    }
-
-    public void setAuthor(Person author) {
-//        this.author = author;
+    public String getAuthor() {
+        return author;
     }
 
-    public Person getCommitter() {
-        return committer;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public void setCommitter(Person committer) {
-        this.committer = committer;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getMsg() {

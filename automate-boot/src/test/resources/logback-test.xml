@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="GBK"?>
+<configuration debug="false">
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>
+                %d %-4relative [%thread] %-5level %logger{36} [T:%X{trans}]  - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="org.eclipse.jgit" level="WARN" />
+
+
+</configuration>

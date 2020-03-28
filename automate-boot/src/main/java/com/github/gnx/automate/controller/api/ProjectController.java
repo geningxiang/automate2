@@ -2,16 +2,15 @@ package com.github.gnx.automate.controller.api;
 
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
-import com.github.gnx.automate.entity.AssemblyLineEntity;
-import com.github.gnx.automate.entity.AssemblyLineLogEntity;
-import com.github.gnx.automate.entity.ProjectEntity;
+import com.github.gnx.automate.entity.*;
 import com.github.gnx.automate.field.req.ReqProjectCreateField;
-import com.github.gnx.automate.field.rsp.RspContainerField;
-import com.github.gnx.automate.service.IAssemblyLineService;
-import com.github.gnx.automate.service.IProjectService;
-import com.github.gnx.automate.vcs.vo.VcsBranch;
+import com.github.gnx.automate.service.*;
+import com.github.gnx.automate.vcs.VcsHelper;
 import com.github.gnx.automate.vcs.vo.CommitLog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,7 +33,19 @@ public class ProjectController {
     private IProjectService projectService;
 
     @Autowired
+    private IProjectBranchService projectBranchService;
+
+    @Autowired
     private IAssemblyLineService assemblyLineService;
+
+    @Autowired
+    private IAssemblyLineLogService assemblyLineLogService;
+
+    @Autowired
+    private IContainerService containerService;
+
+    @Autowired
+    private VcsHelper vcsHelper;
 
     /**
      * 项目列表
@@ -95,10 +106,24 @@ public class ProjectController {
      * @param projectId
      * @return
      */
-    @RequestMapping(value = "/project/{projectId}/pipelineLogs", method = RequestMethod.GET)
-    public ResponseEntity<List<AssemblyLineLogEntity>> pipelineLogList(CurrentUser currentUser, @PathVariable("projectId") Integer projectId) {
-        return null;
+    @RequestMapping(value = "/project/{projectId}/assembly_line_logs", method = RequestMethod.GET)
+    public ResponseEntity<Page<AssemblyLineLogEntity>> assemblyLineLogList(
+            CurrentUser currentUser,
+            @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "page", required = false, defaultValue = "20") Integer pageSize
+    ) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id"); //创建时间降序排序
+        return ResponseEntity.ok(assemblyLineLogService.queryPageByProjectId(projectId, PageRequest.of(page, pageSize, sort)));
     }
+
+
+    @RequestMapping(value = "/project/{projectId}/fetch", method = RequestMethod.POST)
+    public ResponseEntity fetchProject(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) throws Exception {
+        vcsHelper.update(projectService.getModel(projectId).get());
+        return ResponseEntity.ok();
+    }
+
 
     /**
      * 查询指定项目的分支列表
@@ -107,8 +132,8 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value = "/project/{projectId}/branches", method = RequestMethod.GET)
-    public ResponseEntity<List<VcsBranch>> branchList(CurrentUser currentUser, @PathVariable("projectId") Integer projectId) {
-        return null;
+    public ResponseEntity<List<ProjectBranchEntity>> branchList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) throws Exception {
+        return ResponseEntity.ok(projectBranchService.getList(projectId));
     }
 
     /**
@@ -119,7 +144,7 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value = "/project/{projectId}/branch/{branch}", method = RequestMethod.GET)
-    public ResponseEntity<List<CommitLog>> branchList(CurrentUser currentUser, @PathVariable("projectId") Integer projectId, @PathVariable("branch") String branch) {
+    public ResponseEntity<List<CommitLog>> branchList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId, @PathVariable("branch") String branch) {
         return null;
     }
 
@@ -130,8 +155,8 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value = "/project/{projectId}/containers", method = RequestMethod.GET)
-    public ResponseEntity<List<RspContainerField>> containerList(CurrentUser currentUser, @PathVariable("projectId") Integer projectId) {
-        return null;
+    public ResponseEntity<List<ContainerEntity>> containerList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
+        return ResponseEntity.ok(containerService.getAllByProjectIdOrderById(projectId));
     }
 
 

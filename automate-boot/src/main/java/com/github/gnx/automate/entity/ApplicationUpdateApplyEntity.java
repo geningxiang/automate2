@@ -44,7 +44,7 @@ public class ApplicationUpdateApplyEntity {
 
     /**
      * 容器ID
-     * @see ApplicationEntity#getId()
+     * @see ContainerEntity#getId()
      */
     private Integer applicationId;
 

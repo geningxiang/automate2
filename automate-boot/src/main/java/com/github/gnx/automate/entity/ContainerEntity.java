@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "CA2_APPLICATION")
-public class ApplicationEntity {
+public class ContainerEntity {
     private Integer id;
     private Integer serverId;
     private Integer projectId;

@@ -1,6 +1,6 @@
 package com.github.gnx.automate.controller.api;
 
-import com.github.gnx.automate.entity.ApplicationEntity;
+import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ServerEntity;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
@@ -52,7 +52,7 @@ public class ServerController {
      * @return
      */
     @RequestMapping(value = "/server/{serverId}/containers", method = RequestMethod.GET)
-    public ResponseEntity<List<ApplicationEntity>> containerList(@PathVariable("serverId") Integer serverId, CurrentUser currentUser) {
+    public ResponseEntity<List<ContainerEntity>> containerList(@PathVariable("serverId") Integer serverId, CurrentUser currentUser) {
         return null;
     }
 
@@ -61,7 +61,7 @@ public class ServerController {
      * @return
      */
     @RequestMapping(value = "/server/{serverId}/container", method = RequestMethod.POST)
-    public ResponseEntity<ApplicationEntity> createContainer(@PathVariable("serverId") Integer serverId, CurrentUser currentUser, ApplicationEntity applicationEntity) {
+    public ResponseEntity<ContainerEntity> createContainer(@PathVariable("serverId") Integer serverId, CurrentUser currentUser, ContainerEntity containerEntity) {
         return null;
     }
 

@@ -1,17 +1,27 @@
 package com.github.gnx.automate.vcs.svn.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.github.gnx.automate.contants.VcsType;
+import com.github.gnx.automate.event.IEventPublisher;
+import com.github.gnx.automate.event.vo.BranchUpdatedEvent;
+import com.github.gnx.automate.vcs.IVcsCredentialsProvider;
 import com.github.gnx.automate.vcs.IVcsService;
+import com.github.gnx.automate.vcs.VcsUserNamePwdCredentialsProvider;
+import com.github.gnx.automate.vcs.vo.CommitLog;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
-import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNLogClient;
-import org.tmatesoft.svn.core.wc.SVNRevision;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
+import org.tmatesoft.svn.core.wc.*;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,25 +31,25 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
  */
 @Service
 public class SvnServiceImpl implements IVcsService {
+
+    /**
+     * 仓库文件夹后缀 .svn
+     */
+    public static final String DOT_SVN = ".svn";
+
+    @Autowired
+    private IEventPublisher eventPublisher;
+
     @Override
     public VcsType getVcsType() {
         return VcsType.SVN;
     }
 
     @Override
-    public void test(String url, String name, String pwd) throws Exception {
+    public void test(String url, IVcsCredentialsProvider vcsCredentialsProvider) throws Exception {
         SVNClientManager svnClientManager = null;
         try {
-
-            DefaultSVNOptions options = SVNWCUtil.createDefaultOptions(true);
-            ISVNAuthenticationManager authManager = null;
-            if (StringUtils.isNoneBlank(name, pwd)) {
-                authManager = SVNWCUtil.createDefaultAuthenticationManager(null, name, pwd.toCharArray());
-
-            }
-            svnClientManager = SVNClientManager.newInstance(options, authManager);
-
-
+            svnClientManager = getSVNClientManager(vcsCredentialsProvider);
             SVNLogClient svnLogClient = svnClientManager.getLogClient();
             svnLogClient.doLog(SVNURL.parseURIEncoded(url), new String[]{}, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, false, false, 1, null,
                     svnLogEntry -> {
@@ -51,4 +61,109 @@ public class SvnServiceImpl implements IVcsService {
             }
         }
     }
+
+    @Override
+    public int clone(int projectId, String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider) throws Exception {
+        return this.doUpdate(projectId, remoteUrl, localDir, vcsCredentialsProvider);
+    }
+
+    @Override
+    public int doUpdate(int projectId, String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider) throws Exception {
+        SVNClientManager svnClientManager = null;
+        try {
+            svnClientManager = getSVNClientManager(vcsCredentialsProvider);
+
+
+            int updated = 0;
+
+            SVNUpdateClient updateClient = svnClientManager.getUpdateClient();
+            long revision;
+            if (localDir.exists()) {
+                long currentRevision = getCurrentRevision(remoteUrl, svnClientManager);
+                revision = updateClient.doUpdate(localDir, SVNRevision.HEAD, SVNDepth.INFINITY, true, true);
+                if (revision > currentRevision) {
+                    updated++;
+                }
+
+            } else {
+                revision = updateClient.doCheckout(SVNURL.parseURIEncoded(remoteUrl), localDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, true);
+                updated++;
+            }
+
+            // 暂时只认为是单个分支
+            if (updated > 0) {
+
+                List<CommitLog> commitLogList = new ArrayList(IVcsService.DEFAULT_LIMIT);
+                SVNLogClient svnLogClient = svnClientManager.getLogClient();
+                svnLogClient.doLog(SVNURL.parseURIEncoded(remoteUrl), new String[]{}, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, false, false, IVcsService.DEFAULT_LIMIT, null,
+                        svnLogEntry -> {
+                            commitLogList.add(parse(svnLogEntry));
+                        });
+                eventPublisher.publishEvent(new BranchUpdatedEvent(projectId, "trunk", commitLogList));
+            }
+
+            return updated;
+        } finally {
+            if (svnClientManager != null) {
+                svnClientManager.dispose();
+            }
+        }
+    }
+
+
+    private long getCurrentRevision(String remoteUrl, SVNClientManager svnClientManager) throws SVNException {
+        SVNLogClient svnLogClient = svnClientManager.getLogClient();
+        final long[] revisions = new long[1];
+        svnLogClient.doLog(SVNURL.parseURIEncoded(remoteUrl), new String[]{}, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, false, false, 1, null,
+                svnLogEntry -> revisions[0] = svnLogEntry.getRevision());
+        return revisions[0];
+    }
+
+    @Override
+    public List<CommitLog> commitLog(String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider, String branch, String startId, int limit) throws Exception {
+        SVNClientManager svnClientManager = null;
+        try {
+            svnClientManager = getSVNClientManager(vcsCredentialsProvider);
+            SVNLogClient svnLogClient = svnClientManager.getLogClient();
+            final List<CommitLog> list = new ArrayList(limit);
+
+            SVNRevision startRevision = SVNRevision.HEAD;
+            if (StringUtils.isNotBlank(startId)) {
+                startRevision = SVNRevision.create(NumberUtils.toLong(startId));
+            }
+
+            svnLogClient.doLog(SVNURL.parseURIEncoded(remoteUrl), new String[]{}, SVNRevision.HEAD, startRevision, SVNRevision.create(0), false, false, false, limit, null,
+                    svnLogEntry -> list.add(parse(svnLogEntry)));
+            svnClientManager.dispose();
+            return list;
+        } finally {
+            if (svnClientManager != null) {
+                svnClientManager.dispose();
+            }
+        }
+    }
+
+    private CommitLog parse(SVNLogEntry svnLogEntry) {
+        CommitLog commitLog = new CommitLog();
+        commitLog.setId(String.valueOf(svnLogEntry.getRevision()));
+        commitLog.setAuthor(svnLogEntry.getAuthor());
+        commitLog.setCommitTime(svnLogEntry.getDate().getTime());
+        commitLog.setMsg(svnLogEntry.getMessage());
+        return commitLog;
+    }
+
+    private SVNClientManager getSVNClientManager(IVcsCredentialsProvider vcsCredentialsProvider) {
+        DefaultSVNOptions options = SVNWCUtil.createDefaultOptions(true);
+        ISVNAuthenticationManager authManager = null;
+        if (vcsCredentialsProvider != null && vcsCredentialsProvider instanceof VcsUserNamePwdCredentialsProvider) {
+            if (((VcsUserNamePwdCredentialsProvider) vcsCredentialsProvider).isNoneBlank()) {
+                authManager = SVNWCUtil.createDefaultAuthenticationManager(null,
+                        ((VcsUserNamePwdCredentialsProvider) vcsCredentialsProvider).getUserName(),
+                        ((VcsUserNamePwdCredentialsProvider) vcsCredentialsProvider).getPassWord().toCharArray());
+            }
+        }
+        return SVNClientManager.newInstance(options, authManager);
+    }
+
+
 }

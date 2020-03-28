@@ -71,13 +71,12 @@
         </dependency>
 
 
-        <!-- git java api -->
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>5.3.0.201903130848-r</version>
+            <version>5.7.0.202003110725-r</version>
         </dependency>
-
 
         <!-- java 操作 svn -->
         <dependency>

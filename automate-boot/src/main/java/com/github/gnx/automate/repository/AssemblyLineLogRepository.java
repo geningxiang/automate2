@@ -1,6 +1,8 @@
 package com.github.gnx.automate.repository;
 
 import com.github.gnx.automate.entity.AssemblyLineLogEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -15,5 +17,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AssemblyLineLogRepository extends PagingAndSortingRepository<AssemblyLineLogEntity, Integer>, JpaSpecificationExecutor<AssemblyLineLogEntity> {
 
+    Page<AssemblyLineLogEntity> queryAllByProjectId(int projectId, Pageable pageable);
 
 }
