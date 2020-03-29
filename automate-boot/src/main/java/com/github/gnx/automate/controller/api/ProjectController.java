@@ -88,36 +88,14 @@ public class ProjectController {
         return ResponseEntity.ok(projectEntity.get());
     }
 
+
     /**
-     * 查询指定项目的流水线列表
+     * 同步项目的vcs
      * @param currentUser
      * @param projectId
      * @return
+     * @throws Exception
      */
-    @RequestMapping(value = "/project/{projectId}/assembly_lines", method = RequestMethod.GET)
-    public ResponseEntity<List<AssemblyLineEntity>> assemblyLineList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
-        //TODO 权限
-        return ResponseEntity.ok(assemblyLineService.getAllByProjectIdOrderById(projectId));
-    }
-
-    /**
-     * 查询指定项目的 流水线执行记录
-     * @param currentUser
-     * @param projectId
-     * @return
-     */
-    @RequestMapping(value = "/project/{projectId}/assembly_line_logs", method = RequestMethod.GET)
-    public ResponseEntity<Page<AssemblyLineLogEntity>> assemblyLineLogList(
-            CurrentUser currentUser,
-            @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId,
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(value = "page", required = false, defaultValue = "20") Integer pageSize
-    ) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id"); //创建时间降序排序
-        return ResponseEntity.ok(assemblyLineLogService.queryPageByProjectId(projectId, PageRequest.of(page, pageSize, sort)));
-    }
-
-
     @RequestMapping(value = "/project/{projectId}/fetch", method = RequestMethod.POST)
     public ResponseEntity fetchProject(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) throws Exception {
         vcsHelper.update(projectService.getModel(projectId).get());
@@ -157,6 +135,38 @@ public class ProjectController {
     @RequestMapping(value = "/project/{projectId}/containers", method = RequestMethod.GET)
     public ResponseEntity<List<ContainerEntity>> containerList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
         return ResponseEntity.ok(containerService.getAllByProjectIdOrderById(projectId));
+    }
+
+
+
+    /**
+     * 查询指定项目的流水线列表
+     * @param currentUser
+     * @param projectId
+     * @return
+     */
+    @RequestMapping(value = "/project/{projectId}/assembly_lines", method = RequestMethod.GET)
+    public ResponseEntity<List<AssemblyLineEntity>> assemblyLineList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
+        //TODO 权限
+        return ResponseEntity.ok(assemblyLineService.getAllByProjectIdOrderById(projectId));
+    }
+
+    /**
+     * 查询指定项目的 流水线执行记录
+     * @param currentUser
+     * @param projectId
+     * @return
+     */
+    @RequestMapping(value = "/project/{projectId}/assembly_line_logs", method = RequestMethod.GET)
+    public ResponseEntity<Page<AssemblyLineLogEntity>> assemblyLineLogList(
+            CurrentUser currentUser,
+            @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize
+    ) {
+        //倒序排序
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        return ResponseEntity.ok(assemblyLineLogService.queryPageByProjectId(projectId, PageRequest.of(page - 1, pageSize, sort)));
     }
 
 

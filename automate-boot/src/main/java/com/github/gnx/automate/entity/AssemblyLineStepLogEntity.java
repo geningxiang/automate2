@@ -5,14 +5,13 @@ import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
- *
+ * Description: 流水线 单步执行日志
  * @author: genx
  * @date: 2019/2/4 16:06
  */
 @Entity
-@Table(name = "CA2_ASSEMBLY_LINE_TASK_LOG")
-public class AssemblyLineTaskLogEntity {
+@Table(name = "CA2_ASSEMBLY_LINE_STEP_LOG")
+public class AssemblyLineStepLogEntity {
 
     private Integer id;
 
@@ -112,7 +111,7 @@ public class AssemblyLineTaskLogEntity {
         if (this.content == null) {
             synchronized (this) {
                 if (this.content == null) {
-                    this.content = new StringBuffer(1024);
+                    this.content = new StringBuffer(102400);
                 }
             }
         }

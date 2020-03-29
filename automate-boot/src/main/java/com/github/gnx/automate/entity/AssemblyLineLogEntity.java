@@ -25,15 +25,48 @@ public class AssemblyLineLogEntity {
 
 
     private Integer id;
+
+    /**
+     * 某些不需要设置的流水线任务
+     * assemblyLineId = 0
+     * 比如项目 clone
+     */
     private Integer assemblyLineId;
+
+    /**
+     * 项目ID
+     */
     private Integer projectId;
+
+    /**
+     * 名称
+     */
+    private String name;
+
+    /**
+     * 当前执行的分支
+     */
     private String branch;
+
+    /**
+     * 执行时 版本控制ID
+     */
     private String commitId;
+
+    /**
+     * 任务配置信息
+     */
     private String config;
-    private Integer adminId;
+
+    /**
+     * 流水线任务创建人
+     */
+    private Integer createUserId;
+
     private Timestamp createTime;
     private Timestamp startTime;
     private Timestamp endTime;
+
     private Byte status;
 
     @Id
@@ -68,6 +101,16 @@ public class AssemblyLineLogEntity {
     }
 
     @Basic
+    @Column(name = "NAME", nullable = true, length = 255)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Basic
     @Column(name = "BRANCH", nullable = true, length = 64)
     public String getBranch() {
         return branch;
@@ -98,13 +141,13 @@ public class AssemblyLineLogEntity {
     }
 
     @Basic
-    @Column(name = "ADMIN_ID", nullable = true)
-    public Integer getAdminId() {
-        return adminId;
+    @Column(name = "CREATE_USER_ID", nullable = true)
+    public Integer getCreateUserId() {
+        return createUserId;
     }
 
-    public void setAdminId(Integer adminId) {
-        this.adminId = adminId;
+    public void setCreateUserId(Integer createUserId) {
+        this.createUserId = createUserId;
     }
 
     @Basic

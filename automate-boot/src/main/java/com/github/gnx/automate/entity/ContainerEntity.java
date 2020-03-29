@@ -12,7 +12,7 @@ import javax.persistence.*;
  * @date: 2019/2/24 23:38
  */
 @Entity
-@Table(name = "CA2_APPLICATION")
+@Table(name = "CA2_CONTAINER")
 public class ContainerEntity {
     private Integer id;
     private Integer serverId;
@@ -39,7 +39,7 @@ public class ContainerEntity {
     private String scriptStart;
     private String scriptStop;
     private String scriptCheck;
-    private Integer adminId;
+    private Integer userId;
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -133,13 +133,13 @@ public class ContainerEntity {
     }
 
     @Basic
-    @Column(name = "ADMIN_ID", nullable = true)
-    public Integer getAdminId() {
-        return adminId;
+    @Column(name = "USER_ID", nullable = true)
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setAdminId(Integer adminId) {
-        this.adminId = adminId;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     @Basic
@@ -180,7 +180,7 @@ public class ContainerEntity {
         json.put("name", this.name);
         json.put("type", this.type);
         json.put("remark", this.remark);
-        json.put("adminId", this.adminId);
+        json.put("adminId", this.userId);
         return json;
     }
 

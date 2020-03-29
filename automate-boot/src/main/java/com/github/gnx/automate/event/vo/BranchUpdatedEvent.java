@@ -1,0 +1,39 @@
+package com.github.gnx.automate.event.vo;
+
+import com.github.gnx.automate.event.AbstractEvent;
+import com.github.gnx.automate.vcs.vo.CommitLog;
+
+import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ * Description: 
+ * @author genx
+ * @date 2020/3/28 20:49
+ */
+public class BranchUpdatedEvent extends AbstractEvent {
+
+    private int projectId;
+    private String branchName;
+    private List<CommitLog> commitLogList;
+
+    public BranchUpdatedEvent(int projectId, String branchName, List<CommitLog> commitLogList) {
+        super(projectId);
+        this.projectId = projectId;
+        this.branchName = branchName;
+        this.commitLogList = commitLogList;
+    }
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public List<CommitLog> getCommitLogList() {
+        return commitLogList;
+    }
+
+}
