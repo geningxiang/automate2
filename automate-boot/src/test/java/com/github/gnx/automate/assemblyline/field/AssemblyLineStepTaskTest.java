@@ -32,7 +32,7 @@ public class AssemblyLineStepTaskTest {
 
         if(assemblyLineStepTask.getSpecificTasks() != null){
 
-            for (ISpecificTask specificTask : assemblyLineStepTask.getSpecificTasks()) {
+            for (ITaskConfig specificTask : assemblyLineStepTask.getSpecificTasks()) {
                 System.out.println(specificTask.getClass().getName());
             }
 

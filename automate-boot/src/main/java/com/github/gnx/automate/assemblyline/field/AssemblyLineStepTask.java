@@ -16,7 +16,7 @@ public class AssemblyLineStepTask {
 
     private String stepName;
 
-    private List<ISpecificTask> specificTasks;
+    private List<ITaskConfig> specificTasks;
 
 
     public String getStepName() {
@@ -27,7 +27,7 @@ public class AssemblyLineStepTask {
         this.stepName = stepName;
     }
 
-    public List<ISpecificTask> getSpecificTasks() {
+    public List<ITaskConfig> getSpecificTasks() {
         return specificTasks;
     }
 
@@ -36,21 +36,21 @@ public class AssemblyLineStepTask {
             this.specificTasks = null;
         }
 
-        List<ISpecificTask> list = new ArrayList(specificTasks.size());
+        List<ITaskConfig> list = new ArrayList(specificTasks.size());
         for (Object item : specificTasks) {
             if (item != null) {
 
-                if (item instanceof ISpecificTask) {
-                    list.add((ISpecificTask) item);
+                if (item instanceof ITaskConfig) {
+                    list.add((ITaskConfig) item);
                 } else if (item instanceof JSONObject) {
                     //将 json格式解析到具体的实体类， json必须包含 className 标识具体类名
                     String className = ((JSONObject) item).getString("className");
                     Class cls = Class.forName(className);
-                    if (!ISpecificTask.class.isAssignableFrom(cls)) {
+                    if (!ITaskConfig.class.isAssignableFrom(cls)) {
                         throw new RuntimeException("JSON解析失败:" + className + "不是有效的任务类");
                     }
 
-                    ISpecificTask specificTask = (ISpecificTask) JSON.parseObject(((JSONObject) item).toJSONString(), cls);
+                    ITaskConfig specificTask = (ITaskConfig) JSON.parseObject(((JSONObject) item).toJSONString(), cls);
                     list.add(specificTask);
                 } else {
                     throw new RuntimeException("JSON解析失败:" + item);

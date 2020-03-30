@@ -6,8 +6,12 @@ package com.github.gnx.automate.assemblyline.field;
  * @author genx
  * @date 2020/3/29 19:54
  */
-public interface ISpecificTask {
+public interface ITaskConfig {
 
+    /**
+     * 任务名称
+     * @return 任务名称
+     */
     String getName();
 
 

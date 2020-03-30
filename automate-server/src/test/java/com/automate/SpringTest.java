@@ -13,9 +13,13 @@ public class SpringTest {
 
     public static void main(String[] args) {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring/*.xml");
+//        System.out.println(Thread.currentThread().getId() + "-" + Thread.currentThread().getName());
 
+//        org.springframework.data.querydsl.SimpleEntityPathResolver;
+
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring/*.xml");
         System.out.println(context);
+
 
     }
 

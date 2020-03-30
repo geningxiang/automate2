@@ -10,9 +10,29 @@ import java.util.List;
  */
 public class AssemblyLineTask {
 
+    private int projectId;
+
+    private String branch;
+
     private String name;
 
     private List<AssemblyLineStepTask> stepTasks;
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
 
     public String getName() {
         return name;
