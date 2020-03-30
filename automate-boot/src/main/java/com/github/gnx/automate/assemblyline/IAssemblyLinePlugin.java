@@ -24,7 +24,7 @@ public interface IAssemblyLinePlugin<T extends ITaskConfig> {
      * @return boolean 是否执行成功
      * @throws Exception 异常
      */
-    boolean execute(AssemblyLineRunnable.AssemblyLineEnv assemblyLineEnv, T taskConfig, IAssemblyLineProgressListener listener) throws Exception;
+    boolean execute(AssemblyLineEnv assemblyLineEnv, T taskConfig, IAssemblyLineProgressListener listener) throws Exception;
 
 
 }

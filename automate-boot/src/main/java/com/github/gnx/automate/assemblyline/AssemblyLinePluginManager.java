@@ -1,7 +1,6 @@
 package com.github.gnx.automate.assemblyline;
 
 import com.github.gnx.automate.assemblyline.field.ITaskConfig;
-import com.github.gnx.automate.assemblyline.field.LocalShellTaskConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,7 @@ public class AssemblyLinePluginManager {
 
     private static Map<Class<? extends ITaskConfig>, IAssemblyLinePlugin> pluginMap = new HashMap(64);
 
-    public static boolean execute(AssemblyLineRunnable.AssemblyLineEnv assemblyLineEnv, ITaskConfig taskConfig, IAssemblyLineProgressListener listener) throws Exception {
+    public static boolean execute(AssemblyLineEnv assemblyLineEnv, ITaskConfig taskConfig, IAssemblyLineProgressListener listener) throws Exception {
         IAssemblyLinePlugin assemblyLinePlugin = pluginMap.get(taskConfig.getClass());
         if (assemblyLinePlugin == null) {
             throw new RuntimeException("未找到相应的插件: " + taskConfig.getClass().getName());

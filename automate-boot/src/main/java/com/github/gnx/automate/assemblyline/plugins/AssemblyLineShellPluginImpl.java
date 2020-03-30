@@ -1,5 +1,6 @@
 package com.github.gnx.automate.assemblyline.plugins;
 
+import com.github.gnx.automate.assemblyline.AssemblyLineEnv;
 import com.github.gnx.automate.assemblyline.IAssemblyLinePlugin;
 import com.github.gnx.automate.assemblyline.IAssemblyLineProgressListener;
 import com.github.gnx.automate.assemblyline.field.LocalShellTaskConfig;
@@ -22,7 +23,7 @@ public class AssemblyLineShellPluginImpl implements IAssemblyLinePlugin<LocalShe
     }
 
     @Override
-    public boolean execute(LocalShellTaskConfig taskConfig, IAssemblyLineProgressListener listener) throws Exception {
+    public boolean execute(AssemblyLineEnv assemblyLineEnv, LocalShellTaskConfig taskConfig, IAssemblyLineProgressListener listener) throws Exception {
         ExecCommand execCommand = new ExecCommand(taskConfig.getScript());
         ExecHelper.exec(execCommand);
         return execCommand.getExitValue() == 0;

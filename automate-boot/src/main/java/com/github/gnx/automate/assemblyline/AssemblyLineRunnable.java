@@ -62,15 +62,4 @@ public class AssemblyLineRunnable implements Runnable {
         return assemblyLineTask;
     }
 
-    class AssemblyLineEnv{
-        private ProjectEntity projectEntity;
-
-        public ProjectEntity getProjectEntity() {
-            return projectEntity;
-        }
-
-        public void setProjectEntity(ProjectEntity projectEntity) {
-            this.projectEntity = projectEntity;
-        }
-    }
 }
