@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
  */
 public class LocalShellTaskConfig implements ITaskConfig {
 
+    @NotBlank(message = "请输入任务名")
     private String name;
 
     @NotBlank(message = "请输入脚本")

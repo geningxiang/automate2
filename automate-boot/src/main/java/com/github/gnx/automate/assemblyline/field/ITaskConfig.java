@@ -8,6 +8,10 @@ package com.github.gnx.automate.assemblyline.field;
  */
 public interface ITaskConfig {
 
+    default String getClassName() {
+        return getClass().getName();
+    }
+
     /**
      * 任务名称
      * @return 任务名称

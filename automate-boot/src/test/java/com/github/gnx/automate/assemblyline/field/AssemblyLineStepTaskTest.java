@@ -30,9 +30,9 @@ public class AssemblyLineStepTaskTest {
 
         System.out.println(assemblyLineStepTask.getStepName());
 
-        if(assemblyLineStepTask.getSpecificTasks() != null){
+        if(assemblyLineStepTask.getTasks() != null){
 
-            for (ITaskConfig specificTask : assemblyLineStepTask.getSpecificTasks()) {
+            for (ITaskConfig specificTask : assemblyLineStepTask.getTasks()) {
                 System.out.println(specificTask.getClass().getName());
             }
 

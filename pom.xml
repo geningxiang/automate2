@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.automate</groupId>
-  <artifactId>automate</artifactId>
-  <version>2.1.0</version>
-  <packaging>pom</packaging>
+    <groupId>com.automate</groupId>
+    <artifactId>automate</artifactId>
+    <version>2.1.0</version>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>automate-server</module>
-      <module>automate-core</module>
-  </modules>
+    <modules>
+        <module>automate-server</module>
 
-  <name>Automate2</name>
-  <url></url>
+    </modules>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <name>Automate2</name>
+    <url></url>
 
-    <!-- 自定义 版本参数 -->
-    <spring.version>5.1.4.RELEASE</spring.version>
-    <!--下面这两个是springAOP需要用到 -->
-    <aspectj.version>1.9.2</aspectj.version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
-    <hibernate.version>5.4.0.Final</hibernate.version>
+        <!-- 自定义 版本参数 -->
+        <spring.version>5.1.4.RELEASE</spring.version>
+        <!--下面这两个是springAOP需要用到 -->
+        <aspectj.version>1.9.2</aspectj.version>
 
-    <log4j2.version>2.11.0</log4j2.version>
-    <slf4j.version>1.7.25</slf4j.version>
-    <fastjson.version>1.2.54</fastjson.version>
-    <jedis.version>2.9.0</jedis.version>
-  </properties>
+        <hibernate.version>5.4.0.Final</hibernate.version>
+
+        <log4j2.version>2.11.0</log4j2.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <fastjson.version>1.2.54</fastjson.version>
+        <jedis.version>2.9.0</jedis.version>
+    </properties>
 
 </project>

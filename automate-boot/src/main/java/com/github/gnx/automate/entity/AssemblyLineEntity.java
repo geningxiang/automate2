@@ -42,7 +42,7 @@ public class AssemblyLineEntity {
     /**
      * 拥有者
      */
-    private Integer adminId;
+    private Integer userId;
 
     /**
      * 是否自动触发
@@ -122,12 +122,12 @@ public class AssemblyLineEntity {
 
     @Basic
     @Column(name = "ADMIN_ID", nullable = true)
-    public Integer getAdminId() {
-        return adminId;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setAdminId(Integer adminId) {
-        this.adminId = adminId;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
 

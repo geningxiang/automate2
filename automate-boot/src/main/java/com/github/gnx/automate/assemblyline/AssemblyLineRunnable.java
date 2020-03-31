@@ -3,14 +3,11 @@ package com.github.gnx.automate.assemblyline;
 import com.github.gnx.automate.assemblyline.field.AssemblyLineStepTask;
 import com.github.gnx.automate.assemblyline.field.AssemblyLineTask;
 import com.github.gnx.automate.assemblyline.field.ITaskConfig;
-import com.github.gnx.automate.assemblyline.field.LocalShellTaskConfig;
-import com.github.gnx.automate.assemblyline.plugins.AssemblyLineShellPluginImpl;
 import com.github.gnx.automate.common.SpringUtils;
 import com.github.gnx.automate.entity.ProjectEntity;
 import com.github.gnx.automate.service.IProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 
@@ -46,7 +43,7 @@ public class AssemblyLineRunnable implements Runnable {
             }
             IAssemblyLineProgressListener assemblyLineProgressListener = null;
             for (AssemblyLineStepTask stepTask : this.assemblyLineTask.getStepTasks()) {
-                for (ITaskConfig specificTask : stepTask.getSpecificTasks()) {
+                for (ITaskConfig specificTask : stepTask.getTasks()) {
                     AssemblyLinePluginManager.execute(assemblyLineEnv, specificTask, assemblyLineProgressListener);
                 }
             }

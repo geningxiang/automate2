@@ -3,6 +3,7 @@ package com.github.gnx.automate.controller.api;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
 import com.github.gnx.automate.entity.*;
+import com.github.gnx.automate.field.req.AssemblyLineCreateField;
 import com.github.gnx.automate.field.req.ReqProjectCreateField;
 import com.github.gnx.automate.service.*;
 import com.github.gnx.automate.vcs.VcsHelper;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,23 +31,26 @@ import java.util.Optional;
 @RequestMapping("/api/v1")
 public class ProjectController {
 
-    @Autowired
-    private IProjectService projectService;
+    private final IProjectService projectService;
 
-    @Autowired
-    private IProjectBranchService projectBranchService;
+    private final IProjectBranchService projectBranchService;
 
-    @Autowired
-    private IAssemblyLineService assemblyLineService;
+    private final IAssemblyLineService assemblyLineService;
 
-    @Autowired
-    private IAssemblyLineLogService assemblyLineLogService;
+    private final IAssemblyLineLogService assemblyLineLogService;
 
-    @Autowired
-    private IContainerService containerService;
+    private final IContainerService containerService;
 
-    @Autowired
-    private VcsHelper vcsHelper;
+    private final VcsHelper vcsHelper;
+
+    public ProjectController(IProjectService projectService, IProjectBranchService projectBranchService, IAssemblyLineService assemblyLineService, IAssemblyLineLogService assemblyLineLogService, IContainerService containerService, VcsHelper vcsHelper) {
+        this.projectService = projectService;
+        this.projectBranchService = projectBranchService;
+        this.assemblyLineService = assemblyLineService;
+        this.assemblyLineLogService = assemblyLineLogService;
+        this.containerService = containerService;
+        this.vcsHelper = vcsHelper;
+    }
 
     /**
      * 项目列表
@@ -147,8 +152,22 @@ public class ProjectController {
      */
     @RequestMapping(value = "/project/{projectId}/assembly_lines", method = RequestMethod.GET)
     public ResponseEntity<List<AssemblyLineEntity>> assemblyLineList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
-        //TODO 权限
         return ResponseEntity.ok(assemblyLineService.getAllByProjectIdOrderById(projectId));
+    }
+
+    /**
+     * 创建流水线
+     * @param assemblyLineEntity
+     * @return ResponseEntity<AssemblyLineEntity>
+     */
+    @RequestMapping(value = "/project/{projectId}/assembly_line", method = RequestMethod.POST)
+    public ResponseEntity<AssemblyLineEntity> create(
+            CurrentUser currentUser,
+            @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId,
+            @RequestBody(required = false) @Validated AssemblyLineCreateField assemblyLineCreateField
+    ){
+
+        return ResponseEntity.ok(assemblyLineService.create(assemblyLineCreateField, projectId, currentUser.getUserId()));
     }
 
     /**
