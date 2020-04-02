@@ -125,12 +125,12 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j2.version}</version>
         </dependency>
-        <!--web工程需要包含log4j-web，非web工程不需要-->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-web</artifactId>
-            <version>${log4j2.version}</version>
-        </dependency>
+<!--        &lt;!&ndash;web工程需要包含log4j-web，非web工程不需要&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-web</artifactId>-->
+<!--            <version>${log4j2.version}</version>-->
+<!--        </dependency>-->
 
 
         <!--常用的包-->

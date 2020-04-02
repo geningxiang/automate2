@@ -4,6 +4,7 @@ import com.github.gnx.automate.contants.VcsType;
 import com.github.gnx.automate.vcs.vo.CommitLog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -73,4 +74,12 @@ public interface IVcsService {
      */
     List<CommitLog> commitLog(String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider, String branch, String startId, int limit) throws Exception;
 
+
+    /**
+     * 切换分支
+     * @param branch
+     * @param commitId
+     * @return
+     */
+    String checkOut(int projectId, String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider, String branch, String commitId) throws Exception;
 }

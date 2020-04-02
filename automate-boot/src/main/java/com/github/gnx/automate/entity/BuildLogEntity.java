@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class BuildLogEntity {
     /**
      * 状态
-     * 数据库状态只有  cancel、error、success
+     * 数据库状态只有  CANCEL、ERROR、SUCCESS
      */
     public enum Status{
         init,

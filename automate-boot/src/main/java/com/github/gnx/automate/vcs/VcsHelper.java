@@ -40,4 +40,15 @@ public class VcsHelper {
     }
 
 
+    public String checkOut(ProjectEntity projectEntity, String branch, String commitId) throws Exception {
+        return getVcsService(projectEntity.getVcsType()).checkOut(
+                projectEntity.getId(),
+                projectEntity.getVcsUrl(),
+                SystemUtil.getProjectSourceCodeDir(projectEntity),
+                new VcsUserNamePwdCredentialsProvider(projectEntity.getVcsUserName(), projectEntity.getVcsPassWord()),
+                branch,
+                commitId
+        );
+    }
+
 }

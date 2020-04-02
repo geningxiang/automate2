@@ -1,8 +1,12 @@
 package com.github.gnx.automate.assemblyline;
 
-import com.alibaba.fastjson.JSON;
-import com.github.gnx.automate.assemblyline.field.AssemblyLineTask;
+import com.github.gnx.automate.entity.AssemblyLineEntity;
+import com.github.gnx.automate.entity.AssemblyLineLogEntity;
+import com.github.gnx.automate.service.IAssemblyLineLogService;
+import com.github.gnx.automate.service.IAssemblyLineService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,38 +14,35 @@ import org.junit.jupiter.api.Test;
  * @author genx
  * @date 2020/3/30 22:20
  */
+@SpringBootTest
 public class AssemblyLineTaskManagerTest {
 
-    private AssemblyLineTaskManager assemblyLineTaskManager = new AssemblyLineTaskManager();
+    @Autowired
+    private IAssemblyLineService assemblyLineService;
+
+    @Autowired
+    private IAssemblyLineLogService assemblyLineLogService;
+
+    @Autowired
+    private AssemblyLineTaskManager assemblyLineTaskManager;
+
 
     @Test
     public void test() throws InterruptedException {
 
+        AssemblyLineEntity assemblyLineEntity = assemblyLineService.findById(7).get();
 
-        String s = "{\n" +
-                "    \"projectId\": 1,\n" +
-                "    \"branch\": \"master\",\n" +
-                "    \"name\": \"日常构建\",\n" +
-                "    \"stepTasks\": [\n" +
-                "        {\n" +
-                "            \"stepName\": \"构建阶段\",\n" +
-                "            \"specificTasks\": [\n" +
-                "                {\n" +
-                "                    \"className\": \"com.github.gnx.automate.assemblyline.field.LocalShellTaskConfig\",\n" +
-                "                    \"name\": \"查询本机IP\",\n" +
-                "                    \"script\": \"ipconfig\",\n" +
-                "                }\n" +
-                "            ]\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
+        String branch = "develop";
 
-        AssemblyLineTask assemblyLineTask = JSON.parseObject(s, AssemblyLineTask.class);
+        String commitId = "";
 
-        assemblyLineTaskManager.execute(assemblyLineTask);
+        int userId = 0;
 
-        Thread.sleep(1000);
+        AssemblyLineLogEntity assemblyLineLogEntity = assemblyLineLogService.saveWithAssemblyLine(assemblyLineEntity, branch, commitId, userId);
 
+        assemblyLineTaskManager.execute(assemblyLineLogEntity.getId());
+
+        Thread.sleep(300000);
     }
 
 }

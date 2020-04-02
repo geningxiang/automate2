@@ -137,7 +137,7 @@ public class ExecCommand {
     }
 
     /**
-     * msg + error
+     * msg + ERROR
      * @return
      */
     public StringBuffer getOut() {

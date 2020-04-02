@@ -1,6 +1,9 @@
 package com.github.gnx.automate.common;
 
+import com.github.gnx.automate.entity.AssemblyLineEntity;
 import org.springframework.http.HttpStatus;
+
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,6 +44,11 @@ public class ResponseEntity<T> {
     public static <T> ResponseEntity<T> ok(T data) {
         return ok("", data);
     }
+
+    public static <T> ResponseEntity<T> ok(Optional<T> optional) {
+        return optional.map(t -> ok("", t)).orElseGet(() -> of(HttpStatus.NOT_FOUND, "未找到相应资源", null));
+    }
+
 
     public static <T> ResponseEntity<T> ok(String msg, T data) {
         return new ResponseEntity(HttpStatus.OK.value(), msg, data);

@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class AssemblyLineTask {
 
+    private int assemblyLineId;
+
     private int projectId;
 
     private String branch;
@@ -17,6 +19,14 @@ public class AssemblyLineTask {
     private String name;
 
     private List<AssemblyLineStepTask> stepTasks;
+
+    public int getAssemblyLineId() {
+        return assemblyLineId;
+    }
+
+    public void setAssemblyLineId(int assemblyLineId) {
+        this.assemblyLineId = assemblyLineId;
+    }
 
     public int getProjectId() {
         return projectId;

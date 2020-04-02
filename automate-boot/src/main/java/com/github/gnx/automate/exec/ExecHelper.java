@@ -80,10 +80,10 @@ public class ExecHelper {
             }
             execCommand.end(exitValue);
         } catch (Exception e) {
-            execCommand.errorRead("【error by ExecHelper】" + e.getClass().getName());
+            execCommand.errorRead("【ERROR by ExecHelper】" + e.getClass().getName());
             // 1 表示 通用未知错误　
             execCommand.end(1);
-            logger.error("exec error", e);
+            logger.error("exec ERROR", e);
         } finally {
             if (executeFuture != null) {
                 try {

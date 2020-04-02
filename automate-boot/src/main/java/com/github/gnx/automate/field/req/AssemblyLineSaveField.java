@@ -11,7 +11,7 @@ import java.util.List;
  * @author genx
  * @date 2020/3/31 21:04
  */
-public class AssemblyLineCreateField {
+public class AssemblyLineSaveField {
 
     /**
      * 允许的分支

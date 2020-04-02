@@ -1,7 +1,7 @@
 package com.github.gnx.automate.service;
 
 import com.github.gnx.automate.entity.AssemblyLineEntity;
-import com.github.gnx.automate.field.req.AssemblyLineCreateField;
+import com.github.gnx.automate.field.req.AssemblyLineSaveField;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +25,12 @@ public interface IAssemblyLineService {
 
     /**
      * 创建流水线
-     * @param assemblyLineCreateField 流水线创建类
+     * @param assemblyLineSaveField 流水线创建类
      * @param projectId 项目ID
      * @param userId 用户ID
      * @return AssemblyLineEntity
      */
-    AssemblyLineEntity create(AssemblyLineCreateField assemblyLineCreateField, int projectId, int userId);
+    AssemblyLineEntity create(AssemblyLineSaveField assemblyLineSaveField, int projectId, int userId);
+
+    AssemblyLineEntity update(int assemblyLineId, AssemblyLineSaveField assemblyLineSaveField);
 }

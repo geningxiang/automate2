@@ -3,12 +3,11 @@ package com.github.gnx.automate.controller.api;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
 import com.github.gnx.automate.entity.*;
-import com.github.gnx.automate.field.req.AssemblyLineCreateField;
+import com.github.gnx.automate.field.req.AssemblyLineSaveField;
 import com.github.gnx.automate.field.req.ReqProjectCreateField;
 import com.github.gnx.automate.service.*;
 import com.github.gnx.automate.vcs.VcsHelper;
 import com.github.gnx.automate.vcs.vo.CommitLog;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -157,17 +156,18 @@ public class ProjectController {
 
     /**
      * 创建流水线
-     * @param assemblyLineEntity
+     * @param projectId 项目ID
+     * @param assemblyLineSaveField 流水线保存对象
      * @return ResponseEntity<AssemblyLineEntity>
      */
     @RequestMapping(value = "/project/{projectId}/assembly_line", method = RequestMethod.POST)
     public ResponseEntity<AssemblyLineEntity> create(
             CurrentUser currentUser,
             @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId,
-            @RequestBody(required = false) @Validated AssemblyLineCreateField assemblyLineCreateField
+            @RequestBody @Validated AssemblyLineSaveField assemblyLineSaveField
     ){
 
-        return ResponseEntity.ok(assemblyLineService.create(assemblyLineCreateField, projectId, currentUser.getUserId()));
+        return ResponseEntity.ok(assemblyLineService.create(assemblyLineSaveField, projectId, currentUser.getUserId()));
     }
 
     /**

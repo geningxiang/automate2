@@ -16,11 +16,11 @@ import java.sql.Timestamp;
 public class AssemblyLineLogEntity {
 
     public enum Status{
-        init,
-        running,
-        cancel,
-        error,
-        success
+        INIT,
+        RUNNING,
+        CANCEL,
+        ERROR,
+        SUCCESS
     }
 
 
@@ -63,11 +63,20 @@ public class AssemblyLineLogEntity {
      */
     private Integer createUserId;
 
+
     private Timestamp createTime;
     private Timestamp startTime;
     private Timestamp endTime;
 
     private Byte status;
+
+    /**
+     * 错误信息
+     * 主要为了记录
+     * 在步骤任务执行之前的错误
+     * 切换分支失败的错误
+     */
+    private String content;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -192,5 +201,15 @@ public class AssemblyLineLogEntity {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    @Basic
+    @Column(name = "CONTENT", nullable = true, length = 255)
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

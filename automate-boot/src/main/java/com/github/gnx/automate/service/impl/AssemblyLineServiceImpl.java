@@ -2,7 +2,7 @@ package com.github.gnx.automate.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.github.gnx.automate.entity.AssemblyLineEntity;
-import com.github.gnx.automate.field.req.AssemblyLineCreateField;
+import com.github.gnx.automate.field.req.AssemblyLineSaveField;
 import com.github.gnx.automate.repository.AssemblyLineRepository;
 import com.github.gnx.automate.service.IAssemblyLineService;
 import org.springframework.stereotype.Service;
@@ -37,22 +37,48 @@ public class AssemblyLineServiceImpl implements IAssemblyLineService {
     }
 
     @Override
-    public AssemblyLineEntity create(AssemblyLineCreateField assemblyLineCreateField, int projectId, int userId) {
+    public AssemblyLineEntity create(AssemblyLineSaveField assemblyLineSaveField, int projectId, int userId) {
         AssemblyLineEntity assemblyLineEntity = new AssemblyLineEntity();
         assemblyLineEntity.setProjectId(projectId);
-        assemblyLineEntity.setBranches(assemblyLineCreateField.getBranches());
-        assemblyLineEntity.setName(assemblyLineCreateField.getName());
-        assemblyLineEntity.setRemark(assemblyLineCreateField.getRemark());
-        assemblyLineEntity.setConfig(JSONArray.toJSONString(assemblyLineCreateField.getStepTasks()));
+        assemblyLineEntity.setBranches(assemblyLineSaveField.getBranches());
+        assemblyLineEntity.setName(assemblyLineSaveField.getName());
+        assemblyLineEntity.setRemark(assemblyLineSaveField.getRemark());
+        assemblyLineEntity.setConfig(JSONArray.toJSONString(assemblyLineSaveField.getStepTasks()));
         assemblyLineEntity.setUserId(userId);
         Timestamp now = new Timestamp(System.currentTimeMillis());
         assemblyLineEntity.setCreateTime(now);
         assemblyLineEntity.setUpdateTime(now);
         assemblyLineEntity.setLastRunTime(null);
-        assemblyLineEntity.setAutoTrigger(assemblyLineCreateField.getAutoTrigger());
-        assemblyLineEntity.setTriggerCron(assemblyLineCreateField.getTriggerCron());
+        assemblyLineEntity.setAutoTrigger(assemblyLineSaveField.getAutoTrigger());
+        assemblyLineEntity.setTriggerCron(assemblyLineSaveField.getTriggerCron());
         this.assemblyLineRepository.save(assemblyLineEntity);
         return assemblyLineEntity;
+    }
+
+    @Override
+    public AssemblyLineEntity update(int assemblyLineId, AssemblyLineSaveField assemblyLineSaveField){
+        Optional<AssemblyLineEntity> optionalAssemblyLineEntity = this.assemblyLineRepository.findById(assemblyLineId);
+        if(!optionalAssemblyLineEntity.isPresent()){
+            throw new IllegalArgumentException("未找到相应的流水线, id: " + assemblyLineId);
+        }
+
+        AssemblyLineEntity assemblyLineEntity = optionalAssemblyLineEntity.get();
+
+        assemblyLineEntity.setBranches(assemblyLineSaveField.getBranches());
+        assemblyLineEntity.setName(assemblyLineSaveField.getName());
+        assemblyLineEntity.setRemark(assemblyLineSaveField.getRemark());
+        assemblyLineEntity.setConfig(JSONArray.toJSONString(assemblyLineSaveField.getStepTasks()));
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        assemblyLineEntity.setUpdateTime(now);
+        assemblyLineEntity.setAutoTrigger(assemblyLineSaveField.getAutoTrigger());
+        assemblyLineEntity.setTriggerCron(assemblyLineSaveField.getTriggerCron());
+
+        this.assemblyLineRepository.save(assemblyLineEntity);
+        return assemblyLineEntity;
+    }
+
+    private void checkStepTasks(AssemblyLineSaveField assemblyLineSaveField){
+        //TODO 检查 流水线配置
     }
 
 }

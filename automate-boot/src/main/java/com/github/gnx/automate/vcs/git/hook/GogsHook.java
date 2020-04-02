@@ -71,7 +71,7 @@
 //                }
 //
 //            } catch (Exception e) {
-//                logger.error("hook处理时发生错误", e);
+//                logger.ERROR("hook处理时发生错误", e);
 //                hookLogEntity.setHandleStatus(HookLogEntity.HandleStatus.ERROR);
 //                hookLogEntity.setHandleResult(e.getMessage());
 //            }

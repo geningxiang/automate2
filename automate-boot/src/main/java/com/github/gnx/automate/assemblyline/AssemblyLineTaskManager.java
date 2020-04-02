@@ -1,6 +1,5 @@
 package com.github.gnx.automate.assemblyline;
 
-import com.github.gnx.automate.assemblyline.field.AssemblyLineTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,20 +26,20 @@ public class AssemblyLineTaskManager implements IAssemblyLineRunnableListener {
 
     private final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, corePoolSize, 5L, TimeUnit.SECONDS, waitingQueue, Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
 
-    public void execute(AssemblyLineTask assemblyLineTask) {
-        AssemblyLineRunnable assemblyLineRunnable = new AssemblyLineRunnable(assemblyLineTask, this);
+    public void execute(int assemblyLineLogId) {
+        AssemblyLineRunnable assemblyLineRunnable = new AssemblyLineRunnable(assemblyLineLogId, this);
         threadPoolExecutor.execute(assemblyLineRunnable);
     }
 
     @Override
     public void onStart(AssemblyLineRunnable assemblyLineRunnable) {
-        logger.debug("task on start : {}", assemblyLineRunnable.getAssemblyLineTask().getName());
+        logger.debug("task on start : {}", assemblyLineRunnable.getAssemblyLineLogId());
         runningQueue.add(assemblyLineRunnable);
     }
 
     @Override
     public void onFinished(AssemblyLineRunnable assemblyLineRunnable) {
-        logger.debug("task on finished : {}", assemblyLineRunnable.getAssemblyLineTask().getName());
+        logger.debug("task on finished : {}", assemblyLineRunnable.getAssemblyLineLogId());
         runningQueue.remove(assemblyLineRunnable);
     }
 

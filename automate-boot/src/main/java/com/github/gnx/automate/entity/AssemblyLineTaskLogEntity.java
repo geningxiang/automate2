@@ -10,8 +10,8 @@ import java.sql.Timestamp;
  * @date: 2019/2/4 16:06
  */
 @Entity
-@Table(name = "CA2_ASSEMBLY_LINE_STEP_LOG")
-public class AssemblyLineStepLogEntity {
+@Table(name = "CA2_ASSEMBLY_LINE_TASK_LOG")
+public class AssemblyLineTaskLogEntity {
 
     private Integer id;
 
@@ -27,9 +27,9 @@ public class AssemblyLineStepLogEntity {
     private Integer assemblyLineLogId;
 
     /**
-     * 生命周期的下标
+     * 阶段的下标
      */
-    private int lifeCycle;
+    private int stepIndex;
 
     /**
      * 具体任务的下标
@@ -78,13 +78,13 @@ public class AssemblyLineStepLogEntity {
     }
 
     @Basic
-    @Column(name = "LIFE_CYCLE", nullable = true)
-    public int getLifeCycle() {
-        return lifeCycle;
+    @Column(name = "STEP_INDEX", nullable = true)
+    public int getStepIndex() {
+        return stepIndex;
     }
 
-    public void setLifeCycle(int lifeCycle) {
-        this.lifeCycle = lifeCycle;
+    public void setStepIndex(int lifeCycle) {
+        this.stepIndex = lifeCycle;
     }
 
     @Basic

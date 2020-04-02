@@ -8,6 +8,7 @@ import com.github.gnx.automate.vcs.IVcsService;
 import com.github.gnx.automate.vcs.VcsUserNamePwdCredentialsProvider;
 import com.github.gnx.automate.vcs.git.JgitProgressMonitor;
 import com.github.gnx.automate.vcs.vo.CommitLog;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Ref;
@@ -202,6 +203,37 @@ public class GitServiceImpl implements IVcsService {
             }
             return list;
         }finally {
+            if (fileRepository != null) {
+                // Git.wrap( 实例化  fileRepository 不能自动关闭
+                fileRepository.close();
+            }
+            if (git != null) {
+                git.close();
+            }
+        }
+    }
+
+    @Override
+    public String checkOut(int projectId, String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider, String branch, String commitId) throws Exception {
+        FileRepository fileRepository = null;
+        Git git = null;
+        try {
+            fileRepository = openFileRepository(localDir);
+            git = Git.wrap(fileRepository);
+
+            git.checkout().setName(branch).call();
+            String id;
+            if(StringUtils.isNotBlank(commitId)) {
+                Ref resetCommand = git.reset().setMode(ResetCommand.ResetType.HARD).setRef(commitId).call();
+                id = resetCommand.getObjectId().toObjectId().name();
+            } else {
+                //reset hard
+                Ref ref = git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/" + branch).call();
+                id = ref.getObjectId().toObjectId().name();
+            }
+            logger.debug("localDir:{},branch:{},commitId:{};切换到{}", localDir, branch, commitId, id);
+            return id;
+        } finally {
             if (fileRepository != null) {
                 // Git.wrap( 实例化  fileRepository 不能自动关闭
                 fileRepository.close();

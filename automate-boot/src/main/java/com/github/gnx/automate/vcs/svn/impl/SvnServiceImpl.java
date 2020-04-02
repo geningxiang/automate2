@@ -9,6 +9,8 @@ import com.github.gnx.automate.vcs.VcsUserNamePwdCredentialsProvider;
 import com.github.gnx.automate.vcs.vo.CommitLog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -36,6 +38,8 @@ public class SvnServiceImpl implements IVcsService {
      * 仓库文件夹后缀 .svn
      */
     public static final String DOT_SVN = ".svn";
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private IEventPublisher eventPublisher;
@@ -141,6 +145,38 @@ public class SvnServiceImpl implements IVcsService {
                 svnClientManager.dispose();
             }
         }
+    }
+
+    @Override
+    public String checkOut(int projectId, String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider, String branch, String commitId) throws Exception {
+
+        SVNClientManager svnClientManager = null;
+        long result;
+        try {
+            svnClientManager = getSVNClientManager(vcsCredentialsProvider);
+
+            if (localDir.exists()) {
+
+                SVNUpdateClient updateClient = svnClientManager.getUpdateClient();
+                if (StringUtils.isNotBlank(commitId)) {
+                    long revision = NumberUtils.toLong(commitId);
+                    if (revision <= 0) {
+                        throw new IllegalArgumentException("commitId must be long");
+                    }
+                    result = updateClient.doCheckout(SVNURL.parseURIEncoded(remoteUrl), localDir, SVNRevision.HEAD, SVNRevision.create(revision), SVNDepth.INFINITY, true);
+                } else {
+                    result = updateClient.doCheckout(SVNURL.parseURIEncoded(remoteUrl), localDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, true);
+                }
+                logger.info("svn checkout revision:" + result);
+            } else {
+                throw new IllegalArgumentException("请先初始化仓库");
+            }
+        } finally {
+            if (svnClientManager != null) {
+                svnClientManager.dispose();
+            }
+        }
+        return String.valueOf(result);
     }
 
     private CommitLog parse(SVNLogEntry svnLogEntry) {
