@@ -1,4 +1,4 @@
-package com.github.gnx.automate.assemblyline.field;
+package com.github.gnx.automate.assemblyline.config;
 
 
 import com.alibaba.fastjson.JSON;
@@ -32,13 +32,14 @@ public class AssemblyLineStepTaskTest {
 
         if(assemblyLineStepTask.getTasks() != null){
 
-            for (ITaskConfig specificTask : assemblyLineStepTask.getTasks()) {
+            for (IAssemblyLineTaskConfig specificTask : assemblyLineStepTask.getTasks()) {
                 System.out.println(specificTask.getClass().getName());
             }
 
         }
 
-
     }
+
+
 
 }

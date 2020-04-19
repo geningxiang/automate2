@@ -94,6 +94,9 @@ public class ProjectController extends BaseController {
         }
         model.setStatus(ProjectEntity.Status.ACTIVATE);
         projectService.save(model);
+
+        //vcs更新
+
         return ResponseEntity.ok(null);
     }
 

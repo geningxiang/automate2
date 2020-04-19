@@ -1,6 +1,6 @@
 package com.github.gnx.automate.assemblyline;
 
-import com.github.gnx.automate.assemblyline.field.ITaskConfig;
+import com.github.gnx.automate.assemblyline.config.IAssemblyLineTaskConfig;
 
 /**
  * Created with IntelliJ IDEA.
@@ -8,11 +8,11 @@ import com.github.gnx.automate.assemblyline.field.ITaskConfig;
  * @author genx
  * @date 2020/3/29 13:19
  */
-public interface IAssemblyLinePlugin<T extends ITaskConfig> {
+public interface IAssemblyLinePlugin<T extends IAssemblyLineTaskConfig> {
 
     /**
      * 插件关联配置信息的类
-     * @return Class<? extends ITaskConfig>
+     * @return Class<? extends IAssemblyLineTaskConfig>
      */
     Class<T> getTaskConfigClass();
 
@@ -25,6 +25,19 @@ public interface IAssemblyLinePlugin<T extends ITaskConfig> {
      * @throws Exception 异常
      */
     boolean execute(AssemblyLineEnv assemblyLineEnv, T taskConfig, IAssemblyLineProgressListener listener) throws Exception;
+
+    /**
+     * 需要的参数
+     * input() 于 export() 一起 判断配置的流水线是否完整
+     * @return String[]
+     */
+    String[] input();
+
+    /**
+     * 输出的参数
+     * @return String[]
+     */
+    String[] export();
 
 
 }

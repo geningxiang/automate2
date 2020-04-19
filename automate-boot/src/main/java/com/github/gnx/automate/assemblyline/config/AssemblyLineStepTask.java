@@ -1,4 +1,4 @@
-package com.github.gnx.automate.assemblyline.field;
+package com.github.gnx.automate.assemblyline.config;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 
+ * Description:
  * @author genx
  * @date 2020/3/29 19:53
  */
@@ -17,7 +17,7 @@ public class AssemblyLineStepTask {
 
     private String stepName;
 
-    private List<ITaskConfig> tasks;
+    private List<IAssemblyLineTaskConfig> tasks;
 
 
     public String getStepName() {
@@ -28,7 +28,7 @@ public class AssemblyLineStepTask {
         this.stepName = stepName;
     }
 
-    public List<ITaskConfig> getTasks() {
+    public List<IAssemblyLineTaskConfig> getTasks() {
         return tasks;
     }
 
@@ -37,12 +37,12 @@ public class AssemblyLineStepTask {
             this.tasks = null;
         }
 
-        List<ITaskConfig> list = new ArrayList(tasks.size());
+        List<IAssemblyLineTaskConfig> list = new ArrayList(tasks.size());
         for (Object item : tasks) {
             if (item != null) {
 
-                if (item instanceof ITaskConfig) {
-                    list.add((ITaskConfig) item);
+                if (item instanceof IAssemblyLineTaskConfig) {
+                    list.add((IAssemblyLineTaskConfig) item);
                 } else if (item instanceof JSONObject) {
                     //将 json格式解析到具体的实体类， json必须包含 className 标识具体类名
                     String className = ((JSONObject) item).getString("className");
@@ -50,11 +50,11 @@ public class AssemblyLineStepTask {
                         throw new RuntimeException("JSON解析失败:" + className + "不是有效的任务类");
                     }
                     Class cls = Class.forName(className);
-                    if (!ITaskConfig.class.isAssignableFrom(cls)) {
+                    if (!IAssemblyLineTaskConfig.class.isAssignableFrom(cls)) {
                         throw new RuntimeException("JSON解析失败:" + className + "不是有效的任务类");
                     }
 
-                    ITaskConfig specificTask = (ITaskConfig) JSON.parseObject(((JSONObject) item).toJSONString(), cls);
+                    IAssemblyLineTaskConfig specificTask = (IAssemblyLineTaskConfig) JSON.parseObject(((JSONObject) item).toJSONString(), cls);
                     list.add(specificTask);
                 } else {
                     throw new RuntimeException("JSON解析失败:" + item);

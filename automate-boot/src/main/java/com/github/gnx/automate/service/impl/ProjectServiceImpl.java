@@ -1,15 +1,16 @@
 package com.github.gnx.automate.service.impl;
 
+import com.github.gnx.automate.common.thread.GlobalThreadPoolManager;
 import com.github.gnx.automate.entity.ProjectEntity;
 import com.github.gnx.automate.field.req.ReqProjectCreateField;
 import com.github.gnx.automate.repository.ProjectRepository;
 import com.github.gnx.automate.service.IProjectService;
+import com.github.gnx.automate.vcs.VcsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +28,14 @@ public class ProjectServiceImpl implements IProjectService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    @Resource
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+
+    private final VcsHelper vcsHelper;
+
+    public ProjectServiceImpl(VcsHelper vcsHelper, ProjectRepository projectRepository) {
+        this.vcsHelper = vcsHelper;
+        this.projectRepository = projectRepository;
+    }
 
     @Override
     public ProjectEntity getFirstByVcsUrl(String vcsUrl) {
@@ -83,6 +90,17 @@ public class ProjectServiceImpl implements IProjectService {
         projectEntity.setUserId(userId);
         projectEntity.setStatus(ProjectEntity.Status.ACTIVATE);
         this.projectRepository.save(projectEntity);
+
+        GlobalThreadPoolManager.getInstance().execute(() -> {
+            //VCS 更新
+            try {
+                vcsHelper.update(projectEntity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+
         return projectEntity;
     }
 

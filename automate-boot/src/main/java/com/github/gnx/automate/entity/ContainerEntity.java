@@ -14,11 +14,38 @@ import javax.persistence.*;
 @Entity
 @Table(name = "CA2_CONTAINER")
 public class ContainerEntity {
+
+    /**
+     * 容器ID
+     */
     private Integer id;
+
+    /**
+     * 服务器ID
+     * @see ServerEntity#getId()
+     */
     private Integer serverId;
+
+    /**
+     * 项目ID
+     * @see ProjectEntity#getId()
+     */
     private Integer projectId;
+
+    /**
+     * 容器名称
+     */
     private String name;
+
+    /**
+     * 容器类型
+     *
+     */
     private Integer type;
+
+    /**
+     * 备注
+     */
     private String remark;
 
     /**
@@ -32,13 +59,44 @@ public class ContainerEntity {
     private String sourceDir;
 
     /**
-     * 备份文件夹 ${baseDir}/backup
+     * 更新包上传文件夹
+     * ${baseDir}/upload
+     */
+    private String uploadDir;
+
+    /**
+     * 是否需要解压
+     * Tomcat 容器一般 解压部署
+     * SpringBoot 直接放jar
+     */
+    private Boolean exploded;
+
+    /**
+     * 备份文件夹
+     * 每次更新将原先代码打包到备份文件夹下
+     * ${baseDir}/backup
      */
     private String backupDir;
 
+    /**
+     * 启动脚本
+     */
     private String scriptStart;
+
+    /**
+     * 停止脚本
+     */
     private String scriptStop;
+
+    /**
+     * 检查脚本
+     */
     private String scriptCheck;
+
+    /**
+     * 容器所有者
+     * 有事找他就对了
+     */
     private Integer userId;
 
     @Id
@@ -160,6 +218,26 @@ public class ContainerEntity {
 
     public void setSourceDir(String sourceDir) {
         this.sourceDir = sourceDir;
+    }
+
+    @Basic
+    @Column(name = "UPLOAD_DIR", nullable = true)
+    public String getUploadDir() {
+        return uploadDir;
+    }
+
+    public void setUploadDir(String uploadDir) {
+        this.uploadDir = uploadDir;
+    }
+
+    @Basic
+    @Column(name = "EXPLODED", nullable = true)
+    public Boolean getExploded() {
+        return exploded;
+    }
+
+    public void setExploded(Boolean exploded) {
+        this.exploded = exploded;
     }
 
     @Basic

@@ -38,7 +38,7 @@ public class ApplicationUpdateApplyEntity {
 
     /**
      * 项目包ID
-     * @see ProjectPackageEntity#getId()
+     * @see ProductEntity#getId()
      */
     private Integer projectPackageId;
 

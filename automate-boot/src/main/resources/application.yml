@@ -1,9 +1,8 @@
 logging:
   level:
     root: info
-    org:
-      eclipse:
-        jgit: info
+    org.eclipse.jgit: info
+    com.github.gnx: debug
 
 
 server:
@@ -52,4 +51,5 @@ spring:
 
 automate:
   # 源码文件夹 默认 ./
-  sourceCodeDir: E:\automate-data\sourcecode
+  sourceCodeDir: 'E:/automate-data/sourcecode/'
+  packageDir: 'E:/automate-data/package/'

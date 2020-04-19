@@ -19,10 +19,18 @@ public class SystemUtil {
 
     private static String SOURCE_CODE_DIR = null;
 
+    private static String PACKAGE_DIR = null;
+
     @Value("${automate.sourceCodeDir:./sourceCode/}")
     public void setSourceCodeDir(String sourceCodeDir) {
         SOURCE_CODE_DIR = sourceCodeDir;
     }
+
+    @Value("${automate.packageDir:./package/}")
+    public void setPackageDir(String packageDir) {
+        PACKAGE_DIR = packageDir;
+    }
+
 
     /**
      * 获取一个项目的 源码文件夹
@@ -37,6 +45,12 @@ public class SystemUtil {
         Assert.hasText(SOURCE_CODE_DIR, "AUTOMATE_DATA_DIR is null");
         String path = new StringBuilder(SOURCE_CODE_DIR).append(File.separator)
                 .append(projectEntity.getId()).append(File.separator).toString();
+        return new File(path);
+    }
+
+    public static File getProjectPackageDir(int projectId) {
+        String path = new StringBuilder(PACKAGE_DIR).append(File.separator)
+                .append(projectId).append(File.separator).toString();
         return new File(path);
     }
 

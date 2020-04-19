@@ -5,22 +5,18 @@ import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 项目文件包  war jar apk 用于更新具体应用实例
+ * Description: 产物 项目文件包  war jar apk 用于更新具体应用实例
  * @author genx
  * @date 2019/5/26 20:05
  */
 @Entity
-@Table(name = "CA2_PROJECT_PACKAGE")
-public class ProjectPackageEntity {
+@Table(name = "CA2_PRODUCT")
+public class ProductEntity {
 
     /**
      * 更新类型
      */
     public enum Type {
-        /**
-         * 未知  只是占个位
-         */
-        UNKNOWN,
         /**
          * 全量更新
          */
@@ -34,7 +30,7 @@ public class ProjectPackageEntity {
             if (type != null && type >= 0 && type <= Type.values().length) {
                 return Type.values()[type];
             }
-            return UNKNOWN;
+            return null;
         }
     }
 

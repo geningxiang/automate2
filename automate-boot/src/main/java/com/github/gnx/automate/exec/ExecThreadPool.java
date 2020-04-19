@@ -20,7 +20,7 @@ public class ExecThreadPool {
 
 
     public static void execute(ExecStreamReader runnable){
-        pool.execute(runnable);
+//        pool.execute(runnable);
     }
 
     public static <T> Future<T> submit(Callable<T>  task) throws Exception{

@@ -1,4 +1,4 @@
-package com.github.gnx.automate.assemblyline.field;
+package com.github.gnx.automate.assemblyline.config;
 
 /**
  * Created with IntelliJ IDEA.
@@ -6,7 +6,7 @@ package com.github.gnx.automate.assemblyline.field;
  * @author genx
  * @date 2020/3/29 19:54
  */
-public interface ITaskConfig {
+public interface IAssemblyLineTaskConfig {
 
     default String getClassName() {
         return getClass().getName();
@@ -17,6 +17,5 @@ public interface ITaskConfig {
      * @return 任务名称
      */
     String getName();
-
 
 }

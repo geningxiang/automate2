@@ -5,6 +5,8 @@ import com.github.gnx.automate.repository.AssemblyLineTaskLogRepository;
 import com.github.gnx.automate.service.IAssemblyLineTaskLogService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 
@@ -25,6 +27,11 @@ public class AssemblyLineTaskLogServiceImpl implements IAssemblyLineTaskLogServi
     public AssemblyLineTaskLogEntity save(AssemblyLineTaskLogEntity assemblyLineTaskLogEntity) {
         assemblyLineTaskLogRepository.save(assemblyLineTaskLogEntity);
         return assemblyLineTaskLogEntity;
+    }
+
+    @Override
+    public List<AssemblyLineTaskLogEntity> findAllByAssemblyLineLogIdOrderById(int assemblyLineLogId){
+        return assemblyLineTaskLogRepository.findAllByAssemblyLineLogIdOrderById(assemblyLineLogId);
     }
 
 }

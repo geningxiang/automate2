@@ -16,4 +16,6 @@ import java.util.List;
 public interface AssemblyLineTaskLogRepository extends PagingAndSortingRepository<AssemblyLineTaskLogEntity, Integer>, JpaSpecificationExecutor<AssemblyLineTaskLogEntity> {
 
     List<AssemblyLineTaskLogEntity> findAllByAssemblyLineLogIdOrderById(int assemblyLineLogId);
+
+
 }

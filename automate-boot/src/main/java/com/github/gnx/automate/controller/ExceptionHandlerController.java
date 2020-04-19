@@ -4,7 +4,6 @@ import com.github.gnx.automate.common.ResponseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -48,8 +47,6 @@ public class ExceptionHandlerController {
             }
         }
 
-        HttpMessageNotReadableException a = null;
-
 
         if (ex instanceof MaxUploadSizeExceededException) {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, "上传文件大小超过限制");
@@ -59,7 +56,7 @@ public class ExceptionHandlerController {
             return ResponseEntity.of(HttpStatus.BAD_REQUEST, ((MethodArgumentTypeMismatchException) ex).getName() + "参数错误");
         } else if (ex instanceof AuthenticationException) {
             return ResponseEntity.of(HttpStatus.UNAUTHORIZED, "请登录");
-        } else if (ex instanceof NoSuchElementException){
+        } else if (ex instanceof NoSuchElementException) {
             return ResponseEntity.of(HttpStatus.NOT_FOUND, "未找到相应资源");
         }
 

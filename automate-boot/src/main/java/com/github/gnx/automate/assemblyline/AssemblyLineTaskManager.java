@@ -24,7 +24,7 @@ public class AssemblyLineTaskManager implements IAssemblyLineRunnableListener {
     private final ArrayBlockingQueue waitingQueue = new ArrayBlockingQueue(queueMaxSize);
     private final ConcurrentLinkedQueue<AssemblyLineRunnable> runningQueue = new ConcurrentLinkedQueue();
 
-    private final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, corePoolSize, 5L, TimeUnit.SECONDS, waitingQueue, Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+    private final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, corePoolSize, 60L, TimeUnit.SECONDS, waitingQueue, Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
 
     public void execute(int assemblyLineLogId) {
         AssemblyLineRunnable assemblyLineRunnable = new AssemblyLineRunnable(assemblyLineLogId, this);

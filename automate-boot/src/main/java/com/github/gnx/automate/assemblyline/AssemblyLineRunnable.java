@@ -1,8 +1,8 @@
 package com.github.gnx.automate.assemblyline;
 
 import com.alibaba.fastjson.JSONArray;
-import com.github.gnx.automate.assemblyline.field.AssemblyLineStepTask;
-import com.github.gnx.automate.assemblyline.field.ITaskConfig;
+import com.github.gnx.automate.assemblyline.config.AssemblyLineStepTask;
+import com.github.gnx.automate.assemblyline.config.IAssemblyLineTaskConfig;
 import com.github.gnx.automate.common.SpringUtils;
 import com.github.gnx.automate.entity.AssemblyLineLogEntity;
 import com.github.gnx.automate.entity.AssemblyLineTaskLogEntity;
@@ -51,17 +51,15 @@ public class AssemblyLineRunnable implements Runnable {
         AssemblyLineLogEntity assemblyLineLogEntity = assemblyLineLogService.findById(this.assemblyLineLogId).get();
 
         try {
-
-
-
-            final AssemblyLineEnv assemblyLineEnv = new AssemblyLineEnv();
-
-
             Optional<ProjectEntity> projectEntity = projectService.getModel(assemblyLineLogEntity.getProjectId());
-            projectEntity.ifPresent(assemblyLineEnv::setProjectEntity);
+            if(!projectEntity.isPresent()){
+                throw new RuntimeException("未找到相应的项目");
+            }
+
+            final AssemblyLineEnv assemblyLineEnv = new AssemblyLineEnv(projectEntity.get(), assemblyLineLogEntity);
+
 
             //切换分支
-
             vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
 
 
@@ -76,11 +74,12 @@ public class AssemblyLineRunnable implements Runnable {
             boolean success = true;
             for (AssemblyLineStepTask stepTask : assemblyLineStepTasks) {
                 int taskIndex = 0;
-                for (ITaskConfig specificTask : stepTask.getTasks()) {
-                    if(success) {
+                for (IAssemblyLineTaskConfig specificTask : stepTask.getTasks()) {
+                    if (success) {
                         success = runSpecificTask(assemblyLineLogEntity, stepIndex, taskIndex, assemblyLineEnv, specificTask, assemblyLineTaskLogService);
                     } else {
                         //前面任务发生错误  这里就不新建日志了
+                        break;
                     }
 
                     taskIndex++;
@@ -90,7 +89,7 @@ public class AssemblyLineRunnable implements Runnable {
             }
 
             assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
-            assemblyLineLogEntity.setStatus(success ? AssemblyLineLogEntity.Status.ERROR : AssemblyLineLogEntity.Status.SUCCESS);
+            assemblyLineLogEntity.setStatus(success ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
             assemblyLineLogService.update(assemblyLineLogEntity);
 
         } catch (Exception e) {
@@ -103,7 +102,7 @@ public class AssemblyLineRunnable implements Runnable {
         }
     }
 
-    private boolean runSpecificTask(AssemblyLineLogEntity assemblyLineLogEntity, int stepIndex, int taskIndex, AssemblyLineEnv assemblyLineEnv, ITaskConfig specificTask, IAssemblyLineTaskLogService assemblyLineTaskLogService) {
+    private boolean runSpecificTask(AssemblyLineLogEntity assemblyLineLogEntity, int stepIndex, int taskIndex, AssemblyLineEnv assemblyLineEnv, IAssemblyLineTaskConfig specificTask, IAssemblyLineTaskLogService assemblyLineTaskLogService) {
         AssemblyLineTaskLogEntity model = new AssemblyLineTaskLogEntity();
         model.setProjectId(assemblyLineLogEntity.getProjectId());
         model.setAssemblyLineLogId(assemblyLineLogEntity.getId());

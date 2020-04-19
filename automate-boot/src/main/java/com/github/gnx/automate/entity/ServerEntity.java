@@ -1,7 +1,4 @@
 package com.github.gnx.automate.entity;
-
-import com.alibaba.fastjson.JSONObject;
-
 import javax.persistence.*;
 
 /**
@@ -14,7 +11,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "CA2_SERVER")
-public class ServerEntity {
+public class ServerEntity{
 
     /**
      * 服务器类型
@@ -104,13 +101,13 @@ public class ServerEntity {
      * ssh 用户
      */
     @Column(name = "SSH_USER")
-    private transient String sshUser;
+    private String sshUser;
 
     /**
      * ssh 密码
      */
     @Column(name = "SSH_PWD")
-    private transient String sshPwd;
+    private String sshPwd;
 
     /**
      * 备注

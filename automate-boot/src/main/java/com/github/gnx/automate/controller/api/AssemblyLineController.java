@@ -2,14 +2,16 @@ package com.github.gnx.automate.controller.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.github.gnx.automate.assemblyline.AssemblyLineTaskManager;
-import com.github.gnx.automate.assemblyline.field.AssemblyLineStepTask;
+import com.github.gnx.automate.assemblyline.config.AssemblyLineStepTask;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
 import com.github.gnx.automate.entity.AssemblyLineEntity;
 import com.github.gnx.automate.entity.AssemblyLineLogEntity;
+import com.github.gnx.automate.entity.AssemblyLineTaskLogEntity;
 import com.github.gnx.automate.field.req.AssemblyLineSaveField;
 import com.github.gnx.automate.service.IAssemblyLineLogService;
 import com.github.gnx.automate.service.IAssemblyLineService;
+import com.github.gnx.automate.service.IAssemblyLineTaskLogService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +34,14 @@ public class AssemblyLineController {
 
     private final IAssemblyLineLogService assemblyLineLogService;
 
+    private final IAssemblyLineTaskLogService assemblyLineTaskLogService;
+
     private final AssemblyLineTaskManager assemblyLineTaskManager;
 
-    public AssemblyLineController(IAssemblyLineService assemblyLineService, IAssemblyLineLogService assemblyLineLogService, AssemblyLineTaskManager assemblyLineTaskManager) {
+    public AssemblyLineController(IAssemblyLineService assemblyLineService, IAssemblyLineLogService assemblyLineLogService, IAssemblyLineTaskLogService assemblyLineTaskLogService, AssemblyLineTaskManager assemblyLineTaskManager) {
         this.assemblyLineService = assemblyLineService;
         this.assemblyLineLogService = assemblyLineLogService;
+        this.assemblyLineTaskLogService = assemblyLineTaskLogService;
         this.assemblyLineTaskManager = assemblyLineTaskManager;
     }
 
@@ -70,7 +75,7 @@ public class AssemblyLineController {
      * 启动一个流水线任务
      */
     @RequestMapping(value = "/assembly_line/{assemblyLineId}/start", method = RequestMethod.POST)
-    public ResponseEntity updateAssemblyLine(
+    public ResponseEntity<Integer> updateAssemblyLine(
             CurrentUser currentUser,
             @PathVariable("assemblyLineId") @NotNull(message = "请输入流水线ID") Integer assemblyLineId,
             @NotBlank(message = "请指定分支") String branch,
@@ -89,8 +94,13 @@ public class AssemblyLineController {
         //先保存
         assemblyLineTaskManager.execute(assemblyLineLogEntity.getId());
 
-
         return ResponseEntity.ok("流水线任务已提交", assemblyLineLogEntity.getId());
+    }
+
+    @RequestMapping(value = "/assembly_line_log/{assemblyLineLogId}/task_logs", method = RequestMethod.GET)
+    public ResponseEntity<List<AssemblyLineTaskLogEntity>> assemblyLineTaskLogList(@PathVariable("assemblyLineLogId") @NotNull(message = "请输入流水线日志") Integer assemblyLineLogId){
+        return ResponseEntity.ok(assemblyLineTaskLogService.findAllByAssemblyLineLogIdOrderById(assemblyLineLogId));
+
     }
 
 }

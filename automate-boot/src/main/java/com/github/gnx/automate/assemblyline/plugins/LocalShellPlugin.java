@@ -3,11 +3,9 @@ package com.github.gnx.automate.assemblyline.plugins;
 import com.github.gnx.automate.assemblyline.AssemblyLineEnv;
 import com.github.gnx.automate.assemblyline.IAssemblyLinePlugin;
 import com.github.gnx.automate.assemblyline.IAssemblyLineProgressListener;
-import com.github.gnx.automate.assemblyline.field.LocalShellTaskConfig;
+import com.github.gnx.automate.assemblyline.config.ExecTask;
 import com.github.gnx.automate.common.SystemUtil;
 import com.github.gnx.automate.exec.ExecCommand;
-import com.github.gnx.automate.exec.ExecHelper;
-import com.github.gnx.automate.exec.ExecStreamPrintMonitor;
 import com.github.gnx.automate.exec.IExecStreamMonitor;
 import org.springframework.stereotype.Component;
 
@@ -21,15 +19,15 @@ import java.util.Collections;
  * @date 2020/3/30 22:27
  */
 @Component
-public class AssemblyLineShellPluginImpl implements IAssemblyLinePlugin<LocalShellTaskConfig> {
+public class LocalShellPlugin implements IAssemblyLinePlugin<ExecTask> {
 
     @Override
-    public Class<LocalShellTaskConfig> getTaskConfigClass() {
-        return LocalShellTaskConfig.class;
+    public Class<ExecTask> getTaskConfigClass() {
+        return ExecTask.class;
     }
 
     @Override
-    public boolean execute(AssemblyLineEnv assemblyLineEnv, LocalShellTaskConfig taskConfig, IAssemblyLineProgressListener listener) throws Exception {
+    public boolean execute(AssemblyLineEnv assemblyLineEnv, ExecTask taskConfig, IAssemblyLineProgressListener listener) throws Exception {
 
 
         File dir = SystemUtil.getProjectSourceCodeDir(assemblyLineEnv.getProjectEntity());
@@ -55,8 +53,19 @@ public class AssemblyLineShellPluginImpl implements IAssemblyLinePlugin<LocalShe
 
             }
         });
-        ExecHelper.exec(execCommand);
+//        ExecHelper.exec(execCommand);
         return execCommand.getExitValue() == 0;
     }
+
+    @Override
+    public String[] input() {
+        return null;
+    }
+
+    @Override
+    public String[] export() {
+        return null;
+    }
+
 
 }

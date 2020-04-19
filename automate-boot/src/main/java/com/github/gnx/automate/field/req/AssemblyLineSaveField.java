@@ -1,6 +1,6 @@
 package com.github.gnx.automate.field.req;
 
-import com.github.gnx.automate.assemblyline.field.AssemblyLineStepTask;
+import com.github.gnx.automate.assemblyline.config.AssemblyLineStepTask;
 
 import javax.validation.constraints.Size;
 import java.util.List;
