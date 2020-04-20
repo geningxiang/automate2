@@ -11,11 +11,12 @@
     </appender>
 
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
 
     <logger name="org.eclipse.jgit" level="WARN" />
 
+    <logger name="com.github.gnx" level="DEBUG" />
 
 </configuration>

@@ -3,6 +3,8 @@ package com.github.gnx.automate.exec.local;
 import com.github.gnx.automate.common.IExecListener;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 
@@ -44,4 +46,15 @@ class LocalExecConnectionTest {
 
     }
 
+
+    @Test
+    public void makeDirs(){
+
+        File file = new File("d:/1/1.txt");
+
+        File dir = file.getParentFile();
+
+        System.out.println(dir.getAbsolutePath());
+
+    }
 }

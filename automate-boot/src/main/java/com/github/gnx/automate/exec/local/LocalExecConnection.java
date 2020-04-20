@@ -4,11 +4,14 @@ import com.github.gnx.automate.common.Charsets;
 import com.github.gnx.automate.common.IExecListener;
 import com.github.gnx.automate.exec.ExecStreamReader;
 import com.github.gnx.automate.exec.IExecConnection;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +26,7 @@ public class LocalExecConnection implements IExecConnection {
 
     private static Logger logger = LoggerFactory.getLogger(LocalExecConnection.class);
 
-    private final int TIME_OUT = 10;
+    private final int TIME_OUT = 120;
 
     @Override
     public int exec(String cmd, IExecListener execListener) throws Exception {
@@ -54,13 +57,12 @@ public class LocalExecConnection implements IExecConnection {
 
             if (SystemUtils.IS_OS_WINDOWS) {
                 //windows 下 暂时没有找到 停止的办法
-                logger.error("windows系统下无法确保能够终止process");
+                logger.warn("windows系统下无法确保能够终止process");
                 process.destroy();
             } else {
                 //在 ubuntu 中 测试过 有效
                 Runtime.getRuntime().exec("kill -SIGINT " + process.pid());
             }
-
             process.waitFor();
         }
         return process.exitValue();
@@ -68,12 +70,23 @@ public class LocalExecConnection implements IExecConnection {
 
     @Override
     public void upload(File localFile, String remoteDir, String fileName, IExecListener execListener) throws Exception {
+        File dir = new File(remoteDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
+        IOUtils.copy(new FileInputStream(localFile), new FileOutputStream(remoteDir + "/" + fileName));
     }
 
     @Override
     public void download(String remotePath, File localFile, IExecListener execListener) throws Exception {
+        File dir = localFile.getParentFile();
 
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+
+        IOUtils.copy(new FileInputStream(remotePath), new FileOutputStream(localFile));
     }
 
     @Override

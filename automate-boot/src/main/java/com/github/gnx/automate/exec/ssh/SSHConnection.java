@@ -65,9 +65,7 @@ public class SSHConnection implements IExecConnection, Closeable {
                 out.write(3);
                 out.flush();
 
-//                execStreamReader.await(TIME_OUT, TimeUnit.SECONDS);
-
-                Thread.sleep(10000);
+                execStreamReader.await(TIME_OUT, TimeUnit.SECONDS);
             }
 
             //这里需要等待一会  否则 exitStatus = -1  就是这么奇怪
@@ -120,7 +118,6 @@ public class SSHConnection implements IExecConnection, Closeable {
         try {
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
-
 
             if (localFile.exists()) {
                 //TODO 本地文件已存在 要不要直接抛异常

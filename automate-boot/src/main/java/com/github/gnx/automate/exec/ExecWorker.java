@@ -9,5 +9,5 @@ package com.github.gnx.automate.exec;
 public abstract class ExecWorker<T>{
 
 
-    public abstract T doWork(IExecConnection execConnection);
+    public abstract T doWork(IExecConnection execConnection) throws Exception;
 }
