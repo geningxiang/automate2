@@ -1,10 +1,7 @@
 package com.github.gnx.automate.exec.docker;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateContainerCmd;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.ExecCreateCmdResponse;
-import com.github.dockerjava.api.command.InspectExecResponse;
+import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.gnx.automate.common.IExecListener;
 import com.github.gnx.automate.exec.IExecConnection;
@@ -13,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -85,8 +83,17 @@ public class DockerSSHConnetction implements IExecConnection {
     }
 
     @Override
-    public void upload(File localFile, String remoteDir, String fileName, IExecListener execListener) throws Exception {
+    public void upload(File localFile, String remoteDir, boolean withDecompression, IExecListener execListener) throws Exception {
+        //docker 没有文件夹会报错
 
+        this.exec("mkdir " + remoteDir, execListener);
+        CopyArchiveToContainerCmd copyArchiveToContainerCmd = dockerClient.copyArchiveToContainerCmd(this.containerId);
+        if (withDecompression) {
+            copyArchiveToContainerCmd.withTarInputStream(new FileInputStream(localFile));
+        } else {
+            copyArchiveToContainerCmd.withHostResource(localFile.getAbsolutePath());
+        }
+        copyArchiveToContainerCmd.withRemotePath(remoteDir).exec();
     }
 
     @Override

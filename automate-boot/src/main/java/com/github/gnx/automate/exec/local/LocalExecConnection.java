@@ -69,20 +69,24 @@ public class LocalExecConnection implements IExecConnection {
     }
 
     @Override
-    public void upload(File localFile, String remoteDir, String fileName, IExecListener execListener) throws Exception {
+    public void upload(File localFile, String remoteDir, boolean withDecompression, IExecListener execListener) throws Exception {
         File dir = new File(remoteDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        IOUtils.copy(new FileInputStream(localFile), new FileOutputStream(remoteDir + "/" + fileName));
+        if(withDecompression){
+            throw new RuntimeException("LocalExecConnection 解压功能还未完成");
+        }
+
+        IOUtils.copy(new FileInputStream(localFile), new FileOutputStream(remoteDir + "/" + localFile.getName()));
     }
 
     @Override
     public void download(String remotePath, File localFile, IExecListener execListener) throws Exception {
         File dir = localFile.getParentFile();
 
-        if(!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdirs();
         }
 

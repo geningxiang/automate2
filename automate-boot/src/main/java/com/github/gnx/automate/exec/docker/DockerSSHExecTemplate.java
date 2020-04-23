@@ -23,7 +23,7 @@ public class DockerSSHExecTemplate extends AbstractExecTemplate {
 
 
     @Override
-    protected IExecConnection createConnection() throws Exception {
+    public IExecConnection createConnection() throws Exception {
         return new DockerSSHConnetction(host, port, sourceImageName);
     }
 }

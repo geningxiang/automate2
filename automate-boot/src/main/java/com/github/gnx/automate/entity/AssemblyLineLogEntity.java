@@ -1,5 +1,7 @@
 package com.github.gnx.automate.entity;
 
+import com.github.gnx.automate.common.IExecListener;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -13,7 +15,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "CA2_ASSEMBLY_LINE_LOG")
-public class AssemblyLineLogEntity {
+public class AssemblyLineLogEntity implements IExecListener {
 
     public enum Status{
         INIT,
@@ -71,12 +73,11 @@ public class AssemblyLineLogEntity {
     private Byte status;
 
     /**
-     * 错误信息
-     * 主要为了记录
-     * 在步骤任务执行之前的错误
-     * 切换分支失败的错误
+     * 信息
+     * 环境准备时的信息
+     * 发生错误时的错误栈
      */
-    private String content;
+    private StringBuilder content = new StringBuilder(10240);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -205,11 +206,19 @@ public class AssemblyLineLogEntity {
 
     @Basic
     @Column(name = "CONTENT", nullable = true, length = 255)
-    public String getContent() {
+    public StringBuilder getContent() {
         return content;
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.content.append(content).append(System.lineSeparator());
     }
+
+
+    @Override
+    public AssemblyLineLogEntity onMsg(CharSequence csq) {
+        this.content.append(csq).append(System.lineSeparator());
+        return this;
+    }
+
 }

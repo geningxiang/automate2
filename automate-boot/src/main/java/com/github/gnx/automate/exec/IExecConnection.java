@@ -18,13 +18,13 @@ public interface IExecConnection extends Closeable {
     /**
      *
      * @param localFile
-     * @param remoteDir 远程目标的文件夹路径  为了判断要不要创建
-     * @param fileName 上传后的名称
+     * @param remoteDir
+     * @param withDecompression 是否需要解压
      * @param execListener
      * @return
      * @throws Exception
      */
-    void upload(File localFile, String remoteDir, String fileName, IExecListener execListener) throws Exception;
+    void upload(File localFile, String remoteDir, boolean withDecompression, IExecListener execListener) throws Exception;
 
     void download(String remotePath, File localFile, IExecListener execListener) throws Exception;
 

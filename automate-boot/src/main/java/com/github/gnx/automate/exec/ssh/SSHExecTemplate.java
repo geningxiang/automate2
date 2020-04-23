@@ -24,7 +24,7 @@ public class SSHExecTemplate extends AbstractExecTemplate {
     }
 
     @Override
-    protected IExecConnection createConnection() throws Exception {
+    public IExecConnection createConnection() throws Exception {
         return new SSHConnection(host, port, username, password);
     }
 }

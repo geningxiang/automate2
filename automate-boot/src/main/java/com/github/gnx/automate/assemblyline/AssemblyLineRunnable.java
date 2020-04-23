@@ -4,9 +4,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.github.gnx.automate.assemblyline.config.AssemblyLineStepTask;
 import com.github.gnx.automate.assemblyline.config.IAssemblyLineTaskConfig;
 import com.github.gnx.automate.common.SpringUtils;
+import com.github.gnx.automate.common.SystemUtil;
+import com.github.gnx.automate.common.utils.TarUtils;
 import com.github.gnx.automate.entity.AssemblyLineLogEntity;
 import com.github.gnx.automate.entity.AssemblyLineTaskLogEntity;
 import com.github.gnx.automate.entity.ProjectEntity;
+import com.github.gnx.automate.exec.IExecConnection;
+import com.github.gnx.automate.exec.IExecTemplate;
+import com.github.gnx.automate.exec.docker.DockerSSHConnetction;
+import com.github.gnx.automate.exec.local.LocalExecTemplate;
 import com.github.gnx.automate.service.IAssemblyLineLogService;
 import com.github.gnx.automate.service.IAssemblyLineTaskLogService;
 import com.github.gnx.automate.service.IProjectService;
@@ -15,6 +21,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -34,75 +41,108 @@ public class AssemblyLineRunnable implements Runnable {
     private final int assemblyLineLogId;
 
 
+    private IAssemblyLineTaskLogService assemblyLineTaskLogService;
+    private IAssemblyLineLogService assemblyLineLogService;
+    private IProjectService projectService;
+    private VcsHelper vcsHelper;
+
+
     public AssemblyLineRunnable(int assemblyLineLogId, IAssemblyLineRunnableListener assemblyLineRunnableListener) {
         this.assemblyLineLogId = assemblyLineLogId;
 
         //TODO 监听器  暂时没有用起来
         this.assemblyLineRunnableListener = assemblyLineRunnableListener;
 
+        this.assemblyLineTaskLogService = SpringUtils.getBean(IAssemblyLineTaskLogService.class);
+        this.assemblyLineLogService = SpringUtils.getBean(IAssemblyLineLogService.class);
+        this.projectService = SpringUtils.getBean(IProjectService.class);
+        this.vcsHelper = SpringUtils.getBean(VcsHelper.class);
     }
 
     @Override
     public void run() {
-        IAssemblyLineLogService assemblyLineLogService = SpringUtils.getBean(IAssemblyLineLogService.class);
-        IAssemblyLineTaskLogService assemblyLineTaskLogService = SpringUtils.getBean(IAssemblyLineTaskLogService.class);
-        IProjectService projectService = SpringUtils.getBean(IProjectService.class);
-        VcsHelper vcsHelper = SpringUtils.getBean(VcsHelper.class);
-        AssemblyLineLogEntity assemblyLineLogEntity = assemblyLineLogService.findById(this.assemblyLineLogId).get();
 
+
+        AssemblyLineLogEntity assemblyLineLogEntity = assemblyLineLogService.findById(this.assemblyLineLogId).get();
+        this.assemblyLineRunnableListener.onStart(this);
+        boolean success = false;
         try {
             Optional<ProjectEntity> projectEntity = projectService.getModel(assemblyLineLogEntity.getProjectId());
-            if(!projectEntity.isPresent()){
+            if (!projectEntity.isPresent()) {
                 throw new RuntimeException("未找到相应的项目");
             }
 
-            final AssemblyLineEnv assemblyLineEnv = new AssemblyLineEnv(projectEntity.get(), assemblyLineLogEntity);
-
-
-            //切换分支
-            vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
-
-
+            //解析流水线
             List<AssemblyLineStepTask> assemblyLineStepTasks = JSONArray.parseArray(assemblyLineLogEntity.getConfig(), AssemblyLineStepTask.class);
 
 
-            this.assemblyLineRunnableListener.onStart(this);
-            //保存 日志
+            IExecTemplate execTemplate = new LocalExecTemplate();
+
+            try (IExecConnection execConnection = execTemplate.createConnection()) {
+                final AssemblyLineEnv assemblyLineEnv = new AssemblyLineEnv(projectEntity.get(), assemblyLineLogEntity, execConnection);
+
+                //切换分支
+                vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
 
 
-            int stepIndex = 0;
-            boolean success = true;
-            for (AssemblyLineStepTask stepTask : assemblyLineStepTasks) {
-                int taskIndex = 0;
-                for (IAssemblyLineTaskConfig specificTask : stepTask.getTasks()) {
-                    if (success) {
-                        success = runSpecificTask(assemblyLineLogEntity, stepIndex, taskIndex, assemblyLineEnv, specificTask, assemblyLineTaskLogService);
-                    } else {
-                        //前面任务发生错误  这里就不新建日志了
-                        break;
-                    }
+                //暂时只有2种  本地执行 或者 docker执行
+                if (execConnection instanceof DockerSSHConnetction) {
+                    //上传源码
+                    File dir = SystemUtil.getProjectSourceCodeDir(projectEntity.get());
+                    File tarGzFile = TarUtils.tarAndGz(dir, dir, "tmp", true);
 
-                    taskIndex++;
+                    execConnection.upload(tarGzFile, "/work/", true, assemblyLineLogEntity);
+
+                    execConnection.exec("cd /work && tar -zxvf " + tarGzFile.getName() + " && rm " + tarGzFile.getName(), assemblyLineLogEntity);
 
                 }
-                stepIndex++;
+
+
+                success = runTask(assemblyLineLogEntity, assemblyLineStepTasks, assemblyLineEnv);
             }
 
-            assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
-            assemblyLineLogEntity.setStatus(success ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
-            assemblyLineLogService.update(assemblyLineLogEntity);
 
         } catch (Exception e) {
-            assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
-            assemblyLineLogEntity.setContent(ExceptionUtils.getStackTrace(e));
-            assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.ERROR);
-            assemblyLineLogService.update(assemblyLineLogEntity);
+            assemblyLineLogEntity.onMsg("== 执行任务发生异常 ==").onMsg(ExceptionUtils.getStackTrace(e));
         } finally {
             this.assemblyLineRunnableListener.onFinished(this);
         }
+
+        assemblyLineLogEntity.setEndTime(new Timestamp(System.currentTimeMillis()));
+        assemblyLineLogEntity.setStatus(success ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
+        assemblyLineLogService.update(assemblyLineLogEntity);
+
     }
 
-    private boolean runSpecificTask(AssemblyLineLogEntity assemblyLineLogEntity, int stepIndex, int taskIndex, AssemblyLineEnv assemblyLineEnv, IAssemblyLineTaskConfig specificTask, IAssemblyLineTaskLogService assemblyLineTaskLogService) {
+    private boolean runTask(AssemblyLineLogEntity assemblyLineLogEntity, List<AssemblyLineStepTask> assemblyLineStepTasks, AssemblyLineEnv assemblyLineEnv) {
+        int stepIndex = 0;
+        boolean success = true;
+        for (AssemblyLineStepTask stepTask : assemblyLineStepTasks) {
+            int taskIndex = 0;
+            for (IAssemblyLineTaskConfig specificTask : stepTask.getTasks()) {
+                if (success) {
+                    success = runSpecificTask(assemblyLineLogEntity, stepIndex, taskIndex, assemblyLineEnv, specificTask);
+                } else {
+                    //前面任务发生错误  这里就不新建日志了
+                    return false;
+                }
+                taskIndex++;
+            }
+            stepIndex++;
+        }
+        return true;
+    }
+
+    /**
+     * 执行具体的单步任务
+     * @param assemblyLineLogEntity
+     * @param stepIndex
+     * @param taskIndex
+     * @param assemblyLineEnv
+     * @param specificTask
+     * @return
+     */
+    private boolean runSpecificTask(AssemblyLineLogEntity assemblyLineLogEntity, int stepIndex, int taskIndex, AssemblyLineEnv assemblyLineEnv, IAssemblyLineTaskConfig specificTask) {
         AssemblyLineTaskLogEntity model = new AssemblyLineTaskLogEntity();
         model.setProjectId(assemblyLineLogEntity.getProjectId());
         model.setAssemblyLineLogId(assemblyLineLogEntity.getId());
@@ -112,7 +152,6 @@ public class AssemblyLineRunnable implements Runnable {
         model.setStartTime(new Timestamp(System.currentTimeMillis()));
         boolean success = true;
         try {
-
             boolean result = AssemblyLinePluginManager.execute(assemblyLineEnv, specificTask, model::appendLine);
             model.setStatus(result ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
         } catch (Exception e) {

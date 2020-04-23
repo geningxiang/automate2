@@ -8,8 +8,6 @@ package com.github.gnx.automate.exec;
  */
 public abstract class AbstractExecTemplate implements IExecTemplate {
 
-    protected abstract IExecConnection createConnection() throws Exception;
-
     @Override
     public <T> T execute(ExecWorker<T> execWorker) throws Exception {
         IExecConnection connection = null;

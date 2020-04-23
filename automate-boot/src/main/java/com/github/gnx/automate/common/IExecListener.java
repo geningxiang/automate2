@@ -9,9 +9,13 @@ package com.github.gnx.automate.common;
 public interface IExecListener {
 
 
-    void onStart(String step, String msg);
+    default void onStart(String step, String msg){
+
+    }
 
     IExecListener onMsg(CharSequence csq);
 
-    IExecListener onError(CharSequence csq);
+    default IExecListener onError(CharSequence csq){
+        return this;
+    }
 }

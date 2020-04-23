@@ -5,7 +5,6 @@ import com.github.gnx.automate.common.IExecListener;
 import com.github.gnx.automate.exec.ExecStreamReader;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.jcraft.jsch.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +85,7 @@ public class SSHConnection implements IExecConnection, Closeable {
     }
 
     @Override
-    public void upload(File localFile, String remoteDir, String fileName, IExecListener execListener) throws Exception {
+    public void upload(File localFile, String remoteDir, boolean withDecompression, IExecListener execListener) throws Exception {
         ChannelSftp channel = null;
         try {
             channel = (ChannelSftp) session.openChannel("sftp");
@@ -100,11 +99,14 @@ public class SSHConnection implements IExecConnection, Closeable {
             } catch (SftpException e) {
                 channel.mkdir(remoteDir);
             }
-            String remotePath = remoteDir;
-            if (StringUtils.isNotBlank(fileName)) {
-                remotePath += fileName;
+
+            channel.put(localFile.getAbsolutePath(), remoteDir, new SftpProgressMonitorImpl(execListener));
+
+
+            if (withDecompression) {
+                this.exec("cd " + remoteDir + " && tar -zxvf " + localFile.getName() + " && rm " + localFile.getName(), execListener);
             }
-            channel.put(localFile.getAbsolutePath(), remotePath, new SftpProgressMonitorImpl(execListener));
+
         } finally {
             if (channel != null) {
                 channel.disconnect();
