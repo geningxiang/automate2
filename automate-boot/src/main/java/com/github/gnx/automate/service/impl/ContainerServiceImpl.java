@@ -1,6 +1,6 @@
 package com.github.gnx.automate.service.impl;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.entity.ServerEntity;
@@ -46,7 +46,7 @@ public class ContainerServiceImpl implements IContainerService {
     }
 
     @Override
-    public void update(int packageId, int containerId, IExecListener msgLineReader) throws Exception {
+    public void update(int packageId, int containerId, IMsgListener msgLineReader) throws Exception {
 
         ProductEntity productEntity = productRepository.findById(packageId).get();
         ContainerEntity containerEntity = containerRepository.findById(containerId).get();
@@ -76,9 +76,9 @@ public class ContainerServiceImpl implements IContainerService {
 
 
             s.doWork(sshConnection -> {
-                msgLineReader.onMsg("已建立ssh连接: " + serverEntity.getSshHost() + ":" + serverEntity.getSshPort());
+                msgLineReader.append("已建立ssh连接: " + serverEntity.getSshHost() + ":" + serverEntity.getSshPort());
 
-                msgLineReader.onMsg("开始上传文件 " + file.getAbsolutePath() + " ==>> " + containerEntity.getUploadDir());
+                msgLineReader.append("开始上传文件 " + file.getAbsolutePath() + " ==>> " + containerEntity.getUploadDir());
 
                 sshConnection.uploadLocalFileToRemote(file.getAbsolutePath(), containerEntity.getUploadDir(), new SftpProgressMonitorImpl(msgLineReader));
 
@@ -89,12 +89,12 @@ public class ContainerServiceImpl implements IContainerService {
                 backup(containerEntity, sshConnection, beforeSha256, msgLineReader);
 
 
-                msgLineReader.onMsg("######## 关闭应用 ########");
+                msgLineReader.append("######## 关闭应用 ########");
 
                 //关闭容器
                 ExecCommand stopCmd = ContainerUtil.containerStop(sshConnection, containerEntity);
 
-                msgLineReader.onMsg(stopCmd.getOut().toString());
+                msgLineReader.append(stopCmd.getOut().toString());
 
                 if (stopCmd.getExitValue() != 0) {
                     throw new RuntimeException("关闭应用失败");
@@ -109,14 +109,14 @@ public class ContainerServiceImpl implements IContainerService {
                 cmd.append(" && unzip -o ").append(uploadedFile).append(" -d ").append(sourceDir);
 
                 //删除 上传的包
-//                cmd.onMsg(" || rm ").onMsg(uploadedFile);
+//                cmd.append(" || rm ").append(uploadedFile);
 
-                msgLineReader.onMsg("######## 开始更新应用 ########");
-                msgLineReader.onMsg(cmd.toString());
+                msgLineReader.append("######## 开始更新应用 ########");
+                msgLineReader.append(cmd.toString());
                 ExecCommand execCommand = new ExecCommand(cmd.toString(), new ExecStreamPrintMonitor());
                 sshConnection.exec(execCommand);
 
-                msgLineReader.onMsg(execCommand.getOut().toString());
+                msgLineReader.append(execCommand.getOut().toString());
 
                 if (execCommand.getExitValue() != 0) {
                     throw new RuntimeException("更新应用失败");
@@ -135,7 +135,7 @@ public class ContainerServiceImpl implements IContainerService {
 
                 //启动容器
                 ExecCommand startCmd = ContainerUtil.containerStart(sshConnection, containerEntity);
-                msgLineReader.onMsg(startCmd.getOut().toString());
+                msgLineReader.append(startCmd.getOut().toString());
 
                 if (startCmd.getExitValue() != 0) {
                     throw new RuntimeException("启动容器失败");
@@ -149,7 +149,7 @@ public class ContainerServiceImpl implements IContainerService {
 //            applicationUpdateLogRepository.save(applicationUpdateLogEntity);
 
         } catch (Exception e) {
-            msgLineReader.onMsg(ExceptionUtils.getStackTrace(e));
+            msgLineReader.append(ExceptionUtils.getStackTrace(e));
 //            applicationUpdateLogEntity.setStatus(AssemblyLineLogEntity.Status.error);
 //            applicationUpdateLogEntity.setLog(execLog.toString());
 //            applicationUpdateLogEntity.setDoneTime(new Timestamp(System.currentTimeMillis()));
@@ -182,13 +182,13 @@ public class ContainerServiceImpl implements IContainerService {
     }
 
 
-    private void backup(ContainerEntity containerEntity, SSHConnection sshConnection, String beforeSha256, IExecListener msgLineReader) throws Exception {
+    private void backup(ContainerEntity containerEntity, SSHConnection sshConnection, String beforeSha256, IMsgListener msgLineReader) throws Exception {
         if (StringUtils.isBlank(containerEntity.getBackupDir())) {
-            msgLineReader.onMsg("[WARN]当前应用未设置备份文件夹");
+            msgLineReader.append("[WARN]当前应用未设置备份文件夹");
             return;
         }
 
-        msgLineReader.onMsg("====== 开始备份 ======");
+        msgLineReader.append("====== 开始备份 ======");
         StringBuilder backUpFilePath = new StringBuilder(256);
         backUpFilePath.append(containerEntity.getBackupDir());
         if (!containerEntity.getBackupDir().endsWith("/")) {
@@ -198,12 +198,12 @@ public class ContainerServiceImpl implements IContainerService {
 
         logger.info("{} ==> {}", containerEntity.getSourceDir(), backUpFilePath.toString());
 
-        msgLineReader.onMsg(containerEntity.getSourceDir() + " ==> " + backUpFilePath.toString());
+        msgLineReader.append(containerEntity.getSourceDir() + " ==> " + backUpFilePath.toString());
 
         //原文件夹 压缩
 //        sshConnection.tar(containerEntity.getSourceDir(), backUpFilePath.toString(), msgLineReader);
 
-        msgLineReader.onMsg("====== 备份结束 ======");
+        msgLineReader.append("====== 备份结束 ======");
 
         //保存应用备份表
 //        ApplicationBackupEntity applicationBackupEntity = new ApplicationBackupEntity();

@@ -2,9 +2,8 @@ package com.github.gnx.automate.assemblyline.plugins;
 
 import com.github.gnx.automate.assemblyline.AssemblyLineEnv;
 import com.github.gnx.automate.assemblyline.IAssemblyLinePlugin;
-import com.github.gnx.automate.assemblyline.IAssemblyLineProgressListener;
 import com.github.gnx.automate.assemblyline.config.ProductPickTask;
-import com.github.gnx.automate.common.SystemUtil;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.entity.AssemblyLineLogEntity;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.service.IProductService;
@@ -32,16 +31,16 @@ public class ProductPickPlugin implements IAssemblyLinePlugin<ProductPickTask> {
     }
 
     @Override
-    public boolean execute(AssemblyLineEnv env, ProductPickTask taskConfig, IAssemblyLineProgressListener listener) throws Exception {
+    public boolean execute(AssemblyLineEnv env, ProductPickTask taskConfig, IMsgListener listener) throws Exception {
 
         String filePath = taskConfig.getFilePath();
-        listener.onLine("## 开始提取包文件 ##");
-        listener.onLine(filePath);
-        filePath = filePath.replace("${baseDir}", SystemUtil.getProjectSourceCodeDir(env.getProjectEntity()).getAbsolutePath());
-        listener.onLine(filePath);
+        listener.appendLine("## 开始提取包文件 ##");
+        listener.appendLine(filePath);
+        filePath = filePath.replace("${baseDir}", env.getBaseDir());
+        listener.appendLine(filePath);
         File file = new File(filePath);
-        if(!file.exists()){
-            listener.onLine("未找到相应的文件: " + file.getAbsolutePath());
+        if (!file.exists()) {
+            listener.appendLine("未找到相应的文件: " + file.getAbsolutePath());
             //未找到相应的文件
             return false;
         }
@@ -55,12 +54,12 @@ public class ProductPickPlugin implements IAssemblyLinePlugin<ProductPickTask> {
                 assemblyLineLogEntity.getCommitId(),
                 "后台构建生成", file);
 
-        listener.onLine("项目ID: " + assemblyLineLogEntity.getProjectId());
-        listener.onLine("版本: " + env.getVersion());
-        listener.onLine("分支: " + assemblyLineLogEntity.getBranch());
-        listener.onLine("commitId: " + assemblyLineLogEntity.getCommitId());
-        listener.onLine("提取前文件地址: " + file.getAbsolutePath());
-        listener.onLine("提取后包地址: " + productEntity.getFilePath());
+        listener.appendLine("项目ID: " + assemblyLineLogEntity.getProjectId());
+        listener.appendLine("版本: " + env.getVersion());
+        listener.appendLine("分支: " + assemblyLineLogEntity.getBranch());
+        listener.appendLine("commitId: " + assemblyLineLogEntity.getCommitId());
+        listener.appendLine("提取前文件地址: " + file.getAbsolutePath());
+        listener.appendLine("提取后包地址: " + productEntity.getFilePath());
 
         env.put("productId", productEntity.getId());
 

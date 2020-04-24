@@ -1,7 +1,7 @@
 package com.github.gnx.automate.exec.local;
 
 import com.github.gnx.automate.common.Charsets;
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.exec.ExecStreamReader;
 import com.github.gnx.automate.exec.IExecConnection;
 import org.apache.commons.io.IOUtils;
@@ -29,7 +29,7 @@ public class LocalExecConnection implements IExecConnection {
     private final int TIME_OUT = 120;
 
     @Override
-    public int exec(String cmd, IExecListener execListener) throws Exception {
+    public int exec(String cmd, IMsgListener execListener) throws Exception {
 
         final Process process;
 
@@ -69,7 +69,7 @@ public class LocalExecConnection implements IExecConnection {
     }
 
     @Override
-    public void upload(File localFile, String remoteDir, boolean withDecompression, IExecListener execListener) throws Exception {
+    public void upload(File localFile, String remoteDir, boolean withDecompression, IMsgListener execListener) throws Exception {
         File dir = new File(remoteDir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -83,7 +83,7 @@ public class LocalExecConnection implements IExecConnection {
     }
 
     @Override
-    public void download(String remotePath, File localFile, IExecListener execListener) throws Exception {
+    public void download(String remotePath, File localFile, IMsgListener execListener) throws Exception {
         File dir = localFile.getParentFile();
 
         if (!dir.exists()) {

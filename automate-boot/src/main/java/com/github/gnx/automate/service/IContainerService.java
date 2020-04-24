@@ -1,6 +1,6 @@
 package com.github.gnx.automate.service;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.entity.ContainerEntity;
 
 import java.util.List;
@@ -14,5 +14,5 @@ import java.util.List;
 public interface IContainerService {
     List<ContainerEntity> getAllByProjectIdOrderById(int projectId);
 
-    void update(int packageId, int containerId, IExecListener msgLineReader) throws Exception;
+    void update(int packageId, int containerId, IMsgListener msgLineReader) throws Exception;
 }

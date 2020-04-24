@@ -48,7 +48,7 @@
 //            }
 //
 //            @Override
-//            public void onMsg(String line) {
+//            public void append(String line) {
 //                if (StringUtils.isNotBlank(line)) {
 //                    String[] ss = line.split("  ");
 //                    if (ss.length == 2 && ss[1].length() > 2) {

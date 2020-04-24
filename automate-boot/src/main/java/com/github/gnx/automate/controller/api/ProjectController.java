@@ -103,6 +103,7 @@ public class ProjectController {
     @RequestMapping(value = "/project/{projectId}/fetch", method = RequestMethod.POST)
     public ResponseEntity fetchProject(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) throws Exception {
         vcsHelper.update(projectService.getModel(projectId).get());
+        // 刷新 分支列表
         return ResponseEntity.ok();
     }
 

@@ -1,8 +1,8 @@
 package com.github.gnx.automate.exec.ssh;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.common.utils.TarUtils;
-import com.github.gnx.automate.exec.ExecPrintListener;
+import com.github.gnx.automate.exec.MsgPrintListener;
 import com.github.gnx.automate.exec.ExecWorker;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.github.gnx.automate.exec.IExecTemplate;
@@ -29,7 +29,7 @@ class SSHExecTemplateTest {
                 File dir = new File("E:\\automate-data\\sourcecode\\1");
                 File tarGzFile = TarUtils.tarAndGz(dir, dir, "tmp", true);
 
-                IExecListener execListener = new ExecPrintListener();
+                IMsgListener execListener = new MsgPrintListener();
 
                 execConnection.upload(tarGzFile, "/tmp/CaimaoTouch", true, execListener);
 

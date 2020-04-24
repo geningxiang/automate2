@@ -1,6 +1,6 @@
 //package com.github.gnx.automate.exec.ssh;
 //import com.github.gnx.automate.common.Charsets;
-//import com.github.gnx.automate.common.IExecListener;
+//import com.github.gnx.automate.common.IMsgListener;
 //import com.github.gnx.automate.exec.ExecCommand;
 //import com.github.gnx.automate.exec.ExecThreadPool;
 //import com.github.gnx.automate.exec.IExecConnection;
@@ -152,7 +152,7 @@
 //            }
 //
 //            @Override
-//            public void onMsg(String line) {
+//            public void append(String line) {
 //                out.add(line);
 //            }
 //
@@ -231,7 +231,7 @@
 //        }
 //    }
 //
-//    public int tar(String sourceDir, String targetFilePath, IExecListener log) throws Exception {
+//    public int tar(String sourceDir, String targetFilePath, IMsgListener log) throws Exception {
 //        final String dir = targetFilePath.substring(0, targetFilePath.lastIndexOf("/"));
 //
 //        StringBuilder cmd = new StringBuilder(512);
@@ -241,14 +241,14 @@
 //        cmd.append(targetFilePath);
 //        cmd.append(" ./");
 //
-//        log.onMsg(cmd);
+//        log.append(cmd);
 //
 //        ExecCommand execCommand = new ExecCommand(cmd.toString());
 //
 //        this.mkdir(dir);
 //        this.exec(execCommand);
 //
-//        log.onMsg(execCommand.getOut().toString());
+//        log.append(execCommand.getOut().toString());
 //        return execCommand.getExitValue();
 //    }
 //

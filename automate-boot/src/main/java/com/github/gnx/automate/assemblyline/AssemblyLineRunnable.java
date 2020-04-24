@@ -9,10 +9,10 @@ import com.github.gnx.automate.common.utils.TarUtils;
 import com.github.gnx.automate.entity.AssemblyLineLogEntity;
 import com.github.gnx.automate.entity.AssemblyLineTaskLogEntity;
 import com.github.gnx.automate.entity.ProjectEntity;
+import com.github.gnx.automate.exec.ExecEnvConfig;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.github.gnx.automate.exec.IExecTemplate;
 import com.github.gnx.automate.exec.docker.DockerSSHConnetction;
-import com.github.gnx.automate.exec.local.LocalExecTemplate;
 import com.github.gnx.automate.service.IAssemblyLineLogService;
 import com.github.gnx.automate.service.IAssemblyLineTaskLogService;
 import com.github.gnx.automate.service.IProjectService;
@@ -76,10 +76,12 @@ public class AssemblyLineRunnable implements Runnable {
             List<AssemblyLineStepTask> assemblyLineStepTasks = JSONArray.parseArray(assemblyLineLogEntity.getConfig(), AssemblyLineStepTask.class);
 
 
-            IExecTemplate execTemplate = new LocalExecTemplate();
+            //获取当前系统配置的 exec执行模板
+            IExecTemplate execTemplate = ExecEnvConfig.getExecTemplate();
+
 
             try (IExecConnection execConnection = execTemplate.createConnection()) {
-                final AssemblyLineEnv assemblyLineEnv = new AssemblyLineEnv(projectEntity.get(), assemblyLineLogEntity, execConnection);
+                final AssemblyLineEnv env = new AssemblyLineEnv(projectEntity.get(), assemblyLineLogEntity, execConnection);
 
                 //切换分支
                 vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
@@ -87,23 +89,24 @@ public class AssemblyLineRunnable implements Runnable {
 
                 //暂时只有2种  本地执行 或者 docker执行
                 if (execConnection instanceof DockerSSHConnetction) {
+                    assemblyLineLogEntity.appendLine(" == 当前为docker构建模式 == ");
                     //上传源码
                     File dir = SystemUtil.getProjectSourceCodeDir(projectEntity.get());
+                    assemblyLineLogEntity.appendLine("源码打包中...");
                     File tarGzFile = TarUtils.tarAndGz(dir, dir, "tmp", true);
-
-                    execConnection.upload(tarGzFile, "/work/", true, assemblyLineLogEntity);
-
-                    execConnection.exec("cd /work && tar -zxvf " + tarGzFile.getName() + " && rm " + tarGzFile.getName(), assemblyLineLogEntity);
-
+                    assemblyLineLogEntity.appendLine("开始上传源码");
+                    execConnection.upload(tarGzFile, "/work", true, assemblyLineLogEntity);
+                    env.setBaseDir("/work/");
+                    assemblyLineLogEntity.appendLine("源码上传完毕,切换项目基础目录");
+                    assemblyLineLogEntity.appendLine(" == 前期准备工作完成 == ");
                 }
 
-
-                success = runTask(assemblyLineLogEntity, assemblyLineStepTasks, assemblyLineEnv);
+                success = runTask(assemblyLineLogEntity, assemblyLineStepTasks, env);
             }
 
 
         } catch (Exception e) {
-            assemblyLineLogEntity.onMsg("== 执行任务发生异常 ==").onMsg(ExceptionUtils.getStackTrace(e));
+            assemblyLineLogEntity.appendLine("== 执行任务发生异常 ==").appendLine(ExceptionUtils.getStackTrace(e));
         } finally {
             this.assemblyLineRunnableListener.onFinished(this);
         }
@@ -150,16 +153,13 @@ public class AssemblyLineRunnable implements Runnable {
         model.setTaskIndex(taskIndex);
         model.setStatus(AssemblyLineLogEntity.Status.INIT);
         model.setStartTime(new Timestamp(System.currentTimeMillis()));
-        boolean success = true;
+        boolean success = false;
         try {
-            boolean result = AssemblyLinePluginManager.execute(assemblyLineEnv, specificTask, model::appendLine);
-            model.setStatus(result ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
+            success = AssemblyLinePluginManager.execute(assemblyLineEnv, specificTask, model::append);
         } catch (Exception e) {
             model.appendLine(ExceptionUtils.getStackTrace(e));
-            model.setStatus(AssemblyLineLogEntity.Status.ERROR);
-            success = false;
         }
-
+        model.setStatus(success ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
         model.setEndTime(new Timestamp(System.currentTimeMillis()));
         assemblyLineTaskLogService.save(model);
         return success;

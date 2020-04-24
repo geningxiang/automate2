@@ -1,6 +1,7 @@
 package com.github.gnx.automate.assemblyline;
 
 import com.github.gnx.automate.assemblyline.config.IAssemblyLineTaskConfig;
+import com.github.gnx.automate.common.IMsgListener;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,7 +25,7 @@ public interface IAssemblyLinePlugin<T extends IAssemblyLineTaskConfig> {
      * @return boolean 是否执行成功
      * @throws Exception 异常
      */
-    boolean execute(AssemblyLineEnv assemblyLineEnv, T taskConfig, IAssemblyLineProgressListener listener) throws Exception;
+    boolean execute(AssemblyLineEnv assemblyLineEnv, T taskConfig, IMsgListener listener) throws Exception;
 
     /**
      * 需要的参数

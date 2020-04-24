@@ -1,7 +1,7 @@
 package com.github.gnx.automate.exec.ssh;
 
 import com.github.gnx.automate.common.Charsets;
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.exec.ExecStreamReader;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.jcraft.jsch.*;
@@ -43,7 +43,7 @@ public class SSHConnection implements IExecConnection, Closeable {
     }
 
     @Override
-    public int exec(String cmd, IExecListener execListener) throws Exception {
+    public int exec(String cmd, IMsgListener execListener) throws Exception {
         ChannelExec channel = null;
         try {
             channel = (ChannelExec) this.session.openChannel("exec");
@@ -85,7 +85,7 @@ public class SSHConnection implements IExecConnection, Closeable {
     }
 
     @Override
-    public void upload(File localFile, String remoteDir, boolean withDecompression, IExecListener execListener) throws Exception {
+    public void upload(File localFile, String remoteDir, boolean withDecompression, IMsgListener execListener) throws Exception {
         ChannelSftp channel = null;
         try {
             channel = (ChannelSftp) session.openChannel("sftp");
@@ -115,7 +115,7 @@ public class SSHConnection implements IExecConnection, Closeable {
     }
 
     @Override
-    public void download(String remotePath, File localFile, IExecListener execListener) {
+    public void download(String remotePath, File localFile, IMsgListener execListener) {
         ChannelSftp channel = null;
         try {
             channel = (ChannelSftp) session.openChannel("sftp");

@@ -3,16 +3,16 @@ package com.github.gnx.automate.exec.docker;
 import com.github.dockerjava.api.async.ResultCallbackTemplate;
 import com.github.dockerjava.api.model.Frame;
 import com.github.gnx.automate.common.Charsets;
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 
 import java.nio.charset.Charset;
 
 public class ExecStartResultCallback extends ResultCallbackTemplate<ExecStartResultCallback, Frame> {
 
-    private final IExecListener execListener;
+    private final IMsgListener execListener;
     private Charset charset = Charsets.UTF_8;
 
-    public ExecStartResultCallback(IExecListener execListener) {
+    public ExecStartResultCallback(IMsgListener execListener) {
         this.execListener = execListener;
     }
 
@@ -28,7 +28,7 @@ public class ExecStartResultCallback extends ResultCallbackTemplate<ExecStartRes
                 case RAW:
                 case STDERR:
                     if (this.execListener != null) {
-                        this.execListener.onMsg(new String(frame.getPayload(), charset));
+                        this.execListener.append(new String(frame.getPayload(), charset));
                     }
                     break;
                 default:

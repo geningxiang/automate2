@@ -1,6 +1,7 @@
 package com.github.gnx.automate.assemblyline;
 
 import com.github.gnx.automate.assemblyline.config.IAssemblyLineTaskConfig;
+import com.github.gnx.automate.common.IMsgListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ public class AssemblyLinePluginManager {
 
     private static Map<Class<? extends IAssemblyLineTaskConfig>, IAssemblyLinePlugin> pluginMap = new HashMap(64);
 
-    public static boolean execute(AssemblyLineEnv assemblyLineEnv, IAssemblyLineTaskConfig taskConfig, IAssemblyLineProgressListener listener) throws Exception {
+    public static boolean execute(AssemblyLineEnv assemblyLineEnv, IAssemblyLineTaskConfig taskConfig, IMsgListener listener) throws Exception {
         IAssemblyLinePlugin assemblyLinePlugin = pluginMap.get(taskConfig.getClass());
         if (assemblyLinePlugin == null) {
             throw new RuntimeException("未找到相应的插件: " + taskConfig.getClass().getName());

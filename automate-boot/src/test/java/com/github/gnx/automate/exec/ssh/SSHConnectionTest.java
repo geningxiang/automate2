@@ -1,9 +1,8 @@
 package com.github.gnx.automate.exec.ssh;
 
 import com.github.gnx.automate.common.Charsets;
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.exec.ExecStreamReader;
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
@@ -24,22 +23,14 @@ class SSHConnectionTest {
     public void test() throws Exception {
         SSHConnection sshConnection = new SSHConnection("192.168.1.190", 22, "root", "genx@linux");
 
-        int result = sshConnection.exec("ping www.baidu.com", new IExecListener() {
-            @Override
-            public void onStart(String step, String msg) {
-
-            }
+        int result = sshConnection.exec("ping www.baidu.com", new IMsgListener() {
 
             @Override
-            public IExecListener onMsg(CharSequence csq) {
-                System.out.println("[onMsg]" + csq);
+            public IMsgListener append(CharSequence csq) {
+                System.out.println("[append]" + csq);
                 return null;
             }
 
-            @Override
-            public IExecListener onError(CharSequence csq) {
-                return null;
-            }
         });
 
         System.out.println(result);
@@ -77,20 +68,10 @@ class SSHConnectionTest {
 
         Thread.sleep(1000);
 
-        ExecStreamReader.submit(channel.getInputStream(), Charsets.UTF_8, new IExecListener() {
+        ExecStreamReader.submit(channel.getInputStream(), Charsets.UTF_8, new IMsgListener() {
             @Override
-            public void onStart(String step, String msg) {
-
-            }
-
-            @Override
-            public IExecListener onMsg(CharSequence csq) {
-                System.out.println("[onMsg]" + csq);
-                return this;
-            }
-
-            @Override
-            public IExecListener onError(CharSequence csq) {
+            public IMsgListener append(CharSequence csq) {
+                System.out.println("[append]" + csq);
                 return this;
             }
         });

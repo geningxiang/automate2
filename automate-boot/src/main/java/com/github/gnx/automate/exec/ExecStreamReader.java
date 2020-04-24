@@ -1,6 +1,6 @@
 package com.github.gnx.automate.exec;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class ExecStreamReader {
             TimeUnit.SECONDS,
             new SynchronousQueue());
 
-    public static ExecStreamReadRunner submit(InputStream inputStream, Charset charset, IExecListener execListener) {
+    public static ExecStreamReadRunner submit(InputStream inputStream, Charset charset, IMsgListener execListener) {
         ExecStreamReadRunner execStreamReadRunner = new ExecStreamReadRunner(inputStream, charset, execListener);
         pool.execute(execStreamReadRunner);
         return execStreamReadRunner;
@@ -42,11 +42,11 @@ public class ExecStreamReader {
 
         private final InputStream inputStream;
         private final Charset charset;
-        private final IExecListener execListener;
+        private final IMsgListener execListener;
 
         private CountDownLatch countDownLatch = new CountDownLatch(1);
 
-        private ExecStreamReadRunner(InputStream inputStream, Charset charset, IExecListener execListener) {
+        private ExecStreamReadRunner(InputStream inputStream, Charset charset, IMsgListener execListener) {
             this.inputStream = inputStream;
             this.charset = charset;
             this.execListener = execListener;
@@ -60,7 +60,7 @@ public class ExecStreamReader {
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
-                    execListener.onMsg(line);
+                    execListener.append(line);
                 }
                 logger.info("读取完成");
             } catch (IOException e) {

@@ -3,15 +3,16 @@ package com.github.gnx.automate.exec.docker;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
+import com.github.gnx.automate.common.utils.TarUtils;
 import com.github.gnx.automate.exec.IExecConnection;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -26,7 +27,7 @@ public class DockerSSHConnetction implements IExecConnection {
 
     private static Logger logger = LoggerFactory.getLogger(DockerSSHConnetction.class);
 
-    private final int TIME_OUT = 120;
+    private final int TIME_OUT = 600;
 
     private final DockerClient dockerClient;
     private final String containerId;
@@ -47,7 +48,7 @@ public class DockerSSHConnetction implements IExecConnection {
 
 
     @Override
-    public int exec(String cmd, IExecListener execListener) throws Exception {
+    public int exec(String cmd, IMsgListener execListener) throws Exception {
         ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
                 .withAttachStdout(true)
                 .withAttachStderr(true)
@@ -83,7 +84,7 @@ public class DockerSSHConnetction implements IExecConnection {
     }
 
     @Override
-    public void upload(File localFile, String remoteDir, boolean withDecompression, IExecListener execListener) throws Exception {
+    public void upload(File localFile, String remoteDir, boolean withDecompression, IMsgListener execListener) throws Exception {
         //docker 没有文件夹会报错
 
         this.exec("mkdir " + remoteDir, execListener);
@@ -97,7 +98,30 @@ public class DockerSSHConnetction implements IExecConnection {
     }
 
     @Override
-    public void download(String remotePath, File localFile, IExecListener execListener) throws Exception {
+    public void download(String remotePath, File localDir, IMsgListener execListener) throws Exception {
+        execListener.appendLine(" == 从docker下载文件 == ");
+        execListener.appendLine("远程路径: " + remotePath + " ==> 本地路径: " + localDir.getAbsolutePath());
+
+        if (localDir.exists()) {
+            execListener.appendLine("[warn]已存在文件,删除文件");
+            FileUtils.deleteDirectory(localDir);
+        }
+
+        if (!localDir.mkdirs()) {
+            throw new IOException("创建文件夹失败: " + localDir.getAbsolutePath());
+        }
+
+        File tarFile = new File(localDir.getAbsolutePath() + "/temp.tar");
+        try (InputStream in = dockerClient.copyArchiveFromContainerCmd(this.containerId, remotePath).exec();
+             FileOutputStream out = new FileOutputStream(tarFile)
+        ) {
+            // in 是 tar的形式
+            IOUtils.copy(in, out);
+
+            TarUtils.unTar(tarFile, localDir);
+        } finally {
+            tarFile.deleteOnExit();
+        }
 
     }
 

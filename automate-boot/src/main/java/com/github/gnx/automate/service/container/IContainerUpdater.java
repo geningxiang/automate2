@@ -1,6 +1,6 @@
 package com.github.gnx.automate.service.container;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,5 +10,5 @@ import com.github.gnx.automate.common.IExecListener;
  */
 public interface IContainerUpdater {
 
-    void update(IExecListener execListener);
+    void update(IMsgListener execListener);
 }

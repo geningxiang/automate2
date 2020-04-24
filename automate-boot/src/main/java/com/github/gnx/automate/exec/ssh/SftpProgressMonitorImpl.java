@@ -1,6 +1,6 @@
 package com.github.gnx.automate.exec.ssh;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.jcraft.jsch.SftpProgressMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +22,13 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
 
     private boolean endFlag = false;
 
-    private IExecListener msgLineWriter;
+    private IMsgListener msgLineWriter;
 
     public SftpProgressMonitorImpl() {
 
     }
 
-    public SftpProgressMonitorImpl(IExecListener msgLineWriter) {
+    public SftpProgressMonitorImpl(IMsgListener msgLineWriter) {
         this.msgLineWriter = msgLineWriter;
     }
 
@@ -41,7 +41,7 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
         this.size = size;
 
         if (msgLineWriter != null) {
-            msgLineWriter.onMsg(msg);
+            msgLineWriter.append(msg);
         }
     }
 
@@ -56,14 +56,14 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
                 msg = "上传进度：" + currentSize + "/" + size + " " + new BigDecimal(rate).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP) + "%";
                 logger.debug(msg);
                 if (msgLineWriter != null) {
-                    msgLineWriter.onMsg(msg);
+                    msgLineWriter.append(msg);
                 }
             }
         } else {
             msg = "上传进度：已上传:"+ currentSize;
             logger.debug(msg);
             if(msgLineWriter != null){
-                msgLineWriter.onMsg(msg);
+                msgLineWriter.append(msg);
             }
         }
         return true;
@@ -73,7 +73,7 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
     public void end() {
         logger.debug("文件上传结束");
         if(msgLineWriter != null){
-            msgLineWriter.onMsg("文件上传结束");
+            msgLineWriter.append("文件上传结束");
         }
         rate = 1;
         endFlag = true;

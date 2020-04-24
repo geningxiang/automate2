@@ -1,6 +1,7 @@
 package com.github.gnx.automate.common.utils;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 
@@ -69,6 +70,31 @@ public class TarUtils {
             }
         }
         return file;
+    }
+
+    public static void unTar(File tarFile, File targetDir) throws IOException {
+        try (TarArchiveInputStream tais = new TarArchiveInputStream(new FileInputStream(tarFile))) {
+            TarArchiveEntry tae;
+            while ((tae = tais.getNextTarEntry()) != null) {
+
+                String path = targetDir.getAbsolutePath() + File.separator + tae.getName();
+                File file = new File(path);
+                if(tae.isDirectory()){
+                    if(!file.exists()) {
+                        file.mkdirs();
+                    }
+                } else {
+                    if(!file.getParentFile().exists()){
+                        file.getParentFile().mkdirs();
+                    }
+                    try (OutputStream out = new FileOutputStream(file)) {
+                        IOUtils.copy(tais, out);
+                    }
+                }
+
+            }
+        }
+
     }
 
     public static File gz(File sourceFile, File targetDir, String fileName) throws IOException {

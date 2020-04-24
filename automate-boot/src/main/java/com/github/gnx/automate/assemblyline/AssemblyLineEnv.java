@@ -1,10 +1,11 @@
 package com.github.gnx.automate.assemblyline;
 
+import com.github.gnx.automate.common.SystemUtil;
 import com.github.gnx.automate.entity.AssemblyLineLogEntity;
 import com.github.gnx.automate.entity.ProjectEntity;
 import com.github.gnx.automate.exec.IExecConnection;
-import com.github.gnx.automate.exec.IExecTemplate;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,8 @@ public class AssemblyLineEnv {
      */
     private final IExecConnection execConnection;
 
+    private String baseDir;
+
 
     /**
      * 如果是maven gradle 类的项目 读取 配置文件中的版本号
@@ -54,6 +57,8 @@ public class AssemblyLineEnv {
         this.projectEntity = projectEntity;
         this.assemblyLineLogEntity = assemblyLineLogEntity;
         this.execConnection = execConnection;
+
+        this.baseDir = SystemUtil.getProjectSourceCodeDir(projectEntity).getAbsolutePath() + File.separator;
     }
 
     public ProjectEntity getProjectEntity() {
@@ -78,5 +83,17 @@ public class AssemblyLineEnv {
 
     public void put(String key, Object value) {
         this.data.put(key, value);
+    }
+
+    public String getBaseDir() {
+        return baseDir;
+    }
+
+    public void setBaseDir(String baseDir) {
+        this.baseDir = baseDir;
+    }
+
+    public IExecConnection getExecConnection() {
+        return execConnection;
     }
 }

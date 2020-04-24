@@ -1,6 +1,6 @@
 package com.github.gnx.automate.exec.local;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -19,22 +19,14 @@ class LocalExecConnectionTest {
         LocalExecConnection execConnection = new LocalExecConnection();
 
 
-        int exitValue = execConnection.exec("ping www.baidu.com -n 20", new IExecListener() {
-            @Override
-            public void onStart(String step, String msg) {
-
-            }
+        int exitValue = execConnection.exec("ping www.baidu.com -n 20", new IMsgListener() {
 
             @Override
-            public IExecListener onMsg(CharSequence csq) {
-                System.out.println("[onMsg]" + csq);
+            public IMsgListener append(CharSequence csq) {
+                System.out.println("[append]" + csq);
                 return this;
             }
 
-            @Override
-            public IExecListener onError(CharSequence csq) {
-                return this;
-            }
         });
 
         System.out.println(exitValue);
@@ -48,7 +40,7 @@ class LocalExecConnectionTest {
 
 
     @Test
-    public void makeDirs(){
+    public void makeDirs() {
 
         File file = new File("d:/1/1.txt");
 

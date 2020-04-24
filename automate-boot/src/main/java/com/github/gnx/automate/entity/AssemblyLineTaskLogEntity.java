@@ -1,5 +1,7 @@
 package com.github.gnx.automate.entity;
 
+import com.github.gnx.automate.common.IMsgListener;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -11,7 +13,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "CA2_ASSEMBLY_LINE_TASK_LOG")
-public class AssemblyLineTaskLogEntity {
+public class AssemblyLineTaskLogEntity implements IMsgListener {
 
     private Integer id;
 
@@ -107,7 +109,8 @@ public class AssemblyLineTaskLogEntity {
         this.content = new StringBuffer(content);
     }
 
-    public void appendLine(String content) {
+    @Override
+    public AssemblyLineTaskLogEntity append(CharSequence content) {
         if (this.content == null) {
             synchronized (this) {
                 if (this.content == null) {
@@ -115,7 +118,8 @@ public class AssemblyLineTaskLogEntity {
                 }
             }
         }
-        this.content.append(content).append(System.lineSeparator());
+        this.content.append(content);
+        return this;
     }
 
     @Basic

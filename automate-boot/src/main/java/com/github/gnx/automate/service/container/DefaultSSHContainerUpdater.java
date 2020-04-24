@@ -1,6 +1,6 @@
 package com.github.gnx.automate.service.container;
 
-import com.github.gnx.automate.common.IExecListener;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.exec.IExecConnection;
@@ -22,21 +22,21 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
     }
 
     @Override
-    public void upload(ContainerEntity containerEntity, ProductEntity productEntity, IExecConnection execConnection, IExecListener execListener) {
+    public void upload(ContainerEntity containerEntity, ProductEntity productEntity, IExecConnection execConnection, IMsgListener execListener) {
 
 //        execConnection.upload(productEntity.getFilePath(), containerEntity.getUploadDir(), null);
 
     }
 
     @Override
-    public void stop(ContainerEntity containerEntity, IExecConnection execConnection, IExecListener execListener) {
+    public void stop(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) {
 
 //        execConnection.execCmd(containerEntity.getScriptStop(), execListener);
 
     }
 
     @Override
-    public void backup(ContainerEntity containerEntity, IExecConnection execConnection, IExecListener execListener) {
+    public void backup(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) {
 
         StringBuilder backUpFilePath = new StringBuilder(256);
         backUpFilePath.append(containerEntity.getBackupDir());
@@ -59,7 +59,7 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
     }
 
     @Override
-    public void cover(ContainerEntity containerEntity, IExecConnection execConnection, IExecListener execListener) {
+    public void cover(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) {
 
         String sourceDir = containerEntity.getSourceDir();
 
@@ -76,7 +76,7 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
     }
 
     @Override
-    public void start(ContainerEntity containerEntity, IExecConnection execConnection, IExecListener execListener) {
+    public void start(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) {
 
 //        execConnection.execCmd(containerEntity.getScriptStart(), execListener);
 

@@ -2,8 +2,8 @@ package com.github.gnx.automate.assemblyline.plugins;
 
 import com.github.gnx.automate.assemblyline.AssemblyLineEnv;
 import com.github.gnx.automate.assemblyline.IAssemblyLinePlugin;
-import com.github.gnx.automate.assemblyline.IAssemblyLineProgressListener;
 import com.github.gnx.automate.assemblyline.config.ApplicationUpdateTask;
+import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ApplicationUpdatePlugin implements IAssemblyLinePlugin<ApplicationU
     }
 
     @Override
-    public boolean execute(AssemblyLineEnv env, ApplicationUpdateTask taskConfig, IAssemblyLineProgressListener listener) throws Exception {
+    public boolean execute(AssemblyLineEnv env, ApplicationUpdateTask taskConfig, IMsgListener listener) throws Exception {
 
 
         Integer productId = (Integer) env.get("productId");
@@ -41,8 +41,6 @@ public class ApplicationUpdatePlugin implements IAssemblyLinePlugin<ApplicationU
         if(!productEntityOptional.isPresent()){
             throw new IllegalArgumentException("productEntity is not found");
         }
-
-
 
 
         return false;
