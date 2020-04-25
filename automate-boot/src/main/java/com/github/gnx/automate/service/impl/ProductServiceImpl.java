@@ -1,6 +1,7 @@
 package com.github.gnx.automate.service.impl;
 
 import com.github.gnx.automate.common.SystemUtil;
+import com.github.gnx.automate.common.exception.AlreadyExistsException;
 import com.github.gnx.automate.common.utils.FileListSha256Util;
 import com.github.gnx.automate.common.utils.ZipUtil;
 import com.github.gnx.automate.entity.ProductEntity;
@@ -94,7 +95,8 @@ public class ProductServiceImpl implements IProductService {
 
         ProductEntity local = productRepository.getFirstBySha256OrderByIdDesc(sha256);
         if (local != null) {
-            throw new IllegalArgumentException("sha256已存在, sha:" + sha256 + ", projectPackageId:" + local.getId());
+            logger.warn("sha256已存在, sha: {}, productId: {}", sha256, local.getId());
+            throw new AlreadyExistsException(local);
         }
 
         try {
@@ -129,7 +131,7 @@ public class ProductServiceImpl implements IProductService {
 
     private String buildFilePath(int projectId, String fileType) {
         //复制文件
-        File dir = SystemUtil.getProjectPackageDir(projectId);
+        File dir = SystemUtil.getProjectProductDir(projectId);
         if (!dir.exists()) {
             dir.mkdirs();
         }

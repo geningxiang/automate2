@@ -97,6 +97,12 @@ public class AssemblyLineController {
         return ResponseEntity.ok("流水线任务已提交", assemblyLineLogEntity.getId());
     }
 
+    @RequestMapping(value = "/assembly_line_log/{assemblyLineLogId}", method = RequestMethod.GET)
+    public ResponseEntity<AssemblyLineLogEntity> assemblyLineTaskLog(@PathVariable("assemblyLineLogId") @NotNull(message = "请输入流水线日志") Integer assemblyLineLogId) {
+        return ResponseEntity.ok(assemblyLineLogService.findById(assemblyLineLogId));
+
+    }
+
     @RequestMapping(value = "/assembly_line_log/{assemblyLineLogId}/task_logs", method = RequestMethod.GET)
     public ResponseEntity<List<AssemblyLineTaskLogEntity>> assemblyLineTaskLogList(@PathVariable("assemblyLineLogId") @NotNull(message = "请输入流水线日志") Integer assemblyLineLogId){
         return ResponseEntity.ok(assemblyLineTaskLogService.findAllByAssemblyLineLogIdOrderById(assemblyLineLogId));

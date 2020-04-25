@@ -26,16 +26,20 @@ class SSHExecTemplateTest {
             @Override
             public Object doWork(IExecConnection execConnection) throws Exception {
                 //上传源码
-                File dir = new File("E:\\automate-data\\sourcecode\\1");
+                File dir = new File("E:\\automate-data\\sourcecode\\6");
                 File tarGzFile = TarUtils.tarAndGz(dir, dir, "tmp", true);
 
                 IMsgListener execListener = new MsgPrintListener();
 
-                execConnection.upload(tarGzFile, "/tmp/CaimaoTouch", true, execListener);
+                execConnection.upload(tarGzFile, "/tmp/CtpServer", true, execListener);
 
 //                execConnection.exec("cd /tmp/CaimaoTouch && tar -zxvf " + tarGzFile.getName() + " && rm " + tarGzFile.getName(), execListener);
 
                 tarGzFile.deleteOnExit();
+
+
+                execConnection.download("/tmp/CtpServer", new File("D:/temp/CtpServer"), execListener);
+
 
                 return null;
             }

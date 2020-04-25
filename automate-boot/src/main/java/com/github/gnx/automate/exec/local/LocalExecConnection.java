@@ -83,14 +83,9 @@ public class LocalExecConnection implements IExecConnection {
     }
 
     @Override
-    public void download(String remotePath, File localFile, IMsgListener execListener) throws Exception {
-        File dir = localFile.getParentFile();
-
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        IOUtils.copy(new FileInputStream(remotePath), new FileOutputStream(localFile));
+    public File download(String remotePath, File localFile, IMsgListener execListener) throws Exception {
+        execListener.appendLine("本地环境,就不复制文件了");
+        return new File(remotePath);
     }
 
     @Override

@@ -79,14 +79,12 @@ public class AssemblyLineRunnable implements Runnable {
             //获取当前系统配置的 exec执行模板
             IExecTemplate execTemplate = ExecEnvConfig.getExecTemplate();
 
-
             try (IExecConnection execConnection = execTemplate.createConnection()) {
                 final AssemblyLineEnv env = new AssemblyLineEnv(projectEntity.get(), assemblyLineLogEntity, execConnection);
-
+                assemblyLineLogEntity.appendLine("切换版本库, branch: " + assemblyLineLogEntity.getBranch() + " , commitId: " + assemblyLineLogEntity.getCommitId());
                 //切换分支
-                vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
-
-
+                String vcsId = vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
+                assemblyLineLogEntity.appendLine("版本库切换后ID: " + vcsId);
                 //暂时只有2种  本地执行 或者 docker执行
                 if (execConnection instanceof DockerSSHConnetction) {
                     assemblyLineLogEntity.appendLine(" == 当前为docker构建模式 == ");
@@ -133,7 +131,7 @@ public class AssemblyLineRunnable implements Runnable {
             }
             stepIndex++;
         }
-        return true;
+        return success;
     }
 
     /**

@@ -5,6 +5,7 @@ import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.exec.ExecStreamReader;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.jcraft.jsch.*;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -115,18 +117,29 @@ public class SSHConnection implements IExecConnection, Closeable {
     }
 
     @Override
-    public void download(String remotePath, File localFile, IMsgListener execListener) {
+    public File download(String remotePath, File localDir, IMsgListener execListener) {
         ChannelSftp channel = null;
         try {
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
 
-            if (localFile.exists()) {
-                //TODO 本地文件已存在 要不要直接抛异常
-                localFile.delete();
+            execListener.appendLine(" == 从ssh下载文件 == ");
+            execListener.appendLine("远程路径: " + remotePath + " ==> 本地路径: " + localDir.getAbsolutePath());
+
+            Vector<ChannelSftp.LsEntry> vector = channel.ls(remotePath);
+            boolean isDir = vector.get(0).getAttrs().isDir();
+
+            if(isDir){
+                //TODO 下载文件夹支持
+                throw new RuntimeException("暂不支持下载文件夹");
             }
-            localFile.createNewFile();
-            channel.get(remotePath, localFile.getAbsolutePath(), new SftpProgressMonitorImpl(execListener));
+
+            if (localDir.exists()) {
+                execListener.appendLine("[warn]文件夹已存在,将删除文件夹");
+                FileUtils.deleteDirectory(localDir);
+            }
+            localDir.mkdirs();
+            channel.get(remotePath, localDir.getAbsolutePath(), new SftpProgressMonitorImpl(execListener));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,6 +148,7 @@ public class SSHConnection implements IExecConnection, Closeable {
                 channel.disconnect();
             }
         }
+        return localDir;
     }
 
     @Override

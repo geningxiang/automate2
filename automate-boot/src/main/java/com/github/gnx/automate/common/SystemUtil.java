@@ -19,16 +19,16 @@ public class SystemUtil {
 
     private static String SOURCE_CODE_DIR = null;
 
-    private static String PACKAGE_DIR = null;
+    private static String PRODUCT_DIR = null;
 
     @Value("${automate.sourceCodeDir:./sourceCode/}")
     public void setSourceCodeDir(String sourceCodeDir) {
         SOURCE_CODE_DIR = sourceCodeDir;
     }
 
-    @Value("${automate.packageDir:./package/}")
-    public void setPackageDir(String packageDir) {
-        PACKAGE_DIR = packageDir;
+    @Value("${automate.productDir:./product/}")
+    public void setProductDir(String productDir) {
+        PRODUCT_DIR = productDir;
     }
 
 
@@ -48,8 +48,8 @@ public class SystemUtil {
         return new File(path);
     }
 
-    public static File getProjectPackageDir(int projectId) {
-        String path = new StringBuilder(PACKAGE_DIR).append(File.separator)
+    public static File getProjectProductDir(int projectId) {
+        String path = new StringBuilder(PRODUCT_DIR).append(File.separator)
                 .append(projectId).append(File.separator).toString();
         return new File(path);
     }

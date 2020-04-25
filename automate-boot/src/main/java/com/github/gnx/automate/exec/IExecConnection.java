@@ -40,6 +40,6 @@ public interface IExecConnection extends Closeable {
      * @param execListener
      * @throws Exception
      */
-    void download(String remotePath, File localDir, IMsgListener execListener) throws Exception;
+    File download(String remotePath, File localDir, IMsgListener execListener) throws Exception;
 
 }

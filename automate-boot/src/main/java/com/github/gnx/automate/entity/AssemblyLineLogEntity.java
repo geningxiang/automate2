@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @Table(name = "CA2_ASSEMBLY_LINE_LOG")
 public class AssemblyLineLogEntity implements IMsgListener {
 
-    public enum Status{
+    public enum Status {
         INIT,
         RUNNING,
         CANCEL,
@@ -191,7 +191,7 @@ public class AssemblyLineLogEntity implements IMsgListener {
     }
 
     public void setStatus(Status status) {
-        this.status = (byte)status.ordinal();
+        this.status = (byte) status.ordinal();
     }
 
     @Basic
@@ -211,7 +211,9 @@ public class AssemblyLineLogEntity implements IMsgListener {
     }
 
     public void setContent(String content) {
-        this.content.append(content).append(System.lineSeparator());
+        if (content != null) {
+            this.content.append(content);
+        }
     }
 
 

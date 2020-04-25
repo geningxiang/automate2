@@ -77,9 +77,7 @@ public class DockerSSHConnetction implements IExecConnection {
 
             dockerClient.execStartCmd(killCmd.getId()).exec(new ExecStartResultCallback(execListener)).awaitCompletion();
             execStartResultCallback.awaitCompletion();
-
         }
-
         return inspectExecResponse.getExitCodeLong().intValue();
     }
 
@@ -98,12 +96,17 @@ public class DockerSSHConnetction implements IExecConnection {
     }
 
     @Override
-    public void download(String remotePath, File localDir, IMsgListener execListener) throws Exception {
+    public File download(String remotePath, File localDir, IMsgListener execListener) throws Exception {
+
+        remotePath = remotePath.replace("\\", "/");
+
+        String lastName = remotePath.substring(remotePath.lastIndexOf("/") + 1);
+
         execListener.appendLine(" == 从docker下载文件 == ");
-        execListener.appendLine("远程路径: " + remotePath + " ==> 本地路径: " + localDir.getAbsolutePath());
+        execListener.appendLine("远程路径: " + remotePath + " ==> 本地文件夹: " + localDir.getAbsolutePath());
 
         if (localDir.exists()) {
-            execListener.appendLine("[warn]已存在文件,删除文件");
+            execListener.appendLine("[warn]文件夹已存在,将删除文件夹");
             FileUtils.deleteDirectory(localDir);
         }
 
@@ -122,6 +125,9 @@ public class DockerSSHConnetction implements IExecConnection {
         } finally {
             tarFile.deleteOnExit();
         }
+        File result = new File(localDir.getAbsolutePath() + File.separator + lastName);
+        execListener.appendLine("下载完成, 得到" + (result.isDirectory() ? "文件夹" : "文件") + ": " + result.getAbsolutePath());
+        return result;
 
     }
 

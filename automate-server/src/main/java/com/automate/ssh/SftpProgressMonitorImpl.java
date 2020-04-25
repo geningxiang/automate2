@@ -25,7 +25,7 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
     public void init(int mode, String srcFile, String dstDir, long size) {
 
         // inputstream上传时  size = -1
-        logger.debug("文件开始上传：[{}]-->[{}]" + ",文件大小：{},参数：{}", srcFile, dstDir, size, mode);
+        logger.debug("文件开始传输：[{}]-->[{}]" + ",文件大小：{},参数：{}", srcFile, dstDir, size, mode);
         this.size = size;
     }
 
@@ -36,18 +36,15 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
             double currentRate = (double) currentSize / this.size;
             if (currentRate - rate > 0.01) {
                 rate = currentRate;
-                logger.debug("上传进度：{}/{} {}%", currentSize, size, new BigDecimal(rate).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
+                logger.debug("传输进度：{}/{} {}%", currentSize, size, new BigDecimal(rate).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
             }
-        } else {
-            logger.debug("上传进度：已上传{}", currentSize);
         }
-
         return true;
     }
 
     @Override
     public void end() {
-        logger.debug("文件上传结束");
+        logger.debug("文件传输结束");
         rate = 1;
         endFlag = true;
     }
