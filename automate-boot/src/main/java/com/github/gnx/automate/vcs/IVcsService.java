@@ -41,6 +41,15 @@ public interface IVcsService {
     int clone(int projectId, String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider) throws Exception;
 
 
+    /**
+     *
+     * @param projectId
+     * @param remoteUrl
+     * @param localDir
+     * @param vcsCredentialsProvider
+     * @return 更新的分支数
+     * @throws Exception
+     */
     default int update(int projectId, String remoteUrl, File localDir, IVcsCredentialsProvider vcsCredentialsProvider) throws Exception {
         if (localDir.exists()) {
             return this.doUpdate(projectId, remoteUrl, localDir, vcsCredentialsProvider);

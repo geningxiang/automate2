@@ -103,7 +103,7 @@ public class SvnServiceImpl implements IVcsService {
                         svnLogEntry -> {
                             commitLogList.add(parse(svnLogEntry));
                         });
-                eventPublisher.publishEvent(new BranchUpdatedEvent(projectId, "trunk", commitLogList));
+                eventPublisher.publishEvent(new BranchUpdatedEvent(this, projectId, "trunk", commitLogList));
             }
 
             return updated;

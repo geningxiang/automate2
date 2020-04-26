@@ -17,8 +17,8 @@ public class BranchUpdatedEvent extends AbstractEvent {
     private String branchName;
     private List<CommitLog> commitLogList;
 
-    public BranchUpdatedEvent(int projectId, String branchName, List<CommitLog> commitLogList) {
-        super(projectId);
+    public BranchUpdatedEvent(Object source, int projectId, String branchName, List<CommitLog> commitLogList) {
+        super(source);
         this.projectId = projectId;
         this.branchName = branchName;
         this.commitLogList = commitLogList;

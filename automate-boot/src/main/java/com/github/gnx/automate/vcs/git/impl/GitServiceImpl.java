@@ -143,7 +143,8 @@ public class GitServiceImpl implements IVcsService {
                                 RevCommit revCommit = commits.next();
                                 commitLogList.add(parse(revCommit));
                             }
-                            eventPublisher.publishEvent(new BranchUpdatedEvent(projectId, branchName, commitLogList));
+                            //分支更新事件
+                            eventPublisher.publishEvent(new BranchUpdatedEvent(this, projectId, branchName, commitLogList));
                         }
                     }
 
