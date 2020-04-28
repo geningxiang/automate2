@@ -13,6 +13,8 @@ public class Test {
         Test test = (Test) Class.forName("com.github.gnx.automate.Test").getDeclaredConstructor().newInstance();
 
         test.hello();
+
+
     }
 
 

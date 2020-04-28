@@ -13,7 +13,7 @@ public class ExecTask implements IAssemblyLineTaskConfig {
     @NotBlank(message = "请输入任务名")
     private String name;
 
-    @NotBlank(message = "请输入脚本")
+    @NotBlank(message = "请输入脚本内容")
     private String script;
 
     @Override

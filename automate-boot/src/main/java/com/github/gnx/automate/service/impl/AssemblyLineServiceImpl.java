@@ -5,6 +5,7 @@ import com.github.gnx.automate.entity.AssemblyLineEntity;
 import com.github.gnx.automate.field.req.AssemblyLineSaveField;
 import com.github.gnx.automate.repository.AssemblyLineRepository;
 import com.github.gnx.automate.service.IAssemblyLineService;
+import com.github.gnx.automate.utils.AssemblyLineValidateUtil;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -38,6 +39,9 @@ public class AssemblyLineServiceImpl implements IAssemblyLineService {
 
     @Override
     public AssemblyLineEntity create(AssemblyLineSaveField assemblyLineSaveField, int projectId, int userId) {
+
+        AssemblyLineValidateUtil.valid(assemblyLineSaveField.getStepTasks());
+
         AssemblyLineEntity assemblyLineEntity = new AssemblyLineEntity();
         assemblyLineEntity.setProjectId(projectId);
         assemblyLineEntity.setBranches(assemblyLineSaveField.getBranches());
@@ -61,6 +65,8 @@ public class AssemblyLineServiceImpl implements IAssemblyLineService {
         if(!optionalAssemblyLineEntity.isPresent()){
             throw new IllegalArgumentException("未找到相应的流水线, id: " + assemblyLineId);
         }
+
+        AssemblyLineValidateUtil.valid(assemblyLineSaveField.getStepTasks());
 
         AssemblyLineEntity assemblyLineEntity = optionalAssemblyLineEntity.get();
 
