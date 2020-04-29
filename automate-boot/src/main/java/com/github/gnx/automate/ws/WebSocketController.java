@@ -1,9 +1,12 @@
-package com.github.gnx.automate.controller;
+package com.github.gnx.automate.ws;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -11,7 +14,6 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,8 +26,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class WebSocketController {
     private Logger logger = LoggerFactory.getLogger(WebSocketController.class);
 
-    private ConcurrentHashMap<Integer, Session> currentUserMap = new ConcurrentHashMap(256);
-
     @OnOpen
     public void onOpen(Session session, @PathParam("userToken") String userToken) throws IOException {
 
@@ -36,7 +36,7 @@ public class WebSocketController {
 
             int userId = NumberUtils.toInt(userToken, 1);
 
-            currentUserMap.put(userId, session);
+            WebSocketManager.onOpen(session);
 
         } else {
             session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "请登录"));
@@ -49,8 +49,8 @@ public class WebSocketController {
      */
     @OnClose
     public void onClose(Session session) {
-
-        logger.info("用户退出:当前在线人数为:");
+        logger.debug("onClose:{}", session.toString());
+        WebSocketManager.onClose(session);
     }
 
 
@@ -58,6 +58,22 @@ public class WebSocketController {
     public void onMessage(String message, Session session) {
         logger.info("用户消息,报文:" + message);
 
+        session.getAsyncRemote().sendText("返回:"+message);
+
+        try{
+            JSONObject json = JSON.parseObject(message);
+            String op = json.getString("op");
+
+            if(OpEnum.Subscribe.name().equals(op)){
+
+            } else {
+
+            }
+
+
+        }catch (Exception e){
+
+        }
 
     }
 
