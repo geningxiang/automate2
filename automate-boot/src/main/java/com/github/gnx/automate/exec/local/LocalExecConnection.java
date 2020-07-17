@@ -61,7 +61,8 @@ public class LocalExecConnection implements IExecConnection {
                 process.destroy();
             } else {
                 //在 ubuntu 中 测试过 有效
-                Runtime.getRuntime().exec("kill -SIGINT " + process.pid());
+                process.destroy();
+//                Runtime.getRuntime().exec("kill -SIGINT " + process.pid());
             }
             process.waitFor();
         }
