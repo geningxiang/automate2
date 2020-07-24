@@ -3,6 +3,7 @@ package com.github.gnx.automate.vcs.git.impl;
 import com.github.gnx.automate.vcs.IVcsCredentialsProvider;
 import com.github.gnx.automate.vcs.IVcsService;
 import com.github.gnx.automate.vcs.VcsUserNamePwdCredentialsProvider;
+import com.github.gnx.automate.vcs.git.GitServiceImpl;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;

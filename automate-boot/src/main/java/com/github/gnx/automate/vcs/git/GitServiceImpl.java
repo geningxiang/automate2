@@ -1,4 +1,4 @@
-package com.github.gnx.automate.vcs.git.impl;
+package com.github.gnx.automate.vcs.git;
 
 import com.github.gnx.automate.contants.VcsType;
 import com.github.gnx.automate.event.IEventPublisher;
@@ -6,6 +6,7 @@ import com.github.gnx.automate.event.vo.BranchUpdatedEvent;
 import com.github.gnx.automate.vcs.IVcsCredentialsProvider;
 import com.github.gnx.automate.vcs.IVcsService;
 import com.github.gnx.automate.vcs.VcsUserNamePwdCredentialsProvider;
+import com.github.gnx.automate.vcs.git.GitContants;
 import com.github.gnx.automate.vcs.git.JgitProgressMonitor;
 import com.github.gnx.automate.vcs.vo.CommitLog;
 import org.apache.commons.lang3.StringUtils;
@@ -37,23 +38,6 @@ public class GitServiceImpl implements IVcsService {
 
     @Autowired
     private IEventPublisher eventPublisher;
-
-    /**
-     * 仓库文件夹后缀 .git
-     */
-    private final String DOT_GIT = ".git";
-
-    private final String MASTER = "master";
-
-    /**
-     * 分支名 前缀
-     */
-    private final String BRANCH_NAME_PREFIX = "refs/heads/";
-
-    /**
-     * 分支名前缀 长度
-     */
-    private final int BRANCH_NAME_PREFIX_LEN = 11;
 
 
     @Override
@@ -101,14 +85,14 @@ public class GitServiceImpl implements IVcsService {
             //查看本地分支
             List<Ref> list = git.branchList().call();
             for (Ref ref : list) {
-                localBranchMap.put(ref.getName().substring(BRANCH_NAME_PREFIX_LEN), ref.getObjectId().toObjectId().getName());
+                localBranchMap.put(ref.getName().substring(GitContants.BRANCH_NAME_PREFIX_LEN), ref.getObjectId().toObjectId().getName());
             }
 
             //查询远程分支
             Collection<Ref> refs = git.lsRemote().setTags(false).setHeads(false).setCredentialsProvider(buildCredentialsProvider(vcsCredentialsProvider)).call();
             for (Ref ref : refs) {
-                if (ref.getName().startsWith(BRANCH_NAME_PREFIX)) {
-                    String branchName = ref.getName().substring(BRANCH_NAME_PREFIX_LEN);
+                if (ref.getName().startsWith(GitContants.BRANCH_NAME_PREFIX)) {
+                    String branchName = ref.getName().substring(GitContants.BRANCH_NAME_PREFIX_LEN);
                     logger.debug("check out {} ", branchName);
                     CheckoutCommand checkoutCommand = git.checkout().setName(branchName);
                     String id = localBranchMap.get(branchName);
@@ -131,7 +115,7 @@ public class GitServiceImpl implements IVcsService {
                             logger.info("{} pushed, before:{}, after:{}", branchName, id, pullResult.getMergeResult().getNewHead().name());
                             updated++;
                             isUpdate = true;
-                        } else if (isClone && MASTER.equals(branchName)) {
+                        } else if (isClone && GitContants.MASTER.equals(branchName)) {
                             updated++;
                             isUpdate = true;
                         }
@@ -274,7 +258,7 @@ public class GitServiceImpl implements IVcsService {
             throw new RuntimeException("文件路径不存在：" + file.getAbsolutePath());
         }
         if (file.isDirectory()) {
-            file = new File(file.getAbsolutePath() + File.separator + DOT_GIT);
+            file = new File(file.getAbsolutePath() + File.separator + GitContants.DOT_GIT);
         }
         if (!file.exists()) {
             throw new RuntimeException("未处于版本控制下：" + file.getAbsolutePath());

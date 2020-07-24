@@ -65,7 +65,7 @@ public class WebSocketController {
             String op = json.getString("op");
 
             if(OpEnum.Subscribe.name().equals(op)){
-
+                
             } else {
 
             }

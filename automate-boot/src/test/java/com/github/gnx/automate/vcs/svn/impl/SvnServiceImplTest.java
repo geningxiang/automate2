@@ -12,6 +12,9 @@ import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 
@@ -59,6 +62,33 @@ public class SvnServiceImplTest {
 
         svnClientManager.dispose();
 
+    }
+
+    @Test
+    public void readCaimaoCommon() throws SVNException {
+        SVNClientManager svnClientManager = getSVNClientManager();
+        SVNLogClient svnLogClient = svnClientManager.getLogClient();
+
+        Set<String> userSet = new HashSet();
+
+        svnLogClient.doLog(SVNURL.parseURIEncoded("https://www.kxtan.com/svn/projects/components/common/trunk"),
+                new String[]{},
+                SVNRevision.HEAD,
+                SVNRevision.HEAD,
+                SVNRevision.create(0),
+                false,
+                false,
+                false,
+                10000,
+                null,
+                svnLogEntry -> {
+//                    System.out.println(svnLogEntry.getRevision() + " | " + svnLogEntry.getMessage());
+                    userSet.add(svnLogEntry.getAuthor());
+                });
+
+        for (String s : userSet) {
+            System.out.println(s);
+        }
     }
 
 

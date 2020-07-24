@@ -1,5 +1,7 @@
 package com.github.gnx.automate;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 
@@ -14,7 +16,7 @@ public class Test {
 
         test.hello();
 
-
+        ReentrantLock lock = new ReentrantLock();
     }
 
 

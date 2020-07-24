@@ -14,8 +14,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,7 +148,6 @@ public class ProjectController {
     }
 
 
-
     /**
      * 查询指定项目的流水线列表
      * @param currentUser
@@ -166,7 +170,7 @@ public class ProjectController {
             CurrentUser currentUser,
             @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId,
             @RequestBody @Validated AssemblyLineSaveField assemblyLineSaveField
-    ){
+    ) {
 
         return ResponseEntity.ok(assemblyLineService.create(assemblyLineSaveField, projectId, currentUser.getUserId()));
     }
@@ -189,5 +193,41 @@ public class ProjectController {
         return ResponseEntity.ok(assemblyLineLogService.queryPageByProjectId(projectId, PageRequest.of(page - 1, pageSize, sort)));
     }
 
+
+    /**
+     * 暂时只支持 json格式
+     * @param projectId
+     * @param token
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/project/hook/{projectId}/{token}")
+    public ResponseEntity onHook(@PathVariable("projectId") Integer projectId, @PathVariable("token") String token, HttpServletRequest request) throws IOException {
+        System.out.println("[onHook]" + projectId + "\t" + token);
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+
+            System.out.println(headerName + "\t" + request.getHeader(headerName));
+
+        }
+
+        StringBuilder data = new StringBuilder(102400);
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                data.append(line);
+            }
+        }
+
+        System.out.println(data.toString());
+
+
+        return ResponseEntity.ok();
+
+    }
 
 }

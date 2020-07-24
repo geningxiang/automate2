@@ -1,6 +1,5 @@
 package com.github.gnx.automate.common;
 
-import com.github.gnx.automate.entity.AssemblyLineEntity;
 import org.springframework.http.HttpStatus;
 
 import java.util.Optional;

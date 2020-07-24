@@ -5,10 +5,7 @@ import com.github.gnx.automate.contants.VcsType;
 import com.github.gnx.automate.vcs.VcsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 
@@ -46,5 +43,6 @@ public class VcsController {
         return ResponseEntity.ok();
 
     }
+
 
 }
