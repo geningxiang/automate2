@@ -47,7 +47,7 @@ public class TarUtils {
 
             final List<File> fileList = new ArrayList(1024);
 
-            Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<>() {
+            Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                     if (skipHiddenDir && path.toAbsolutePath().toString().contains(File.separator + ".")) {

@@ -31,7 +31,7 @@ public class ApplicationUpdatePlugin implements IAssemblyLinePlugin<ApplicationU
     @Override
     public boolean execute(AssemblyLineEnv env, ApplicationUpdateTask taskConfig, IMsgListener listener) throws Exception {
 
-
+        //产物ID
         Integer productId = (Integer) env.get("productId");
 
         Assert.isNull(productId, "productId is null");

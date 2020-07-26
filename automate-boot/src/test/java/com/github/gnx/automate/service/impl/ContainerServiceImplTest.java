@@ -1,5 +1,6 @@
 package com.github.gnx.automate.service.impl;
 
+import com.github.gnx.automate.exec.MsgPrintListener;
 import com.github.gnx.automate.service.IContainerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ class ContainerServiceImplTest {
     @Test
     public void test() throws Exception {
 
-        containerService.update(6, 1, null);
+        containerService.update(13, 5, new MsgPrintListener());
 
         System.out.println("## end ##");
 

@@ -4,6 +4,8 @@ import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ServerEntity;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
+import com.github.gnx.automate.service.IServerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +21,17 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class ServerController {
 
+    @Autowired
+    private IServerService serverService;
+
     /**
      * 服务器资源列表
      * @return
      */
     @RequestMapping(value = "/servers", method = RequestMethod.GET)
-    public ResponseEntity<List<ServerEntity>> serverList(CurrentUser currentUser) {
-        return null;
+    public ResponseEntity<Iterable<ServerEntity>> serverList(CurrentUser currentUser) {
+        Iterable<ServerEntity> list = this.serverService.findAll();
+        return ResponseEntity.ok(list);
     }
 
     /**

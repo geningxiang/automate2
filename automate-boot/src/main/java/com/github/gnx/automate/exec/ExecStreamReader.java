@@ -60,7 +60,7 @@ public class ExecStreamReader {
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
-                    execListener.append(line);
+                    execListener.appendLine(line);
                 }
                 logger.info("读取完成");
             } catch (IOException e) {

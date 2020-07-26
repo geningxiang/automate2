@@ -10,7 +10,6 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.annotation.Resource;
-import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 
 /**

@@ -1,15 +1,24 @@
 package com.github.gnx.automate.service.impl;
 
 import com.github.gnx.automate.common.IMsgListener;
+import com.github.gnx.automate.common.utils.FileListSha256Util;
 import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.entity.ServerEntity;
+import com.github.gnx.automate.exec.ExecWorker;
+import com.github.gnx.automate.exec.IExecConnection;
 import com.github.gnx.automate.exec.ssh.SSHConnection;
+import com.github.gnx.automate.exec.ssh.SSHExecTemplate;
+import com.github.gnx.automate.exec.ssh.SSHUtil;
 import com.github.gnx.automate.repository.ContainerRepository;
 import com.github.gnx.automate.repository.ProductRepository;
 import com.github.gnx.automate.repository.ServerRepository;
 import com.github.gnx.automate.service.IContainerService;
+import com.github.gnx.automate.service.container.DefaultSSHContainerUpdater;
+import com.github.gnx.automate.service.container.IContainerUpdater;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,81 +55,40 @@ public class ContainerServiceImpl implements IContainerService {
     }
 
     @Override
-    public void update(int packageId, int containerId, IMsgListener msgLineReader) throws Exception {
+    public void update(int productId, int containerId, IMsgListener msgLineReader) throws Exception {
 
-        ProductEntity productEntity = productRepository.findById(packageId).get();
+        ProductEntity productEntity = productRepository.findById(productId).get();
         ContainerEntity containerEntity = containerRepository.findById(containerId).get();
         ServerEntity serverEntity = serverRepository.findById(containerEntity.getServerId()).get();
 
 
-        File file = this.updateFileVerify(productEntity.getFilePath());
 
         //源代码文件夹
         final String sourceDir = containerEntity.getSourceDir();
 
-        /*
-        SSHSession s = new SSHSession(serverEntity);
 
-        //当前源码的filelist
-        List<String[]> fileSha256List = SSHUtil.sha256sum(s, sourceDir);
-
-        String fileList = FileListSha256Util.parseToFileListByArray(fileSha256List);
-        String beforeSha256 = DigestUtils.sha256Hex(fileList);
-//        //保存 sha256 fileList关系
-//        this.fileListShaService.save(beforeSha256, fileList);
-//
-//        ApplicationUpdateLogEntity applicationUpdateLogEntity = create(applicationEntity.get(), applicationUpdateApplyEntity.getId(), beforeSha256);
+        SSHExecTemplate sshExecTemplate = new SSHExecTemplate(serverEntity.getSshHost(), serverEntity.getSshPort(), serverEntity.getSshUser(), serverEntity.getSshPwd());
 
 
-        try {
+        sshExecTemplate.execute(new ExecWorker<Object>() {
+            @Override
+            public Object doWork(IExecConnection execConnection) throws Exception {
+                SSHConnection sshConnection = (SSHConnection) execConnection;
+
+                msgLineReader.appendLine("已建立ssh连接: " + serverEntity.getSshHost() + ":" + serverEntity.getSshPort());
+
+                //当前源码的filelist
+                List<String[]> fileSha256List = SSHUtil.sha256sum(sshConnection, sourceDir);
+
+                String fileList = FileListSha256Util.parseToFileListByArray(fileSha256List);
+                String beforeSha256 = DigestUtils.sha256Hex(fileList);
+
+                msgLineReader.appendLine("更新前sha256: " + beforeSha256);
 
 
-            s.doWork(sshConnection -> {
-                msgLineReader.append("已建立ssh连接: " + serverEntity.getSshHost() + ":" + serverEntity.getSshPort());
+                IContainerUpdater containerUpdater = new DefaultSSHContainerUpdater();
 
-                msgLineReader.append("开始上传文件 " + file.getAbsolutePath() + " ==>> " + containerEntity.getUploadDir());
-
-                sshConnection.uploadLocalFileToRemote(file.getAbsolutePath(), containerEntity.getUploadDir(), new SftpProgressMonitorImpl(msgLineReader));
-
-                String uploadedFile = containerEntity.getUploadDir() + "/" + file.getName();
-
-
-                //2.备份
-                backup(containerEntity, sshConnection, beforeSha256, msgLineReader);
-
-
-                msgLineReader.append("######## 关闭应用 ########");
-
-                //关闭容器
-                ExecCommand stopCmd = ContainerUtil.containerStop(sshConnection, containerEntity);
-
-                msgLineReader.append(stopCmd.getOut().toString());
-
-                if (stopCmd.getExitValue() != 0) {
-                    throw new RuntimeException("关闭应用失败");
-                }
-
-                StringBuilder cmd = new StringBuilder(1024);
-                //删除旧代码
-                cmd.append("rm -rf ").append(sourceDir);
-
-                cmd.append(" && mkdir -p -v ").append(sourceDir);
-                //解压
-                cmd.append(" && unzip -o ").append(uploadedFile).append(" -d ").append(sourceDir);
-
-                //删除 上传的包
-//                cmd.append(" || rm ").append(uploadedFile);
-
-                msgLineReader.append("######## 开始更新应用 ########");
-                msgLineReader.append(cmd.toString());
-                ExecCommand execCommand = new ExecCommand(cmd.toString(), new ExecStreamPrintMonitor());
-                sshConnection.exec(execCommand);
-
-                msgLineReader.append(execCommand.getOut().toString());
-
-                if (execCommand.getExitValue() != 0) {
-                    throw new RuntimeException("更新应用失败");
-                }
+                containerUpdater.update(containerEntity, productEntity, sshConnection, msgLineReader);
 
 
                 //更新后的文件sha256
@@ -128,58 +96,20 @@ public class ContainerServiceImpl implements IContainerService {
                 String afterFileList = FileListSha256Util.parseToFileListByArray(afterFileSha256List);
                 String afterSha256 = DigestUtils.sha256Hex(afterFileList);
 
+                msgLineReader.appendLine("更新后sha256: " + afterSha256);
+
 //                applicationUpdateLogEntity.setAfterSha256(afterSha256);
 
                 //保存 sha256 fileList关系
 //                this.fileListShaService.save(afterSha256, afterFileList);
-
-                //启动容器
-                ExecCommand startCmd = ContainerUtil.containerStart(sshConnection, containerEntity);
-                msgLineReader.append(startCmd.getOut().toString());
-
-                if (startCmd.getExitValue() != 0) {
-                    throw new RuntimeException("启动容器失败");
-                }
-            });
+                return null;
+            }
+        });
 
 
-//            applicationUpdateLogEntity.setStatus(AssemblyLineLogEntity.Status.success);
-//            applicationUpdateLogEntity.setLog(execLog.toString());
-//            applicationUpdateLogEntity.setDoneTime(new Timestamp(System.currentTimeMillis()));
-//            applicationUpdateLogRepository.save(applicationUpdateLogEntity);
-
-        } catch (Exception e) {
-            msgLineReader.append(ExceptionUtils.getStackTrace(e));
-//            applicationUpdateLogEntity.setStatus(AssemblyLineLogEntity.Status.error);
-//            applicationUpdateLogEntity.setLog(execLog.toString());
-//            applicationUpdateLogEntity.setDoneTime(new Timestamp(System.currentTimeMillis()));
-//            applicationUpdateLogRepository.save(applicationUpdateLogEntity);
-        }
-
-    */
     }
 
 
-    private File updateFileVerify(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            throw new IllegalArgumentException("更新文件不存在:" + file.getAbsolutePath());
-        }
-
-        if (file.isDirectory()) {
-            throw new IllegalArgumentException("暂不支持文件夹,等待后续完善");
-        }
-
-        int index = file.getName().lastIndexOf(".");
-        if (index <= 0) {
-            throw new IllegalArgumentException("文件没有后缀?" + file.getName());
-        }
-        String suffix = file.getName().substring(index + 1).toLowerCase();
-        if (!"war".equals(suffix) && !"zip".equals(suffix)) {
-            throw new IllegalArgumentException("暂时只支持war、zip后缀,等待后续完善");
-        }
-        return file;
-    }
 
 
     private void backup(ContainerEntity containerEntity, SSHConnection sshConnection, String beforeSha256, IMsgListener msgLineReader) throws Exception {

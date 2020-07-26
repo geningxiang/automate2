@@ -50,6 +50,8 @@ public class SSHConnection implements IExecConnection, Closeable {
         try {
             channel = (ChannelExec) this.session.openChannel("exec");
 
+            execListener.appendLine("# " + cmd);
+
             channel.setCommand(cmd);
 
             channel.connect();

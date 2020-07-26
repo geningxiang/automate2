@@ -1,4 +1,6 @@
 package com.github.gnx.automate.entity;
+import com.alibaba.fastjson.annotation.JSONField;
+
 import javax.persistence.*;
 
 /**
@@ -90,10 +92,10 @@ public class ServerEntity{
      */
     @Column(name = "SSH_HOST")
     private String sshHost;
+
     /**
      * ssh 端口
      */
-
     @Column(name = "SSH_PORT")
     private Integer sshPort;
 
@@ -192,6 +194,7 @@ public class ServerEntity{
         this.sshUser = sshUser;
     }
 
+    @JSONField(serialize = false)
     public String getSshPwd() {
         return sshPwd;
     }

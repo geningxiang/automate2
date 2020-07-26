@@ -84,6 +84,8 @@ public class AssemblyLineRunnable implements Runnable {
                 assemblyLineLogEntity.appendLine("切换版本库, branch: " + assemblyLineLogEntity.getBranch() + " , commitId: " + assemblyLineLogEntity.getCommitId());
                 //切换分支
                 String vcsId = vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
+                assemblyLineLogEntity.setCommitId(vcsId );
+                //挡墙项目版本
                 assemblyLineLogEntity.appendLine("版本库切换后ID: " + vcsId);
                 //暂时只有2种  本地执行 或者 docker执行
                 if (execConnection instanceof DockerSSHConnetction) {

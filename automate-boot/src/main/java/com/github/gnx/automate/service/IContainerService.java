@@ -14,5 +14,5 @@ import java.util.List;
 public interface IContainerService {
     List<ContainerEntity> getAllByProjectIdOrderById(int projectId);
 
-    void update(int packageId, int containerId, IMsgListener msgLineReader) throws Exception;
+    void update(int productId, int containerId, IMsgListener msgLineReader) throws Exception;
 }

@@ -1,5 +1,7 @@
 package com.github.gnx.automate.common;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 
@@ -9,7 +11,14 @@ package com.github.gnx.automate.common;
 public class CurrentUser {
 
     private int userId;
+
     private String userToken;
+
+    /**
+     * 项目权限
+     * { 项目ID: 权限等级 }
+     */
+    private Map<Integer, Integer> projectMap;
 
     public CurrentUser(int userId){
         this.userId = userId;
