@@ -3,6 +3,7 @@ package com.github.gnx.automate.service.container;
 import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ProductEntity;
+import com.github.gnx.automate.exec.DefaultMsgListener;
 import com.github.gnx.automate.exec.IExecConnection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -25,18 +26,29 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
     }
 
     @Override
+    public boolean check(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
+        int exitStatus = execConnection.exec(containerEntity.getScriptCheck(), execListener);
+        return exitStatus == 0;
+    }
+
+    @Override
     public void upload(ContainerEntity containerEntity, ProductEntity productEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
         File file = this.updateFileVerify(productEntity.getFilePath());
         execConnection.upload(file, containerEntity.getUploadDir(), false, execListener);
         this.uploadFilePath = containerEntity.getUploadDir() + "/" + file.getName();
-
     }
 
     @Override
     public void stop(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
+        DefaultMsgListener defaultMsgListener = new DefaultMsgListener(execListener);
+        int exit = execConnection.exec(containerEntity.getScriptStop(), defaultMsgListener);
+        if(exit == 0){
 
-        execConnection.exec(containerEntity.getScriptStop(), execListener);
-
+        } else if(exit == 1){
+            throw new RuntimeException("server is not run");
+        } else {
+            throw new RuntimeException(defaultMsgListener.getContent());
+        }
     }
 
     @Override
@@ -86,9 +98,15 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
 
     @Override
     public void start(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
+        DefaultMsgListener defaultMsgListener = new DefaultMsgListener(execListener);
+        int exit = execConnection.exec(containerEntity.getScriptStart(), defaultMsgListener);
+        if(exit == 0){
 
-        execConnection.exec(containerEntity.getScriptStart(), execListener);
-
+        } else if(exit == 1){
+            throw new RuntimeException("server is already running");
+        } else {
+            throw new RuntimeException(defaultMsgListener.getContent());
+        }
     }
 
     /**

@@ -6,7 +6,7 @@ import com.github.gnx.automate.service.IServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +21,12 @@ public class ServerServiceImpl implements IServerService {
     private ServerRepository serverRepository;
 
     @Override
-    public Iterable<ServerEntity> findAll(){
+    public Optional<ServerEntity> findById(int id) {
+        return this.serverRepository.findById(id);
+    }
+
+    @Override
+    public Iterable<ServerEntity> findAll() {
         return this.serverRepository.findAll();
     }
 

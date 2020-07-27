@@ -5,6 +5,7 @@ import com.github.gnx.automate.common.utils.FileListSha256Util;
 import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.entity.ServerEntity;
+import com.github.gnx.automate.exec.DefaultMsgListener;
 import com.github.gnx.automate.exec.ExecWorker;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.github.gnx.automate.exec.ssh.SSHConnection;
@@ -18,15 +19,14 @@ import com.github.gnx.automate.service.container.DefaultSSHContainerUpdater;
 import com.github.gnx.automate.service.container.IContainerUpdater;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,17 +50,34 @@ public class ContainerServiceImpl implements IContainerService {
 
 
     @Override
+    public Optional<ContainerEntity> findById(int id) {
+        return this.containerRepository.findById(id);
+    }
+
+
+    @Override
+    public Iterable<ContainerEntity> findAll() {
+        return this.containerRepository.findAll();
+    }
+
+    @Override
     public List<ContainerEntity> getAllByProjectIdOrderById(int projectId) {
         return containerRepository.getAllByProjectIdOrderById(projectId);
     }
 
+    /**
+     * 更新容器
+     * @param productId 产物ID
+     * @param containerId 容器ID
+     * @param msgLineReader
+     * @throws Exception
+     */
     @Override
     public void update(int productId, int containerId, IMsgListener msgLineReader) throws Exception {
 
         ProductEntity productEntity = productRepository.findById(productId).get();
         ContainerEntity containerEntity = containerRepository.findById(containerId).get();
         ServerEntity serverEntity = serverRepository.findById(containerEntity.getServerId()).get();
-
 
 
         //源代码文件夹
@@ -109,8 +126,52 @@ public class ContainerServiceImpl implements IContainerService {
 
     }
 
+    @Override
+    public boolean check(int containerId) throws Exception {
+        Optional<ContainerEntity> containerOptional = this.containerRepository.findById(containerId);
+        Optional<ServerEntity> serverOptional = this.serverRepository.findById(containerOptional.get().getServerId());
+        ServerEntity serverEntity = serverOptional.get();
+        SSHExecTemplate sshExecTemplate = new SSHExecTemplate(serverEntity.getSshHost(), serverEntity.getSshPort(), serverEntity.getSshUser(), serverEntity.getSshPwd());
+        return sshExecTemplate.execute(new ExecWorker<Boolean>() {
+            @Override
+            public Boolean doWork(IExecConnection execConnection) throws Exception {
+                SSHConnection sshConnection = (SSHConnection) execConnection;
+                return new DefaultSSHContainerUpdater().check(containerOptional.get(), sshConnection, new DefaultMsgListener());
+            }
+        });
+    }
 
+    @Override
+    public void start(int containerId) throws Exception {
+        Optional<ContainerEntity> containerOptional = this.containerRepository.findById(containerId);
+        Optional<ServerEntity> serverOptional = this.serverRepository.findById(containerOptional.get().getServerId());
+        ServerEntity serverEntity = serverOptional.get();
+        SSHExecTemplate sshExecTemplate = new SSHExecTemplate(serverEntity.getSshHost(), serverEntity.getSshPort(), serverEntity.getSshUser(), serverEntity.getSshPwd());
+        sshExecTemplate.execute(new ExecWorker<Object>() {
+            @Override
+            public Object doWork(IExecConnection execConnection) throws Exception {
+                SSHConnection sshConnection = (SSHConnection) execConnection;
+                new DefaultSSHContainerUpdater().start(containerOptional.get(), sshConnection, new DefaultMsgListener());
+                return null;
+            }
+        });
+    }
 
+    @Override
+    public void stop(int containerId) throws Exception {
+        Optional<ContainerEntity> containerOptional = this.containerRepository.findById(containerId);
+        Optional<ServerEntity> serverOptional = this.serverRepository.findById(containerOptional.get().getServerId());
+        ServerEntity serverEntity = serverOptional.get();
+        SSHExecTemplate sshExecTemplate = new SSHExecTemplate(serverEntity.getSshHost(), serverEntity.getSshPort(), serverEntity.getSshUser(), serverEntity.getSshPwd());
+        sshExecTemplate.execute(new ExecWorker<Object>() {
+            @Override
+            public Object doWork(IExecConnection execConnection) throws Exception {
+                SSHConnection sshConnection = (SSHConnection) execConnection;
+                new DefaultSSHContainerUpdater().stop(containerOptional.get(), sshConnection, new DefaultMsgListener());
+                return null;
+            }
+        });
+    }
 
     private void backup(ContainerEntity containerEntity, SSHConnection sshConnection, String beforeSha256, IMsgListener msgLineReader) throws Exception {
         if (StringUtils.isBlank(containerEntity.getBackupDir())) {

@@ -2,9 +2,8 @@ package com.github.gnx.automate.exec.docker;
 
 import com.github.gnx.automate.common.IMsgListener;
 import com.github.gnx.automate.common.utils.TarUtils;
+import com.github.gnx.automate.exec.DefaultMsgListener;
 import com.github.gnx.automate.exec.IExecConnection;
-import com.github.gnx.automate.exec.MsgPrintListener;
-import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -24,7 +23,7 @@ public class DockerSSHExecTemplateTest {
 //        Integer result = dockerExecTemplate.execute(new ExecWorker<>() {
 //            @Override
 //            public Integer doWork(IExecConnection execConnection) throws Exception {
-//                return execConnection.exec("yum install -y iputils && ping -w 10 www.baidu.com", new MsgPrintListener());
+//                return execConnection.exec("yum install -y iputils && ping -w 10 www.baidu.com", new DefaultMsgListener());
 //            }
 //        });
 //        System.out.println("result:" + result);
@@ -32,7 +31,7 @@ public class DockerSSHExecTemplateTest {
 
         IExecConnection execConnection = dockerExecTemplate.createConnection();
 
-        IMsgListener execListener = new MsgPrintListener();
+        IMsgListener execListener = new DefaultMsgListener();
 
 
 

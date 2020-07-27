@@ -3,7 +3,7 @@ package com.github.gnx.automate;
 import com.github.gnx.automate.exec.ExecWorker;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.github.gnx.automate.exec.IExecTemplate;
-import com.github.gnx.automate.exec.MsgPrintListener;
+import com.github.gnx.automate.exec.DefaultMsgListener;
 import com.github.gnx.automate.exec.local.LocalExecTemplate;
 
 /**
@@ -31,7 +31,7 @@ public class Mp4Test {
 
                 System.out.println(cmd);
 
-                execConnection.exec(cmd.toString(), new MsgPrintListener());
+                execConnection.exec(cmd.toString(), new DefaultMsgListener());
 
                 return null;
             }

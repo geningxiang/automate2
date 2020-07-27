@@ -14,6 +14,7 @@ import com.github.gnx.automate.exec.IExecConnection;
 public interface IContainerUpdater {
 
 
+    boolean check(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception;
 
     /**
      * 上传文件
