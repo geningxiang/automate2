@@ -62,7 +62,7 @@ public class ExecStreamReader {
                 while ((line = bufferedReader.readLine()) != null) {
                     execListener.appendLine(line);
                 }
-                logger.info("读取完成");
+                logger.debug("读取完成");
             } catch (IOException e) {
                 //读取超时时  会通过关闭 stream 来结束该进程
                 logger.warn("stream read error, {}", e.getMessage());

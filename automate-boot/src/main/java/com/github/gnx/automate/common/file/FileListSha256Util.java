@@ -1,7 +1,7 @@
-package com.github.gnx.automate.common.utils;
+package com.github.gnx.automate.common.file;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.github.gnx.automate.field.PathSha256Info;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
@@ -29,25 +29,42 @@ import java.util.zip.ZipInputStream;
  */
 public class FileListSha256Util {
 
-    public static String parseToFileList(List<PathSha256Info> pathSha256InfoList) {
+    /**
+     * 转换成 字符串格式
+     * @param pathSha256InfoList
+     * @return "[[path, sha256]...]"
+     */
+    public static String parseToString(List<FileInfo> pathSha256InfoList) {
         JSONArray array = new JSONArray(pathSha256InfoList.size());
-        for (PathSha256Info pathSha256Info : pathSha256InfoList) {
-            array.add(new String[]{pathSha256Info.getPath(), pathSha256Info.getSha256()});
+        for (FileInfo pathSha256Info : pathSha256InfoList) {
+            array.add(new String[]{pathSha256Info.getPath(), pathSha256Info.getDigest()});
         }
         return array.toJSONString();
     }
 
-    public static String parseToFileListByArray(List<String[]> pathSha256InfoList) {
-        Collections.sort(pathSha256InfoList, Comparator.comparing(o -> o[0]));
-        return JSONArray.toJSONString(pathSha256InfoList);
+    public static List<FileInfo> parseToList(String fileListStr) {
+        JSONArray array = JSON.parseArray(fileListStr);
+        List<FileInfo> list = new ArrayList(array.size());
+        JSONArray item;
+        for (int i = 0; i < array.size(); i++) {
+            item = array.getJSONArray(i);
+            list.add(new FileInfo(item.getString(0), item.getString(1)));
+        }
+        return list;
     }
 
 
-    public static ArrayList<PathSha256Info> list(File file) throws IOException {
+//    public static String parseToFileListByArray(List<FileInfo> pathSha256InfoList) {
+//        Collections.sort(pathSha256InfoList, Comparator.comparing(o -> o.getPath()));
+//        return JSONArray.toJSONString(pathSha256InfoList);
+//    }
+
+
+    public static ArrayList<FileInfo> list(File file) throws IOException {
         if (!file.exists()) {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
-        ArrayList<PathSha256Info> list;
+        ArrayList<FileInfo> list;
         if (file.isDirectory()) {
             list = listForDir(file);
         } else {
@@ -58,18 +75,18 @@ public class FileListSha256Util {
                 throw new IOException("暂不支持该文件类型");
             }
         }
-        Collections.sort(list, Comparator.comparing(PathSha256Info::getPath));
+        Collections.sort(list, Comparator.comparing(FileInfo::getPath));
         return list;
     }
 
-    private static ArrayList<PathSha256Info> listForDir(File dir) throws IOException {
+    private static ArrayList<FileInfo> listForDir(File dir) throws IOException {
         int dirPathLen = dir.getAbsolutePath().length();
-        ArrayList<PathSha256Info> list = new ArrayList(1024);
+        ArrayList<FileInfo> list = new ArrayList(1024);
         Files.walkFileTree(dir.toPath(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                 File file = path.toFile();
-                list.add(new PathSha256Info(path.toString().substring(dirPathLen + 1), DigestUtils.sha256Hex(new FileInputStream(file)), file.length()));
+                list.add(new FileInfo(path.toString().substring(dirPathLen + 1), DigestUtils.sha256Hex(new FileInputStream(file))));
                 return FileVisitResult.CONTINUE;
             }
         });
@@ -84,8 +101,8 @@ public class FileListSha256Util {
      * @return
      * @throws IOException
      */
-    private static ArrayList<PathSha256Info> listForZip(File file) throws IOException {
-        ArrayList<PathSha256Info> list = new ArrayList(1024);
+    private static ArrayList<FileInfo> listForZip(File file) throws IOException {
+        ArrayList<FileInfo> list = new ArrayList(1024);
         ZipFile zipFile = null;
         ZipInputStream zipInputStream = null;
         try {
@@ -94,7 +111,7 @@ public class FileListSha256Util {
             ZipEntry zipEntry;
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 if (!zipEntry.isDirectory()) {
-                    list.add(new PathSha256Info(zipEntry.getName(), DigestUtils.sha256Hex(zipFile.getInputStream(zipEntry)), zipEntry.getSize()));
+                    list.add(new FileInfo(zipEntry.getName(), DigestUtils.sha256Hex(zipFile.getInputStream(zipEntry))));
                 }
             }
         } finally {
@@ -105,7 +122,7 @@ public class FileListSha256Util {
                 zipInputStream.close();
             }
         }
-        Collections.sort(list, Comparator.comparing(PathSha256Info::getPath));
+        Collections.sort(list, Comparator.comparing(FileInfo::getPath));
         return list;
     }
 

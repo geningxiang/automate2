@@ -1,10 +1,17 @@
 package com.github.gnx.automate.service.impl;
 
+import com.github.gnx.automate.common.file.FileInfo;
 import com.github.gnx.automate.exec.DefaultMsgListener;
+import com.github.gnx.automate.exec.ExecWorker;
+import com.github.gnx.automate.exec.IExecConnection;
+import com.github.gnx.automate.exec.ssh.SSHConnection;
+import com.github.gnx.automate.exec.ssh.SSHExecTemplate;
+import com.github.gnx.automate.exec.ssh.SSHUtil;
 import com.github.gnx.automate.service.IContainerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author genx
  * @date 2020/4/4 15:40
  */
-@SpringBootTest
+//@SpringBootTest
 class ContainerServiceImplTest {
 
     @Autowired
@@ -25,6 +32,26 @@ class ContainerServiceImplTest {
 
         System.out.println("## end ##");
 
+
+    }
+
+    @Test
+    public void compare() throws Exception {
+
+        SSHExecTemplate sshExecTemplate = new SSHExecTemplate("192.168.1.190", 22, "root", "genx@linux");
+
+        List<FileInfo> list = sshExecTemplate.execute(new ExecWorker<List<FileInfo>>() {
+            @Override
+            public List<FileInfo> doWork(IExecConnection execConnection) throws Exception {
+                SSHConnection sshConnection = (SSHConnection) execConnection;
+                return SSHUtil.sha256sum(sshConnection, "/var/caimao-webapps/client/webroot/ROOT/");
+
+            }
+        });
+
+        for (FileInfo fileInfo : list) {
+            System.out.println(fileInfo.getPath() + "\t" + fileInfo.getDigest());
+        }
 
     }
 

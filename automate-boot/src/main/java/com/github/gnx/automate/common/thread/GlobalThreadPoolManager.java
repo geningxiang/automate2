@@ -31,6 +31,10 @@ public class GlobalThreadPoolManager {
         globalThreadPool.execute(r);
     }
 
+    public <T> Future<T> submit(Callable<T> callable) {
+        return globalThreadPool.submit(callable);
+    }
+
     public int size() {
         return globalThreadPool.runningSize.get();
     }

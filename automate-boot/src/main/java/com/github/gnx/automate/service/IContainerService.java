@@ -1,10 +1,12 @@
 package com.github.gnx.automate.service;
 
 import com.github.gnx.automate.common.IMsgListener;
+import com.github.gnx.automate.common.file.FileInfo;
 import com.github.gnx.automate.entity.ContainerEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,4 +36,6 @@ public interface IContainerService {
     void start(int containerId) throws Exception;
 
     void stop(int containerId) throws Exception;
+
+    Future<List<FileInfo>> getFileInfoList(int containerId);
 }

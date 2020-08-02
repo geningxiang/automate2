@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,7 +41,7 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
 
     @Override
     public void stop(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
-        DefaultMsgListener defaultMsgListener = new DefaultMsgListener(execListener);
+        DefaultMsgListener defaultMsgListener = new DefaultMsgListener(execListener, false);
         int exit = execConnection.exec(containerEntity.getScriptStop(), defaultMsgListener);
         if(exit == 0){
 
@@ -98,7 +99,7 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
 
     @Override
     public void start(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
-        DefaultMsgListener defaultMsgListener = new DefaultMsgListener(execListener);
+        DefaultMsgListener defaultMsgListener = new DefaultMsgListener(execListener, false);
         int exit = execConnection.exec(containerEntity.getScriptStart(), defaultMsgListener);
         if(exit == 0){
 
@@ -108,6 +109,14 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
             throw new RuntimeException(defaultMsgListener.getContent());
         }
     }
+
+
+    public List sha256(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
+
+        return null;
+
+    }
+
 
     /**
      * 检查产物文件

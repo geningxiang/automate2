@@ -1,7 +1,9 @@
 package com.github.gnx.automate.service.impl;
 
 import com.github.gnx.automate.common.IMsgListener;
-import com.github.gnx.automate.common.utils.FileListSha256Util;
+import com.github.gnx.automate.common.file.FileInfo;
+import com.github.gnx.automate.common.file.FileListSha256Util;
+import com.github.gnx.automate.common.thread.GlobalThreadPoolManager;
 import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.entity.ServerEntity;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 /**
  * Created with IntelliJ IDEA.
@@ -65,6 +68,7 @@ public class ContainerServiceImpl implements IContainerService {
         return containerRepository.getAllByProjectIdOrderById(projectId);
     }
 
+
     /**
      * 更新容器
      * @param productId 产物ID
@@ -79,13 +83,10 @@ public class ContainerServiceImpl implements IContainerService {
         ContainerEntity containerEntity = containerRepository.findById(containerId).get();
         ServerEntity serverEntity = serverRepository.findById(containerEntity.getServerId()).get();
 
-
         //源代码文件夹
         final String sourceDir = containerEntity.getSourceDir();
 
-
         SSHExecTemplate sshExecTemplate = new SSHExecTemplate(serverEntity.getSshHost(), serverEntity.getSshPort(), serverEntity.getSshUser(), serverEntity.getSshPwd());
-
 
         sshExecTemplate.execute(new ExecWorker<Object>() {
             @Override
@@ -95,9 +96,9 @@ public class ContainerServiceImpl implements IContainerService {
                 msgLineReader.appendLine("已建立ssh连接: " + serverEntity.getSshHost() + ":" + serverEntity.getSshPort());
 
                 //当前源码的filelist
-                List<String[]> fileSha256List = SSHUtil.sha256sum(sshConnection, sourceDir);
+                List<FileInfo> fileSha256List = SSHUtil.sha256sum(sshConnection, sourceDir);
 
-                String fileList = FileListSha256Util.parseToFileListByArray(fileSha256List);
+                String fileList = FileListSha256Util.parseToString(fileSha256List);
                 String beforeSha256 = DigestUtils.sha256Hex(fileList);
 
                 msgLineReader.appendLine("更新前sha256: " + beforeSha256);
@@ -109,8 +110,8 @@ public class ContainerServiceImpl implements IContainerService {
 
 
                 //更新后的文件sha256
-                List<String[]> afterFileSha256List = SSHUtil.sha256sum(sshConnection, sourceDir);
-                String afterFileList = FileListSha256Util.parseToFileListByArray(afterFileSha256List);
+                List<FileInfo> afterFileSha256List = SSHUtil.sha256sum(sshConnection, sourceDir);
+                String afterFileList = FileListSha256Util.parseToString(afterFileSha256List);
                 String afterSha256 = DigestUtils.sha256Hex(afterFileList);
 
                 msgLineReader.appendLine("更新后sha256: " + afterSha256);
@@ -172,6 +173,24 @@ public class ContainerServiceImpl implements IContainerService {
             }
         });
     }
+
+    @Override
+    public Future<List<FileInfo>> getFileInfoList(int containerId) {
+        final ContainerEntity container = this.containerRepository.findById(containerId).get();
+
+        final ServerEntity serverEntity = this.serverRepository.findById(container.getServerId()).get();
+
+        return GlobalThreadPoolManager.getInstance().submit(() -> {
+            SSHExecTemplate sshExecTemplate = new SSHExecTemplate(serverEntity.getSshHost(), serverEntity.getSshPort(), serverEntity.getSshUser(), serverEntity.getSshPwd());
+            return sshExecTemplate.execute(new ExecWorker<List<FileInfo>>() {
+                @Override
+                public List<FileInfo> doWork(IExecConnection execConnection) throws Exception {
+                    return SSHUtil.sha256sum((SSHConnection) execConnection, container.getSourceDir());
+                }
+            });
+        });
+    }
+
 
     private void backup(ContainerEntity containerEntity, SSHConnection sshConnection, String beforeSha256, IMsgListener msgLineReader) throws Exception {
         if (StringUtils.isBlank(containerEntity.getBackupDir())) {

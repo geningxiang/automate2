@@ -2,7 +2,10 @@ package com.github.gnx.automate.controller.api;
 
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
+import com.github.gnx.automate.common.file.FileCompareResult;
+import com.github.gnx.automate.common.thread.GlobalThreadPoolManager;
 import com.github.gnx.automate.entity.ContainerEntity;
+import com.github.gnx.automate.exec.DefaultMsgListener;
 import com.github.gnx.automate.service.IContainerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +26,6 @@ public class ContainerController {
     @Autowired
     private IContainerService containerService;
 
-
     /**
      * 服务器资源列表
      * @return
@@ -32,6 +34,30 @@ public class ContainerController {
     public ResponseEntity<Iterable<ContainerEntity>> serverList(CurrentUser currentUser) {
         Iterable<ContainerEntity> list = this.containerService.findAll();
         return ResponseEntity.ok(list);
+    }
+
+    /**
+     * 更新前的确认
+     * @param currentUser
+     * @param productId
+     * @param containerIds
+     * @return
+     */
+    @RequestMapping(value = "/container/updateApply", method = RequestMethod.POST)
+    public ResponseEntity updateApply(CurrentUser currentUser, Integer productId, Integer[] containerIds) {
+
+        for (int i = 0; i < containerIds.length; i++) {
+            int containerId = containerIds[i];
+            GlobalThreadPoolManager.getInstance().execute(() -> {
+                try {
+                    containerService.update(productId, containerId, new DefaultMsgListener());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        return ResponseEntity.ok("更新申请已提交", "");
     }
 
     /**

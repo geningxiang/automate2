@@ -16,10 +16,11 @@ import java.io.File;
 @Component
 public class SystemUtil {
 
-
     private static String SOURCE_CODE_DIR = null;
 
     private static String PRODUCT_DIR = null;
+
+    private static String MVN_DEPLOY_DIR = null;
 
     @Value("${automate.sourceCodeDir:./sourceCode/}")
     public void setSourceCodeDir(String sourceCodeDir) {
@@ -29,6 +30,11 @@ public class SystemUtil {
     @Value("${automate.productDir:./product/}")
     public void setProductDir(String productDir) {
         PRODUCT_DIR = productDir;
+    }
+
+    @Value("${automate.mvnDeployDir:./mvnDeploy/}")
+    public void setMvnDeployDir(String mvnDeployDir) {
+        MVN_DEPLOY_DIR = mvnDeployDir;
     }
 
 
@@ -52,6 +58,10 @@ public class SystemUtil {
         String path = new StringBuilder(PRODUCT_DIR).append(File.separator)
                 .append(projectId).append(File.separator).toString();
         return new File(path);
+    }
+
+    public static String getMvnDeployDir(){
+        return MVN_DEPLOY_DIR;
     }
 
 }

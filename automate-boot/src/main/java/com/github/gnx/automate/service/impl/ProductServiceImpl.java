@@ -2,10 +2,10 @@ package com.github.gnx.automate.service.impl;
 
 import com.github.gnx.automate.common.SystemUtil;
 import com.github.gnx.automate.common.exception.AlreadyExistsException;
-import com.github.gnx.automate.common.utils.FileListSha256Util;
+import com.github.gnx.automate.common.file.FileInfo;
+import com.github.gnx.automate.common.file.FileListSha256Util;
 import com.github.gnx.automate.common.utils.ZipUtil;
 import com.github.gnx.automate.entity.ProductEntity;
-import com.github.gnx.automate.field.PathSha256Info;
 import com.github.gnx.automate.repository.ProductRepository;
 import com.github.gnx.automate.service.IFileListShaService;
 import com.github.gnx.automate.service.IProductService;
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -46,13 +45,20 @@ public class ProductServiceImpl implements IProductService {
 
 
     @Override
-    public Page<ProductEntity> queryPage(Pageable pageable){
+    public Page<ProductEntity> queryPage(Pageable pageable) {
         return productRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<ProductEntity> findById(int id){
+    public Optional<ProductEntity> findById(int id) {
         return productRepository.findById(id);
+    }
+
+
+    @Override
+    public List<FileInfo> getFileInfoListById(int productId) {
+        ProductEntity productEntity = this.productRepository.findById(productId).get();
+        return this.fileListShaService.getFileInfoList(productEntity.getSha256());
     }
 
     @Override
@@ -88,8 +94,8 @@ public class ProductServiceImpl implements IProductService {
      */
     private ProductEntity create(int projectId, String version, String branch, String commitId, String remark, File file, ProductEntity.Type type, int userId) throws IOException {
         //读取文件列表
-        List<PathSha256Info> list = FileListSha256Util.list(file);
-        String fileList = FileListSha256Util.parseToFileList(list);
+        List<FileInfo> list = FileListSha256Util.list(file);
+        String fileList = FileListSha256Util.parseToString(list);
 
         String sha256 = DigestUtils.sha256Hex(fileList);
 

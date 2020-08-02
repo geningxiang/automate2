@@ -18,10 +18,13 @@ public class DefaultMsgListener implements IMsgListener {
 
     private IMsgListener parentMsgListener;
 
+    private boolean printLog = true;
+
     private StringBuffer content = new StringBuffer(1024);
 
-    public DefaultMsgListener(IMsgListener parentMsgListener){
+    public DefaultMsgListener(IMsgListener parentMsgListener, boolean printLog){
         this.parentMsgListener = parentMsgListener;
+        this.printLog = printLog;
     }
 
     public DefaultMsgListener(){
@@ -31,7 +34,7 @@ public class DefaultMsgListener implements IMsgListener {
 
     @Override
     public IMsgListener append(CharSequence csq) {
-        if(StringUtils.isNotBlank(csq)) {
+        if(printLog && StringUtils.isNotBlank(csq)) {
             logger.debug(csq.toString());
         }
         content.append(csq);
