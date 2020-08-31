@@ -6,6 +6,7 @@ import com.github.gnx.automate.common.file.FileInfo;
 import com.github.gnx.automate.common.file.FileListSha256Util;
 import com.github.gnx.automate.common.utils.ZipUtil;
 import com.github.gnx.automate.entity.ProductEntity;
+import com.github.gnx.automate.event.IEventPublisher;
 import com.github.gnx.automate.repository.ProductRepository;
 import com.github.gnx.automate.service.IFileListShaService;
 import com.github.gnx.automate.service.IProductService;
@@ -42,7 +43,6 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     private IFileListShaService fileListShaService;
-
 
     @Override
     public Page<ProductEntity> queryPage(Pageable pageable) {

@@ -14,4 +14,6 @@ public interface IServerService {
     Optional<ServerEntity> findById(int id);
 
     Iterable<ServerEntity> findAll();
+
+    void save(ServerEntity serverEntity);
 }

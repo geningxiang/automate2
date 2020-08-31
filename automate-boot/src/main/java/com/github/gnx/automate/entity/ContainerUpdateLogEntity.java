@@ -1,5 +1,7 @@
 package com.github.gnx.automate.entity;
 
+import com.github.gnx.automate.common.IMsgListener;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -10,8 +12,8 @@ import java.sql.Timestamp;
  * @date 2019/7/23 23:21
  */
 @Entity
-@Table(name = "CA2_APPLICATION_UPDATE_LOG")
-public class ApplicationUpdateLogEntity {
+@Table(name = "ca2_container_update_log")
+public class ContainerUpdateLogEntity implements IMsgListener {
     private Integer id;
 
     /**
@@ -25,9 +27,9 @@ public class ApplicationUpdateLogEntity {
     private Integer serverId;
 
     /**
-     * 应用ID
+     * 容器ID
      */
-    private Integer applicationId;
+    private Integer containerId;
 
     /**
      * 申请ID (0代表直接操作的)
@@ -73,7 +75,7 @@ public class ApplicationUpdateLogEntity {
     /**
      * 更新日志
      */
-    private String log;
+    private StringBuffer log = new StringBuffer(2048);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,13 +89,13 @@ public class ApplicationUpdateLogEntity {
     }
 
     @Basic
-    @Column(name = "APPLICATION_ID", nullable = true)
-    public Integer getApplicationId() {
-        return applicationId;
+    @Column(name = "CONTAINER_ID", nullable = true)
+    public Integer getContainerId() {
+        return containerId;
     }
 
-    public void setApplicationId(Integer applicationId) {
-        this.applicationId = applicationId;
+    public void setContainerId(Integer containerId) {
+        this.containerId = containerId;
     }
 
     @Basic
@@ -204,11 +206,19 @@ public class ApplicationUpdateLogEntity {
     @Basic
     @Column(name = "LOG", nullable = true, length = -1)
     public String getLog() {
-        return log;
+        return log.toString();
     }
 
     public void setLog(String log) {
-        this.log = log;
+        if(log != null) {
+            this.log.append(log);
+        }
     }
 
+
+    @Override
+    public IMsgListener append(CharSequence csq) {
+        this.log.append(csq);
+        return this;
+    }
 }

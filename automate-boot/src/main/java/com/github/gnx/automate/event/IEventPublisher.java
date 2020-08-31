@@ -1,5 +1,7 @@
 package com.github.gnx.automate.event;
 
+import org.springframework.context.ApplicationEvent;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 
@@ -8,6 +10,6 @@ package com.github.gnx.automate.event;
  */
 public interface IEventPublisher {
 
-    void publishEvent(AbstractEvent event);
+    void publishEvent(ApplicationEvent event);
 
 }

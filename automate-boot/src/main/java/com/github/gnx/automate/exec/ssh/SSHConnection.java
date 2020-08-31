@@ -27,7 +27,7 @@ public class SSHConnection implements IExecConnection, Closeable {
 
     private static Logger logger = LoggerFactory.getLogger(SSHConnection.class);
 
-    private final int TIME_OUT = 10;
+    private final int TIME_OUT = 60;
 
     private final Session session;
 

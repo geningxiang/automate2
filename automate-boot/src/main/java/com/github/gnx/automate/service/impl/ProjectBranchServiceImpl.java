@@ -2,7 +2,7 @@ package com.github.gnx.automate.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.github.gnx.automate.entity.ProjectBranchEntity;
-import com.github.gnx.automate.event.vo.BranchUpdatedEvent;
+import com.github.gnx.automate.event.bean.BranchUpdatedEvent;
 import com.github.gnx.automate.repository.ProjectBranchRepository;
 import com.github.gnx.automate.service.IProjectBranchService;
 import com.github.gnx.automate.vcs.vo.CommitLog;

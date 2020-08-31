@@ -67,7 +67,7 @@ public class AssemblyLineRunnable implements Runnable {
         this.assemblyLineRunnableListener.onStart(this);
         boolean success = false;
         try {
-            Optional<ProjectEntity> projectEntity = projectService.getModel(assemblyLineLogEntity.getProjectId());
+            Optional<ProjectEntity> projectEntity = projectService.findById(assemblyLineLogEntity.getProjectId());
             if (!projectEntity.isPresent()) {
                 throw new RuntimeException("未找到相应的项目");
             }

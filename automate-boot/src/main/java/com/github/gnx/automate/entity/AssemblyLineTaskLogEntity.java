@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  * @date: 2019/2/4 16:06
  */
 @Entity
-@Table(name = "CA2_ASSEMBLY_LINE_TASK_LOG")
+@Table(name = "ca2_assembly_line_task_log")
 public class AssemblyLineTaskLogEntity implements IMsgListener {
 
     private Integer id;

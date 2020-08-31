@@ -58,7 +58,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/current", method = RequestMethod.GET)
     public ResponseEntity<UserEntity> detail(CurrentUser currentUser) {
-        return ResponseEntity.ok(userService.getModel(currentUser.getUserId()).get());
+        return ResponseEntity.ok(userService.findById(currentUser.getUserId()).get());
     }
 
     /**

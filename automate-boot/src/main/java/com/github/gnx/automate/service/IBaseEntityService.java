@@ -15,7 +15,7 @@ public interface IBaseEntityService<T> {
     /**
      * 查询对象
      **/
-    Optional<T> getModel(int id);
+    Optional<T> findById(int id);
 
     /**
      * 添加对象

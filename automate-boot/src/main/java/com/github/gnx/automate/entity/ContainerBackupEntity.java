@@ -10,8 +10,8 @@ import java.sql.Timestamp;
  * @date 2019/8/10 18:27
  */
 @Entity
-@Table(name = "CA2_APPLICATION_BACKUP")
-public class ApplicationBackupEntity {
+@Table(name = "ca2_container_backup")
+public class ContainerBackupEntity {
     private int id;
     private Integer applicationId;
     private String filePath;

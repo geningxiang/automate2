@@ -10,8 +10,8 @@ import java.sql.Timestamp;
  * @date 2019/5/26 20:36
  */
 @Entity
-@Table(name = "CA2_APPLICATION_UPDATE_APPLY")
-public class ApplicationUpdateApplyEntity {
+@Table(name = "ca2_container_update_apply")
+public class ContainerUpdateApplyEntity {
 
     public enum Status {
         /**

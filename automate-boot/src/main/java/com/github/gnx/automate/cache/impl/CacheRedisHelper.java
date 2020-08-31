@@ -16,6 +16,7 @@ import java.util.Map;
  */
 @Component
 public class CacheRedisHelper implements ICacheHelper {
+
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 

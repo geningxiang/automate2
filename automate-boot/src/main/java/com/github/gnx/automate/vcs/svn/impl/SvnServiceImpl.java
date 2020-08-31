@@ -2,7 +2,7 @@ package com.github.gnx.automate.vcs.svn.impl;
 
 import com.github.gnx.automate.contants.VcsType;
 import com.github.gnx.automate.event.IEventPublisher;
-import com.github.gnx.automate.event.vo.BranchUpdatedEvent;
+import com.github.gnx.automate.event.bean.BranchUpdatedEvent;
 import com.github.gnx.automate.vcs.IVcsCredentialsProvider;
 import com.github.gnx.automate.vcs.IVcsService;
 import com.github.gnx.automate.vcs.VcsUserNamePwdCredentialsProvider;

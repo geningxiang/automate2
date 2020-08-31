@@ -23,7 +23,9 @@ public interface IContainerService {
 
     List<ContainerEntity> getAllByProjectIdOrderById(int projectId);
 
-    void update(int productId, int containerId, IMsgListener msgLineReader) throws Exception;
+    void save(ContainerEntity containerEntity);
+
+    void updateContainer(int productId, int containerId) throws Exception;
 
     /**
      * 检查容器状态

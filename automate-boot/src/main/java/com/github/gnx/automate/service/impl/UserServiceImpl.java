@@ -39,7 +39,7 @@ public class UserServiceImpl implements IUserService {
     /**
      * 查询对象
      **/
-    public Optional<UserEntity> getModel(int id) {
+    public Optional<UserEntity> findById(int id) {
         return userRepository.findById(id);
     }
 

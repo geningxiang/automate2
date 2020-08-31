@@ -1,7 +1,8 @@
-package com.github.gnx.automate.event.vo;
+package com.github.gnx.automate.event.bean;
 
 import com.github.gnx.automate.event.AbstractEvent;
 import com.github.gnx.automate.vcs.vo.CommitLog;
+import org.springframework.context.ApplicationEvent;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @author genx
  * @date 2020/3/28 20:49
  */
-public class BranchUpdatedEvent extends AbstractEvent {
+public class BranchUpdatedEvent extends ApplicationEvent {
 
     private int projectId;
     private String branchName;

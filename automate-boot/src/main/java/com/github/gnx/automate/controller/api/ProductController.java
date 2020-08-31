@@ -1,14 +1,18 @@
 package com.github.gnx.automate.controller.api;
 
+import com.github.gnx.automate.cache.IEntityCache;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
 import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,8 +25,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public class ProductController {
 
-    @Autowired
-    private IProductService productService;
+    private final IProductService productService;
+
+    private final IEntityCache entityCache;
+
+    public ProductController(IProductService productService, IEntityCache entityCache) {
+        this.productService = productService;
+        this.entityCache = entityCache;
+    }
 
     /**
      * 产物列表(分页)
@@ -36,6 +46,11 @@ public class ProductController {
     ) {
         //倒序排序
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        return ResponseEntity.ok(productService.queryPage(PageRequest.of(page - 1, pageSize, sort)));
+        Page<ProductEntity> result = productService.queryPage(PageRequest.of(page - 1, pageSize, sort));
+
+        return ResponseEntity.ok(new PageImpl(result.getContent()
+                .stream().map(entityCache::parse).collect(Collectors.toList()),
+                result.getPageable(),
+                result.getTotalElements()));
     }
 }

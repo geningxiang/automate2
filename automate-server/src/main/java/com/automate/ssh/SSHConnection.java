@@ -237,7 +237,7 @@ public class SSHConnection {
         StringBuilder cmd = new StringBuilder(512);
         cmd.append("cd ");
         cmd.append(sourceDir);
-        cmd.append(" && tar -zcvf ");
+        cmd.append(" && tar -zcf ");
         cmd.append(targetFilePath);
         cmd.append(" ./");
         ExecCommand execCommand = new ExecCommand(cmd.toString());

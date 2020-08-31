@@ -41,7 +41,7 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
         this.size = size;
 
         if (msgLineWriter != null) {
-            msgLineWriter.append(msg);
+            msgLineWriter.appendLine(msg);
         }
     }
 
@@ -51,19 +51,19 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
         String msg;
         if (this.size > 0) {
             double currentRate = (double) currentSize / this.size;
-            if (currentRate - rate > 0.01) {
+            if (currentRate - rate > 0.05) {
                 rate = currentRate;
                 msg = "上传进度：" + currentSize + "/" + size + " " + new BigDecimal(rate).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP) + "%";
                 logger.debug(msg);
                 if (msgLineWriter != null) {
-                    msgLineWriter.append(msg);
+                    msgLineWriter.appendLine(msg);
                 }
             }
         } else {
-            msg = "上传进度：已上传:"+ currentSize;
+            msg = "上传进度：已上传:" + currentSize;
             logger.debug(msg);
-            if(msgLineWriter != null){
-                msgLineWriter.append(msg);
+            if (msgLineWriter != null) {
+                msgLineWriter.appendLine(msg);
             }
         }
         return true;
@@ -72,8 +72,8 @@ public class SftpProgressMonitorImpl implements SftpProgressMonitor {
     @Override
     public void end() {
         logger.debug("文件上传结束");
-        if(msgLineWriter != null){
-            msgLineWriter.append("文件上传结束");
+        if (msgLineWriter != null) {
+            msgLineWriter.appendLine("文件上传结束");
         }
         rate = 1;
         endFlag = true;

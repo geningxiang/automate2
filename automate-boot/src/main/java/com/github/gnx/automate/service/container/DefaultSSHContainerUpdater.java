@@ -66,12 +66,13 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
         StringBuilder cmd = new StringBuilder(512);
         cmd.append("cd ");
         cmd.append(containerEntity.getSourceDir());
-        cmd.append(" && tar -zcvf ");
+        cmd.append(" && tar -zcf ");
 
         cmd.append(backUpFilePath.toString());
         cmd.append(" ./");
         execConnection.exec(cmd.toString(), execListener);
 
+        execListener.appendLine("备份后文件: " + backUpFilePath.toString());
     }
 
     @Override
@@ -88,13 +89,11 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
         cmd.append("rm -rf ").append(sourceDir);
 
         cmd.append(" && mkdir -p -v ").append(sourceDir);
-        //解压
-        cmd.append(" && unzip -o ").append(uploadFilePath).append(" -d ").append(sourceDir);
+        //解压  -q 执行时不显示任何信息。
+        cmd.append(" && unzip -o -q ").append(uploadFilePath).append(" -d ").append(sourceDir);
 
         //暂时不删除 上传的更新包
-
         execConnection.exec(cmd.toString(), execListener);
-
     }
 
     @Override

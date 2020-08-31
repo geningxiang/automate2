@@ -1,7 +1,6 @@
 package com.github.gnx.automate.service.impl;
 
 import com.github.gnx.automate.common.file.FileInfo;
-import com.github.gnx.automate.exec.DefaultMsgListener;
 import com.github.gnx.automate.exec.ExecWorker;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.github.gnx.automate.exec.ssh.SSHConnection;
@@ -28,7 +27,7 @@ class ContainerServiceImplTest {
     @Test
     public void test() throws Exception {
 
-        containerService.update(13, 5, new DefaultMsgListener());
+        containerService.updateContainer(13, 5);
 
         System.out.println("## end ##");
 

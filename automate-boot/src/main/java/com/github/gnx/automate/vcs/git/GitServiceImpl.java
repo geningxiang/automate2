@@ -2,12 +2,10 @@ package com.github.gnx.automate.vcs.git;
 
 import com.github.gnx.automate.contants.VcsType;
 import com.github.gnx.automate.event.IEventPublisher;
-import com.github.gnx.automate.event.vo.BranchUpdatedEvent;
+import com.github.gnx.automate.event.bean.BranchUpdatedEvent;
 import com.github.gnx.automate.vcs.IVcsCredentialsProvider;
 import com.github.gnx.automate.vcs.IVcsService;
 import com.github.gnx.automate.vcs.VcsUserNamePwdCredentialsProvider;
-import com.github.gnx.automate.vcs.git.GitContants;
-import com.github.gnx.automate.vcs.git.JgitProgressMonitor;
 import com.github.gnx.automate.vcs.vo.CommitLog;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.*;
@@ -187,7 +185,7 @@ public class GitServiceImpl implements IVcsService {
                 list.add(parse(commit));
             }
             return list;
-        }finally {
+        } finally {
             if (fileRepository != null) {
                 // Git.wrap( 实例化  fileRepository 不能自动关闭
                 fileRepository.close();
@@ -208,7 +206,7 @@ public class GitServiceImpl implements IVcsService {
 
             git.checkout().setName(branch).call();
             String id;
-            if(StringUtils.isNotBlank(commitId)) {
+            if (StringUtils.isNotBlank(commitId)) {
                 Ref resetCommand = git.reset().setMode(ResetCommand.ResetType.HARD).setRef(commitId).call();
                 id = resetCommand.getObjectId().toObjectId().name();
             } else {

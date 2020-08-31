@@ -1,13 +1,18 @@
 package com.github.gnx.automate.controller.api;
 
+import com.github.gnx.automate.cache.IEntityCache;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
-import com.github.gnx.automate.entity.*;
+import com.github.gnx.automate.entity.AssemblyLineEntity;
+import com.github.gnx.automate.entity.AssemblyLineLogEntity;
+import com.github.gnx.automate.entity.ProjectBranchEntity;
+import com.github.gnx.automate.entity.ProjectEntity;
 import com.github.gnx.automate.field.req.AssemblyLineSaveField;
 import com.github.gnx.automate.field.req.ReqProjectCreateField;
 import com.github.gnx.automate.service.*;
 import com.github.gnx.automate.vcs.VcsHelper;
 import com.github.gnx.automate.vcs.vo.CommitLog;
+import com.github.gnx.automate.vo.response.ContainerVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +28,7 @@ import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,13 +53,16 @@ public class ProjectController {
 
     private final VcsHelper vcsHelper;
 
-    public ProjectController(IProjectService projectService, IProjectBranchService projectBranchService, IAssemblyLineService assemblyLineService, IAssemblyLineLogService assemblyLineLogService, IContainerService containerService, VcsHelper vcsHelper) {
+    private final IEntityCache entityCache;
+
+    public ProjectController(IProjectService projectService, IProjectBranchService projectBranchService, IAssemblyLineService assemblyLineService, IAssemblyLineLogService assemblyLineLogService, IContainerService containerService, VcsHelper vcsHelper, IEntityCache entityCache) {
         this.projectService = projectService;
         this.projectBranchService = projectBranchService;
         this.assemblyLineService = assemblyLineService;
         this.assemblyLineLogService = assemblyLineLogService;
         this.containerService = containerService;
         this.vcsHelper = vcsHelper;
+        this.entityCache = entityCache;
     }
 
     /**
@@ -93,7 +102,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/project/{projectId}", method = RequestMethod.GET)
     public ResponseEntity<ProjectEntity> detail(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
-        Optional<ProjectEntity> projectEntity = projectService.getModel(projectId);
+        Optional<ProjectEntity> projectEntity = projectService.findById(projectId);
         return ResponseEntity.ok(projectEntity.get());
     }
 
@@ -107,7 +116,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/project/{projectId}/fetch", method = RequestMethod.POST)
     public ResponseEntity fetchProject(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) throws Exception {
-        vcsHelper.update(projectService.getModel(projectId).get());
+        vcsHelper.update(projectService.findById(projectId).get());
         // 刷新 分支列表
         return ResponseEntity.ok();
     }
@@ -143,8 +152,9 @@ public class ProjectController {
      * @return
      */
     @RequestMapping(value = "/project/{projectId}/containers", method = RequestMethod.GET)
-    public ResponseEntity<List<ContainerEntity>> containerList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
-        return ResponseEntity.ok(containerService.getAllByProjectIdOrderById(projectId));
+    public ResponseEntity<List<ContainerVO>> containerList(CurrentUser currentUser, @PathVariable("projectId") @NotNull(message = "请输入项目ID") Integer projectId) {
+        return ResponseEntity.ok(containerService.getAllByProjectIdOrderById(projectId)
+                .stream().map(entityCache::parse).collect(Collectors.toList()));
     }
 
 

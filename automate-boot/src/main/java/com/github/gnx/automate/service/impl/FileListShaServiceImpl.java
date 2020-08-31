@@ -1,6 +1,5 @@
 package com.github.gnx.automate.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.github.gnx.automate.common.file.FileInfo;
 import com.github.gnx.automate.common.file.FileListSha256Util;
 import com.github.gnx.automate.entity.FileListShaEntity;
