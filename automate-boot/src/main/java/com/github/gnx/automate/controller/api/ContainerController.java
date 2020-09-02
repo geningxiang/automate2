@@ -5,10 +5,11 @@ import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
 import com.github.gnx.automate.common.thread.GlobalThreadPoolManager;
 import com.github.gnx.automate.entity.ContainerEntity;
+import com.github.gnx.automate.entity.ContainerUpdateLogEntity;
 import com.github.gnx.automate.service.IContainerService;
+import com.github.gnx.automate.service.IContainerUpdateLogService;
+import com.github.gnx.automate.vo.response.ContainerUpdateLogVO;
 import com.github.gnx.automate.vo.response.ContainerVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -26,11 +27,17 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class ContainerController {
 
-    @Autowired
-    private IContainerService containerService;
+    private final IContainerService containerService;
 
-    @Autowired
-    private IEntityCache entityCache;
+    private final IContainerUpdateLogService containerUpdateLogService;
+
+    private final IEntityCache entityCache;
+
+    public ContainerController(IContainerService containerService, IContainerUpdateLogService containerUpdateLogService, IEntityCache entityCache) {
+        this.containerService = containerService;
+        this.containerUpdateLogService = containerUpdateLogService;
+        this.entityCache = entityCache;
+    }
 
     /**
      * 服务器资源列表
@@ -42,6 +49,20 @@ public class ContainerController {
         List<ContainerVO> result = new LinkedList();
         for (ContainerEntity containerEntity : list) {
             result.add(entityCache.parse(containerEntity));
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 容器更新日志
+     * @return
+     */
+    @RequestMapping(value = "/containerUpdateLogs", method = RequestMethod.GET)
+    public ResponseEntity<List<ContainerUpdateLogVO>> updateLogList() {
+        Iterable<ContainerUpdateLogEntity> list = this.containerUpdateLogService.findAll();
+        List<ContainerUpdateLogVO> result = new LinkedList();
+        for (ContainerUpdateLogEntity containerUpdateLogEntity : list) {
+            result.add(entityCache.parse(containerUpdateLogEntity));
         }
         return ResponseEntity.ok(result);
     }

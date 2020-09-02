@@ -39,6 +39,11 @@ public class TarUtils {
             targetDir.mkdirs();
         }
         File file = new File(targetDir.getAbsolutePath() + File.separator + fileName + ".tar");
+
+        //必须先删一次
+        file.deleteOnExit();
+
+
         try (TarArchiveOutputStream taos = new TarArchiveOutputStream(new FileOutputStream(file))) {
             //允许长名  不设置的话 路径长度不能超过100
             taos.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
@@ -102,6 +107,7 @@ public class TarUtils {
             targetDir.mkdirs();
         }
         File file = new File(targetDir.getAbsolutePath() + File.separator + fileName + ".tar.gz");
+        file.deleteOnExit();
         try (
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(sourceFile), BUFFER_SIZE);
                 GZIPOutputStream gzp = new GZIPOutputStream(new FileOutputStream(file))) {

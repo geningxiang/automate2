@@ -108,6 +108,7 @@
     </dependencies>
 
     <build>
+        <finalName>automate-boot</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -122,6 +123,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- 打jar包时 排除配置文件 -->
+                        <exclude>application.yml</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>com.github.geningxiang</groupId>
                 <artifactId>javadoc-mvn-plugin</artifactId>

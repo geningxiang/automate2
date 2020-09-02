@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+
+    <servers>
+        <!-- deploy 到私有仓库时的 http基础认证 -->
+        <server>
+            <id>caimao-releases</id>
+            <username>caimao</username>
+            <password>87677911</password>
+        </server>
+        <server>
+            <id>caimao-snapshots</id>
+            <username>caimao</username>
+            <password>87677911</password>
+        </server>
+    </servers>
+
+    <mirrors>
+        <mirror>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <id>caimaoProfile</id>
+            <!-- repositories 本来是 pom.xml下的  可以通过 profile 来配在 settings.xml 方便些 -->
+            <repositories>
+                <!-- 内网 maven私有库 -->
+                <repository>
+                    <id>nexus</id>
+                    <url>http://192.168.1.190:8081/repository/maven-public/</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+                <!-- 优先使用阿里云镜像仓库 -->
+                <repository>
+                    <id>aliyun</id>
+                    <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+                <!-- 如果阿里云仓库找不到 才会去caimao私有仓库下载 -->
+                <repository>
+                    <id>caimao</id>
+                    <url>http://60.190.13.162:6118/maven/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+            </repositories>
+            <!-- 插件仓库地址 -->
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>nexus</id>
+                    <url>http://192.168.1.190:8081/repository/maven-public/</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>aliyun</id>
+                    <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+                    <layout>default</layout>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>caimao</id>
+                    <url>http://60.190.13.162:6118/maven/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <!-- 使 caimaoProfile 生效 -->
+        <activeProfile>caimaoProfile</activeProfile>
+    </activeProfiles>
+</settings>

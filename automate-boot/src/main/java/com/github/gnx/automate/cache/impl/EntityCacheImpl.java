@@ -1,14 +1,12 @@
 package com.github.gnx.automate.cache.impl;
 
 import com.github.gnx.automate.cache.IEntityCache;
-import com.github.gnx.automate.entity.ContainerEntity;
-import com.github.gnx.automate.entity.ProductEntity;
-import com.github.gnx.automate.entity.ProjectEntity;
-import com.github.gnx.automate.entity.ServerEntity;
+import com.github.gnx.automate.entity.*;
 import com.github.gnx.automate.event.bean.EntityChangeEvent;
 import com.github.gnx.automate.service.IContainerService;
 import com.github.gnx.automate.service.IProjectService;
 import com.github.gnx.automate.service.IServerService;
+import com.github.gnx.automate.vo.response.ContainerUpdateLogVO;
 import com.github.gnx.automate.vo.response.ContainerVO;
 import com.github.gnx.automate.vo.response.ProductVO;
 import org.springframework.beans.BeanUtils;
@@ -132,6 +130,16 @@ public class EntityCacheImpl implements IEntityCache {
         ProductVO vo = new ProductVO();
         BeanUtils.copyProperties(productEntity, vo);
         vo.setProjectName(this.getProjectName(vo.getProjectId()));
+        return vo;
+    }
+
+    @Override
+    public ContainerUpdateLogVO parse(ContainerUpdateLogEntity containerUpdateLogEntity) {
+        ContainerUpdateLogVO vo = new ContainerUpdateLogVO();
+        BeanUtils.copyProperties(containerUpdateLogEntity, vo);
+        vo.setProjectName(this.getProjectName(vo.getProjectId()));
+        vo.setServerName(this.getServerName(vo.getServerId()));
+        vo.setContainerName(this.getContainerName(vo.getContainerId()));
         return vo;
     }
 }

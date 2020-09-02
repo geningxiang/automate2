@@ -3,6 +3,7 @@ package com.github.gnx.automate.assemblyline;
 import com.alibaba.fastjson.JSONArray;
 import com.github.gnx.automate.assemblyline.config.AssemblyLineStepTask;
 import com.github.gnx.automate.assemblyline.config.IAssemblyLineTaskConfig;
+import com.github.gnx.automate.cache.RunningCacheManager;
 import com.github.gnx.automate.common.SpringUtils;
 import com.github.gnx.automate.common.SystemUtil;
 import com.github.gnx.automate.common.utils.TarUtils;
@@ -62,11 +63,13 @@ public class AssemblyLineRunnable implements Runnable {
     @Override
     public void run() {
 
-
         AssemblyLineLogEntity assemblyLineLogEntity = assemblyLineLogService.findById(this.assemblyLineLogId).get();
         this.assemblyLineRunnableListener.onStart(this);
         boolean success = false;
         try {
+
+            RunningCacheManager.add(assemblyLineLogEntity.getId(), assemblyLineLogEntity);
+
             Optional<ProjectEntity> projectEntity = projectService.findById(assemblyLineLogEntity.getProjectId());
             if (!projectEntity.isPresent()) {
                 throw new RuntimeException("未找到相应的项目");
@@ -74,7 +77,6 @@ public class AssemblyLineRunnable implements Runnable {
 
             //解析流水线
             List<AssemblyLineStepTask> assemblyLineStepTasks = JSONArray.parseArray(assemblyLineLogEntity.getConfig(), AssemblyLineStepTask.class);
-
 
             //获取当前系统配置的 exec执行模板
             IExecTemplate execTemplate = ExecEnvConfig.getExecTemplate();
@@ -84,7 +86,7 @@ public class AssemblyLineRunnable implements Runnable {
                 assemblyLineLogEntity.appendLine("切换版本库, branch: " + assemblyLineLogEntity.getBranch() + " , commitId: " + assemblyLineLogEntity.getCommitId());
                 //切换分支
                 String vcsId = vcsHelper.checkOut(projectEntity.get(), assemblyLineLogEntity.getBranch(), assemblyLineLogEntity.getCommitId());
-                assemblyLineLogEntity.setCommitId(vcsId );
+                assemblyLineLogEntity.setCommitId(vcsId);
                 //挡墙项目版本
                 assemblyLineLogEntity.appendLine("版本库切换后ID: " + vcsId);
                 //暂时只有2种  本地执行 或者 docker执行
@@ -108,6 +110,7 @@ public class AssemblyLineRunnable implements Runnable {
         } catch (Exception e) {
             assemblyLineLogEntity.appendLine("== 执行任务发生异常 ==").appendLine(ExceptionUtils.getStackTrace(e));
         } finally {
+            RunningCacheManager.release(assemblyLineLogEntity.getId(), AssemblyLineLogEntity.class);
             this.assemblyLineRunnableListener.onFinished(this);
         }
 
@@ -153,19 +156,27 @@ public class AssemblyLineRunnable implements Runnable {
         model.setTaskIndex(taskIndex);
         model.setStatus(AssemblyLineLogEntity.Status.INIT);
         model.setStartTime(new Timestamp(System.currentTimeMillis()));
+        assemblyLineTaskLogService.save(model);
+
         boolean success = false;
         try {
-            success = AssemblyLinePluginManager.execute(assemblyLineEnv, specificTask, model::append);
-        } catch (Exception e) {
-            model.appendLine(ExceptionUtils.getStackTrace(e));
+            RunningCacheManager.add(model.getId(), model);
+            try {
+                success = AssemblyLinePluginManager.execute(assemblyLineEnv, specificTask, model::append);
+            } catch (Exception e) {
+                model.appendLine(ExceptionUtils.getStackTrace(e));
+            }
+            model.setStatus(success ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
+            model.setEndTime(new Timestamp(System.currentTimeMillis()));
+            assemblyLineTaskLogService.save(model);
+        } finally {
+            RunningCacheManager.release(model.getId(), AssemblyLineTaskLogEntity.class);
         }
-        model.setStatus(success ? AssemblyLineLogEntity.Status.SUCCESS : AssemblyLineLogEntity.Status.ERROR);
-        model.setEndTime(new Timestamp(System.currentTimeMillis()));
-        assemblyLineTaskLogService.save(model);
         return success;
     }
 
     public int getAssemblyLineLogId() {
         return assemblyLineLogId;
     }
+
 }

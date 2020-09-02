@@ -29,6 +29,7 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
     @Override
     public boolean check(ContainerEntity containerEntity, IExecConnection execConnection, IMsgListener execListener) throws Exception {
         int exitStatus = execConnection.exec(containerEntity.getScriptCheck(), execListener);
+        // 0 运行中  1 未运行
         return exitStatus == 0;
     }
 
@@ -44,8 +45,9 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
         DefaultMsgListener defaultMsgListener = new DefaultMsgListener(execListener, false);
         int exit = execConnection.exec(containerEntity.getScriptStop(), defaultMsgListener);
         if(exit == 0){
-
-        } else if(exit == 1){
+            //停止成功
+        } else if(exit == 2){
+            //本来就没运行
             throw new RuntimeException("server is not run");
         } else {
             throw new RuntimeException(defaultMsgListener.getContent());
@@ -102,7 +104,8 @@ public class DefaultSSHContainerUpdater extends AbstractContainerUpdater {
         int exit = execConnection.exec(containerEntity.getScriptStart(), defaultMsgListener);
         if(exit == 0){
 
-        } else if(exit == 1){
+        } else if(exit == 2){
+            //本来就是已运行了
             throw new RuntimeException("server is already running");
         } else {
             throw new RuntimeException(defaultMsgListener.getContent());

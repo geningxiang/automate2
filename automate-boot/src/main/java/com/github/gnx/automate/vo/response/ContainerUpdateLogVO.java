@@ -1,19 +1,17 @@
-package com.github.gnx.automate.entity;
+package com.github.gnx.automate.vo.response;
 
-import com.github.gnx.automate.common.IMsgListener;
+import com.github.gnx.automate.entity.AssemblyLineLogEntity;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 应用更新日志
+ * Description: 
  * @author genx
- * @date 2019/7/23 23:21
+ * @date 2020/9/1 20:59
  */
-@Entity
-@Table(name = "ca2_container_update_log")
-public class ContainerUpdateLogEntity implements IMsgListener {
+public class ContainerUpdateLogVO {
+
     private Integer id;
 
     /**
@@ -21,15 +19,21 @@ public class ContainerUpdateLogEntity implements IMsgListener {
      */
     private Integer projectId;
 
+    private String projectName;
+
     /**
      * 服务器ID
      */
     private Integer serverId;
 
+    private String serverName;
+
     /**
      * 容器ID
      */
     private Integer containerId;
+
+    private String containerName;
 
     /**
      * 申请ID (0代表直接操作的)
@@ -37,14 +41,11 @@ public class ContainerUpdateLogEntity implements IMsgListener {
     private Integer applyId;
 
     /**
-     * 产物ID
-     */
-    private Integer productId;
-
-    /**
      * 操作用户ID
      */
     private Integer userId;
+
+    private String userName;
 
     /**
      * 类型 0更新 1回滚
@@ -80,11 +81,8 @@ public class ContainerUpdateLogEntity implements IMsgListener {
     /**
      * 更新日志
      */
-    private StringBuffer log = new StringBuffer(2048);
+    private String log;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
     public Integer getId() {
         return id;
     }
@@ -93,18 +91,6 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "CONTAINER_ID", nullable = true)
-    public Integer getContainerId() {
-        return containerId;
-    }
-
-    public void setContainerId(Integer containerId) {
-        this.containerId = containerId;
-    }
-
-    @Basic
-    @Column(name = "PROJECT_ID", nullable = true)
     public Integer getProjectId() {
         return projectId;
     }
@@ -113,8 +99,14 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.projectId = projectId;
     }
 
-    @Basic
-    @Column(name = "SERVER_ID", nullable = true)
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
     public Integer getServerId() {
         return serverId;
     }
@@ -123,8 +115,30 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.serverId = serverId;
     }
 
-    @Basic
-    @Column(name = "APPLY_ID", nullable = true)
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public Integer getContainerId() {
+        return containerId;
+    }
+
+    public void setContainerId(Integer containerId) {
+        this.containerId = containerId;
+    }
+
+    public String getContainerName() {
+        return containerName;
+    }
+
+    public void setContainerName(String containerName) {
+        this.containerName = containerName;
+    }
+
     public Integer getApplyId() {
         return applyId;
     }
@@ -133,18 +147,6 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.applyId = applyId;
     }
 
-    @Basic
-    @Column(name = "PRODUCT_ID", nullable = true)
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
-    @Basic
-    @Column(name = "USER_ID", nullable = true)
     public Integer getUserId() {
         return userId;
     }
@@ -153,8 +155,14 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "TYPE", nullable = true)
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public Integer getType() {
         return type;
     }
@@ -163,8 +171,6 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.type = type;
     }
 
-    @Basic
-    @Column(name = "CREATE_TIME", nullable = true)
     public Timestamp getCreateTime() {
         return createTime;
     }
@@ -173,8 +179,6 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.createTime = createTime;
     }
 
-    @Basic
-    @Column(name = "DONE_TIME", nullable = true)
     public Timestamp getDoneTime() {
         return doneTime;
     }
@@ -183,8 +187,6 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.doneTime = doneTime;
     }
 
-    @Basic
-    @Column(name = "STATUS", nullable = true)
     public Integer getStatus() {
         return status;
     }
@@ -193,13 +195,6 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.status = status;
     }
 
-    public void setStatus(AssemblyLineLogEntity.Status status) {
-        this.status = status.ordinal();
-    }
-
-
-    @Basic
-    @Column(name = "BEFORE_SHA256", nullable = true, length = 512)
     public String getBeforeSha256() {
         return beforeSha256;
     }
@@ -208,8 +203,6 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.beforeSha256 = beforeSha256;
     }
 
-    @Basic
-    @Column(name = "AFTER_SHA256", nullable = true, length = 512)
     public String getAfterSha256() {
         return afterSha256;
     }
@@ -218,22 +211,11 @@ public class ContainerUpdateLogEntity implements IMsgListener {
         this.afterSha256 = afterSha256;
     }
 
-    @Basic
-    @Column(name = "LOG", nullable = true, length = -1)
     public String getLog() {
-        return log.toString();
+        return log;
     }
 
     public void setLog(String log) {
-        if(log != null) {
-            this.log.append(log);
-        }
-    }
-
-
-    @Override
-    public IMsgListener append(CharSequence csq) {
-        this.log.append(csq);
-        return this;
+        this.log = log;
     }
 }

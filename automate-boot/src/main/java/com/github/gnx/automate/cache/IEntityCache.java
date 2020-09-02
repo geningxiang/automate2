@@ -1,9 +1,7 @@
 package com.github.gnx.automate.cache;
 
-import com.github.gnx.automate.entity.ContainerEntity;
-import com.github.gnx.automate.entity.ProductEntity;
-import com.github.gnx.automate.entity.ProjectEntity;
-import com.github.gnx.automate.entity.ServerEntity;
+import com.github.gnx.automate.entity.*;
+import com.github.gnx.automate.vo.response.ContainerUpdateLogVO;
 import com.github.gnx.automate.vo.response.ContainerVO;
 import com.github.gnx.automate.vo.response.ProductVO;
 
@@ -27,4 +25,6 @@ public interface IEntityCache {
     ContainerVO parse(ContainerEntity containerEntity);
 
     ProductVO parse(ProductEntity productEntity);
+
+    ContainerUpdateLogVO parse(ContainerUpdateLogEntity containerUpdateLogEntity);
 }

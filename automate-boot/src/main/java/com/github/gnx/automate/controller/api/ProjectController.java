@@ -217,12 +217,9 @@ public class ProjectController {
         System.out.println("[onHook]" + projectId + "\t" + token);
 
         Enumeration<String> headerNames = request.getHeaderNames();
-
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
-
             System.out.println(headerName + "\t" + request.getHeader(headerName));
-
         }
 
         StringBuilder data = new StringBuilder(102400);
@@ -235,9 +232,7 @@ public class ProjectController {
 
         System.out.println(data.toString());
 
-
         return ResponseEntity.ok();
-
     }
 
 }

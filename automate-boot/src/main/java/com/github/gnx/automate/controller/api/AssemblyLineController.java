@@ -3,6 +3,7 @@ package com.github.gnx.automate.controller.api;
 import com.alibaba.fastjson.JSONArray;
 import com.github.gnx.automate.assemblyline.AssemblyLineTaskManager;
 import com.github.gnx.automate.assemblyline.config.AssemblyLineStepTask;
+import com.github.gnx.automate.cache.RunningCacheManager;
 import com.github.gnx.automate.common.CurrentUser;
 import com.github.gnx.automate.common.ResponseEntity;
 import com.github.gnx.automate.entity.AssemblyLineEntity;
@@ -87,11 +88,9 @@ public class AssemblyLineController {
         List<AssemblyLineStepTask> assemblyLineStepTasks = JSONArray.parseArray(assemblyLineEntity.getConfig(), AssemblyLineStepTask.class);
 
         //检查任务是否正常
-
-
         AssemblyLineLogEntity assemblyLineLogEntity = assemblyLineLogService.saveWithAssemblyLine(assemblyLineEntity, branch, commitId, currentUser.getUserId());
 
-        //先保存
+        //后端线程池执行 流水线任务
         assemblyLineTaskManager.execute(assemblyLineLogEntity.getId());
 
         return ResponseEntity.ok("流水线任务已提交", assemblyLineLogEntity.getId());
@@ -99,14 +98,28 @@ public class AssemblyLineController {
 
     @RequestMapping(value = "/assembly_line_log/{assemblyLineLogId}", method = RequestMethod.GET)
     public ResponseEntity<AssemblyLineLogEntity> assemblyLineTaskLog(@PathVariable("assemblyLineLogId") @NotNull(message = "请输入流水线日志") Integer assemblyLineLogId) {
-        return ResponseEntity.ok(assemblyLineLogService.findById(assemblyLineLogId));
-
+        //先查一下 运行时缓存中 有没有
+        AssemblyLineLogEntity assemblyLineLogEntity = RunningCacheManager.getAssemblyLineLogEntity(assemblyLineLogId);
+        if (assemblyLineLogEntity != null) {
+            return ResponseEntity.ok(assemblyLineLogEntity);
+        } else {
+            return ResponseEntity.ok(assemblyLineLogService.findById(assemblyLineLogId));
+        }
     }
 
     @RequestMapping(value = "/assembly_line_log/{assemblyLineLogId}/task_logs", method = RequestMethod.GET)
-    public ResponseEntity<List<AssemblyLineTaskLogEntity>> assemblyLineTaskLogList(@PathVariable("assemblyLineLogId") @NotNull(message = "请输入流水线日志") Integer assemblyLineLogId){
-        return ResponseEntity.ok(assemblyLineTaskLogService.findAllByAssemblyLineLogIdOrderById(assemblyLineLogId));
-
+    public ResponseEntity<List<AssemblyLineTaskLogEntity>> assemblyLineTaskLogList(@PathVariable("assemblyLineLogId") @NotNull(message = "请输入流水线日志") Integer assemblyLineLogId) {
+        List<AssemblyLineTaskLogEntity> list = assemblyLineTaskLogService.findAllByAssemblyLineLogIdOrderById(assemblyLineLogId);
+        AssemblyLineTaskLogEntity item;
+        AssemblyLineTaskLogEntity cache;
+        for (int i = 0; i < list.size(); i++) {
+            item = list.get(i);
+            cache = RunningCacheManager.getAssemblyLineTaskLogEntity(item.getId());
+            if (cache != null) {
+                list.set(i, cache);
+            }
+        }
+        return ResponseEntity.ok(list);
     }
 
 }
