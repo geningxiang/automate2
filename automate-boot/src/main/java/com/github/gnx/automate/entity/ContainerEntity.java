@@ -39,7 +39,6 @@ public class ContainerEntity {
 
     /**
      * 容器类型
-     *
      */
     private Integer type;
 

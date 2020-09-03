@@ -13,6 +13,7 @@ import com.github.gnx.automate.field.req.AssemblyLineSaveField;
 import com.github.gnx.automate.service.IAssemblyLineLogService;
 import com.github.gnx.automate.service.IAssemblyLineService;
 import com.github.gnx.automate.service.IAssemblyLineTaskLogService;
+import com.github.gnx.automate.vo.request.NewestLogRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,6 +102,7 @@ public class AssemblyLineController {
         //先查一下 运行时缓存中 有没有
         AssemblyLineLogEntity assemblyLineLogEntity = RunningCacheManager.getAssemblyLineLogEntity(assemblyLineLogId);
         if (assemblyLineLogEntity != null) {
+            assemblyLineLogEntity.setStatus(AssemblyLineLogEntity.Status.RUNNING);
             return ResponseEntity.ok(assemblyLineLogEntity);
         } else {
             return ResponseEntity.ok(assemblyLineLogService.findById(assemblyLineLogId));
@@ -116,10 +118,28 @@ public class AssemblyLineController {
             item = list.get(i);
             cache = RunningCacheManager.getAssemblyLineTaskLogEntity(item.getId());
             if (cache != null) {
+                cache.setStatus(AssemblyLineLogEntity.Status.RUNNING);
                 list.set(i, cache);
             }
         }
         return ResponseEntity.ok(list);
+    }
+
+    /**
+     * 获取运行时最新消息
+     * TODO 暂时用定时器拉取  以后改成 websocket
+     * @return httpCode==204 key不存在 或者 key对应的内容已经处理完毕
+     */
+    @RequestMapping(value = "/assembly_line/running", method = RequestMethod.POST)
+    public ResponseEntity<String[]> unreadMsg(@RequestBody NewestLogRequest[] newestLogRequests) {
+        String[] result = new String[newestLogRequests.length];
+        for (int i = 0; i < newestLogRequests.length; i++) {
+            String unread = RunningCacheManager.getUnread(newestLogRequests[i].getKey(), newestLogRequests[i].getRead());
+            if (unread != null) {
+                result[i] = unread;
+            }
+        }
+        return ResponseEntity.ok(result);
     }
 
 }

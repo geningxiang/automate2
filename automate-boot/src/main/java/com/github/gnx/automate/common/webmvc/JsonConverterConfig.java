@@ -50,17 +50,22 @@ public class JsonConverterConfig implements WebMvcConfigurer {
 
         config.setSerializerFeatures(
 
-                SerializerFeature.WriteMapNullValue,        // 是否输出值为null的字段,默认为false,我们将它打开
+                // 是否输出值为null的字段,默认为false,我们将它打开
+                SerializerFeature.WriteMapNullValue,
 
-                SerializerFeature.WriteNullListAsEmpty,     // 将Collection类型字段的字段空值输出为[]
+                // 将Collection类型字段的字段空值输出为[]
+                SerializerFeature.WriteNullListAsEmpty,
 
-                SerializerFeature.WriteNullStringAsEmpty,   // 将字符串类型字段的空值输出为空字符串
+                // 将字符串类型字段的空值输出为空字符串
+//                SerializerFeature.WriteNullStringAsEmpty,
 
-                SerializerFeature.WriteNullNumberAsZero,    // 将数值类型字段的空值输出为0
+                // 将数值类型字段的空值输出为0
+//                SerializerFeature.WriteNullNumberAsZero,
 
                 SerializerFeature.WriteDateUseDateFormat,
 
-                SerializerFeature.DisableCircularReferenceDetect    // 禁用循环引用
+                // 禁用循环引用
+                SerializerFeature.DisableCircularReferenceDetect
 
         );
 

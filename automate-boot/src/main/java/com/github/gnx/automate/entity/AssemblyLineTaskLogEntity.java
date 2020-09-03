@@ -1,6 +1,7 @@
 package com.github.gnx.automate.entity;
 
 import com.github.gnx.automate.common.IMsgListener;
+import com.github.gnx.automate.vo.IRunningLog;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "ca2_assembly_line_task_log")
-public class AssemblyLineTaskLogEntity implements IMsgListener {
+public class AssemblyLineTaskLogEntity implements IMsgListener, IRunningLog {
 
     private Integer id;
 
@@ -155,6 +156,11 @@ public class AssemblyLineTaskLogEntity implements IMsgListener {
 
     public void setEndTime(Timestamp endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public StringBuffer content(){
+        return this.content;
     }
 
 }

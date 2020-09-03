@@ -68,7 +68,7 @@ public class AssemblyLineRunnable implements Runnable {
         boolean success = false;
         try {
 
-            RunningCacheManager.add(assemblyLineLogEntity.getId(), assemblyLineLogEntity);
+            RunningCacheManager.add(assemblyLineLogEntity);
 
             Optional<ProjectEntity> projectEntity = projectService.findById(assemblyLineLogEntity.getProjectId());
             if (!projectEntity.isPresent()) {
@@ -110,7 +110,7 @@ public class AssemblyLineRunnable implements Runnable {
         } catch (Exception e) {
             assemblyLineLogEntity.appendLine("== 执行任务发生异常 ==").appendLine(ExceptionUtils.getStackTrace(e));
         } finally {
-            RunningCacheManager.release(assemblyLineLogEntity.getId(), AssemblyLineLogEntity.class);
+            RunningCacheManager.release(assemblyLineLogEntity);
             this.assemblyLineRunnableListener.onFinished(this);
         }
 
@@ -160,7 +160,7 @@ public class AssemblyLineRunnable implements Runnable {
 
         boolean success = false;
         try {
-            RunningCacheManager.add(model.getId(), model);
+            RunningCacheManager.add(model);
             try {
                 success = AssemblyLinePluginManager.execute(assemblyLineEnv, specificTask, model::append);
             } catch (Exception e) {
@@ -170,7 +170,7 @@ public class AssemblyLineRunnable implements Runnable {
             model.setEndTime(new Timestamp(System.currentTimeMillis()));
             assemblyLineTaskLogService.save(model);
         } finally {
-            RunningCacheManager.release(model.getId(), AssemblyLineTaskLogEntity.class);
+            RunningCacheManager.release(model);
         }
         return success;
     }
