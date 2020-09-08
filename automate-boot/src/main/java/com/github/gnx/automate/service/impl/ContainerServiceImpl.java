@@ -107,7 +107,8 @@ public class ContainerServiceImpl implements IContainerService {
 
         ContainerUpdateLogEntity log = new ContainerUpdateLogEntity();
         log.setContainerId(containerId);
-        log.setProjectId(productEntity.getId());
+        log.setProjectId(productEntity.getProjectId());
+        log.setProductId(productEntity.getId());
         log.setServerId(serverEntity.getId());
         log.setApplyId(0);
         log.setUserId(0);

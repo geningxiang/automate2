@@ -3,6 +3,7 @@ package com.github.gnx.automate.service.impl;
 import com.github.gnx.automate.entity.ContainerUpdateLogEntity;
 import com.github.gnx.automate.repository.ContainerUpdateLogRepository;
 import com.github.gnx.automate.service.IContainerUpdateLogService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,8 +22,8 @@ public class ContainerUpdateLogServiceImpl implements IContainerUpdateLogService
     }
 
     @Override
-    public Iterable<ContainerUpdateLogEntity> findAll() {
-        return containerUpdateLogRepository.findAll();
+    public Iterable<ContainerUpdateLogEntity> findAll(Sort sort) {
+        return containerUpdateLogRepository.findAll(sort);
     }
 
 }

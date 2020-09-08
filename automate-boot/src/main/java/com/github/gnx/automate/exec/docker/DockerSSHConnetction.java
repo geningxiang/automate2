@@ -27,7 +27,7 @@ public class DockerSSHConnetction implements IExecConnection {
 
     private static Logger logger = LoggerFactory.getLogger(DockerSSHConnetction.class);
 
-    private final int TIME_OUT = 600;
+    private final int TIME_OUT = 1000;
 
     private final DockerClient dockerClient;
     private final String containerId;
@@ -40,9 +40,10 @@ public class DockerSSHConnetction implements IExecConnection {
         //分配一个伪终端 防止容器直接退出
         createContainerCmd.withTty(true);
 
+
         CreateContainerResponse createContainerResponse = createContainerCmd.exec();
         containerId = createContainerResponse.getId();
-
+        logger.debug("创建容器: {}", containerId);
         dockerClient.startContainerCmd(containerId).exec();
     }
 

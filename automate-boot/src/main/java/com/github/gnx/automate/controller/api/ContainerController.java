@@ -6,10 +6,14 @@ import com.github.gnx.automate.common.ResponseEntity;
 import com.github.gnx.automate.common.thread.GlobalThreadPoolManager;
 import com.github.gnx.automate.entity.ContainerEntity;
 import com.github.gnx.automate.entity.ContainerUpdateLogEntity;
+import com.github.gnx.automate.entity.ProductEntity;
 import com.github.gnx.automate.service.IContainerService;
 import com.github.gnx.automate.service.IContainerUpdateLogService;
 import com.github.gnx.automate.vo.response.ContainerUpdateLogVO;
 import com.github.gnx.automate.vo.response.ContainerVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -58,8 +62,14 @@ public class ContainerController {
      * @return
      */
     @RequestMapping(value = "/containerUpdateLogs", method = RequestMethod.GET)
-    public ResponseEntity<List<ContainerUpdateLogVO>> updateLogList() {
-        Iterable<ContainerUpdateLogEntity> list = this.containerUpdateLogService.findAll();
+    public ResponseEntity<List<ContainerUpdateLogVO>> updateLogList(
+            CurrentUser currentUser,
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        //TODO 分页
+        Iterable<ContainerUpdateLogEntity> list = this.containerUpdateLogService.findAll(sort);
         List<ContainerUpdateLogVO> result = new LinkedList();
         for (ContainerUpdateLogEntity containerUpdateLogEntity : list) {
             result.add(entityCache.parse(containerUpdateLogEntity));

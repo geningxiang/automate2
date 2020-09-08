@@ -2,6 +2,7 @@ package com.github.gnx.automate.exec.ssh;
 
 import com.github.gnx.automate.common.Charsets;
 import com.github.gnx.automate.common.IMsgListener;
+import com.github.gnx.automate.exec.DefaultMsgListener;
 import com.github.gnx.automate.exec.ExecStreamReader;
 import com.github.gnx.automate.exec.IExecConnection;
 import com.jcraft.jsch.*;
@@ -42,6 +43,9 @@ public class SSHConnection implements IExecConnection, Closeable {
         session.setConfig(config);
         session.setTimeout(1000 * 60 * 10);
         session.connect();
+
+        //加载 环境变量
+        this.exec("source /etc/profile", new DefaultMsgListener());
     }
 
     @Override
