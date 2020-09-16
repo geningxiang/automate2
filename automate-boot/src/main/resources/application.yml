@@ -1,0 +1,56 @@
+logging:
+  level:
+    root: info
+    org.eclipse.jgit: info
+    com.github.gnx: debug
+
+
+server:
+  port: 6118
+
+spring:
+  application:
+    name: automate-server
+
+  #数据库配置
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+    #url: jdbc:mysql://47.100.63.232:3306/automate2?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+
+    url: jdbc:mysql://192.168.1.190:3306/automate2?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+  jpa:
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  # Redis数据库索引（默认为0）
+  redis:
+    database: 0
+    # Redis服务器地址
+    host: 192.168.1.190
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password:
+
+
+automate:
+  # 源码文件夹 默认 ./
+  sourceCodeDir: 'E:/automate-data/sourcecode/'
+
+  # 产物文件夹
+  productDir: 'E:/automate-data/product/'
+
+  mvnDeployDir: 'E:/automate-data/mvnDeploy/'
+
+  exec:
+    docker:
+      host: '192.168.1.190'
+      port: 2375
+      imageName: 'mycentos:1.0.0'
