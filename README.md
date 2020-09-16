@@ -3,17 +3,19 @@
 GitHub地址: https://github.com/geningxiang/automate2  
 Gitee地址: https://gitee.com/panda007/automate2
 
-![Screenshot](http://automate.ink:8080/resources/images/1.png)
+- automate-boot 基于SpringBoot开发的版本
+- automate-server 已废弃
 
-![Screenshot](http://automate.ink:8080/resources/images/2.png)
+#### 部分界面截图
+![Screenshot](https://panda007.gitee.io/static/automate/images/1.png)
 
-![Screenshot](http://automate.ink:8080/resources/images/3.png)
+![Screenshot](https://panda007.gitee.io/static/automate/images/2.png)
 
-#### 开发环境配置
- 使用jvm启动参数 指定config.properties文件地址  
- 在本项目的中没有设计构建时的环境分离,推荐使用jvm参数,同一份代码可以应用于不同环境
-~~~~
--Dconfig.location=file:{userPath}/dev/config.properties
-~~~~
+![Screenshot](https://panda007.gitee.io/static/automate/images/3.png)
 
-待完成~~~  
+![Screenshot](https://panda007.gitee.io/static/automate/images/4.png)
+
+![Screenshot](https://panda007.gitee.io/static/automate/images/11.png)
+
+![Screenshot](https://panda007.gitee.io/static/automate/images/12.png)
+

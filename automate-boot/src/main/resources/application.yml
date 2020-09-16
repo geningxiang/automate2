@@ -15,6 +15,9 @@ spring:
   #数据库配置
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
+
+    #url: jdbc:mysql://47.100.63.232:3306/automate2?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+
     url: jdbc:mysql://192.168.1.190:3306/automate2?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
